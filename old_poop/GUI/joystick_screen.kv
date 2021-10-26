@@ -1,0 +1,41 @@
+#: kivy 1.0.10
+
+<JoystickScreen>:
+	title_button: TitleButton
+	joystick: JoystickManager
+	color_button: ColorButton
+	background_color: 0, 0, 0, 1
+
+	canvas:
+		Color:
+			rgba: self.background_color
+		Rectangle:
+			size: self.size
+
+	Joystick:
+		id: JoystickManager
+
+	ImageButton:
+		id: TitleButton
+		source: 'GUI/images/back.png'
+		pressed_src: 'GUI/images/back_pressed.png'
+		size_hint: 0.1, 0.1
+		pos_hint: {'top': 1, 'left': 0}
+		on_release: root.manager.transition.direction = 'left'
+		on_release: root.manager.current = 'main screen'
+
+	Button:
+		id: ColorButton
+		current_background_color: 1, 1, 1, 1
+		canvas:
+			Color:
+				rgba: self.current_background_color
+			Rectangle:
+				size: self.size
+				pos: self.pos
+
+		on_release: root.manager.transition.direction = 'up'
+		on_release: root.manager.current = "color screen"
+
+		size_hint: 0.5, 0.5
+		pos_hint: {'center_x': 0.5, 'center_y': 0.3}

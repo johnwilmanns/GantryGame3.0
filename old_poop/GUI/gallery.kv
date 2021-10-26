@@ -1,0 +1,29 @@
+#: kivy 1.0.10
+
+<Gallery>:
+	cols: 2
+	size_hint: 1, 1
+	
+<DrawingButton>:
+	current_background_color: 1, 1, 1, 1
+	canvas:
+		Color:
+			rgba: self.current_background_color
+		Rectangle:
+			size: self.size
+			pos: root.pos
+
+	on_press: self.current_background_color = 0, 0, 1, 1
+	on_touch_up: self.current_background_color = 1, 1, 1, 1
+
+	preview: Preview
+
+	FloatLayout:
+		pos: root.pos
+		size: root.size
+		
+		Image:
+			id: Preview
+			pos_hint: {"center_x": 0.5, "center_y": 0.5}
+			size_hint: 0.3, 0.8
+

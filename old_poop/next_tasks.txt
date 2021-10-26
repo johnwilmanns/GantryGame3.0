@@ -1,0 +1,34 @@
+NEXT TASKS:
+
+1) The joystick pen swapping code needs to be greatly improved. Right now, sending commands to the Planner class too quickly will
+cause the Gantry Game motors to become confused, meaning the Odrive will try to solve many different commands at the same time. This can
+easily result in the pen lowering before the carriage has reached the empty pen location, smashing the pen into the drawing frame. Easiest
+solution would be to attach a ready variable to the ODriveMotors class, which would be set to false every time you send them a command, and
+be reset when completed. Then, every time you send the ODriveMotors class a command through the Planner class, you can check if it's ready 
+before sending the command.
+
+2) More normie pictures. Understandbly minor, but right now since I'm a nerd, most images on the pi are geeky and, although appealing to 
+Maker Faire crowds and high school nerds, they are not accessible to children or adults you would typically see at museums. Use the
+color_trace program to test out how different images look as pngs, then place them into the pi.
+
+3) COMPLETE REDESIGN OF MACHINE: Seriously, this thing is awful. Don't get me wrong, the design makes sense, but there are just a few
+little things that make the machine awful to deal with.
+	a) The rails are rested upon 80/20, and thus are not very straight. This is bad because right now the carriage rests on another piece 
+	of 80/20, and that 80/20 needs to be a constant length. If the two rails along the y-axis are not parallel, then at times the carriage
+	will get stuck. Right now the solution is to loosen the rails and their ends, so that they increase and decrease width depending on 
+	where the 80/20 is located, but that is sketchy, and not permanent.
+	b) The y-axis uses two motors to control the y-axis rather than a single motor and a pulley system. This is awful because if the motors
+	are off sync even just a little bit, the 80/20 piece horizontally holding the carriage will become diagonal, and stop traveling due to
+	the stress on the rails. I already have workarounds for that (Changing the speeds of the two motors based on the difference between the
+	encoder readings and using low speeds) but I shouldn't have to.
+	c) The method for picking up the pen, while accounting for the problem of needing grip strength, is not reasonable. Right now, the 
+	machine uses a collet system to slowly close on the pen holder. This requires the machine to hover exactly over where the pen is located
+	with a tenth of an inch tolerance. While the machine can achieve that, the pen holders have springs in them that change the angle of the
+	pen holder and thus the location of the top of the pen holder, meaning the machine cannot 100% guarentee that it'll grab it. Right now,
+	I have the carriage wiggle around a little while descending in hopes of catching the pen holder, but this is not perfect.
+	
+4) Finally, the trapezoidal trajectory odrive stuff is a little iffy and I don't know why. It's just inconsistent -- sometimes one motor 
+will move its setpoint to a scope of 10^39 when it should really be around 10^6. Sometimes it will move its setpoint to just 10000 what it
+needs to be. No idea what could be causing this issue. If you can't solve it, not a big deal. Just use the position control rather than 
+trapezoidal trajectory.
+	

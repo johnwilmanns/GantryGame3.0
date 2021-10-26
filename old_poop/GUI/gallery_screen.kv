@@ -1,0 +1,47 @@
+#: kivy 1.0.10
+
+<GalleryScreen>:
+	gallery: Gallery
+	title_button: Title
+	prev_button: PreviousButton
+	next_button: NextButton
+	background_color: 0, 0, 0, 1
+
+
+	canvas:
+		Color:
+			rgba: self.background_color
+		Rectangle:
+			size: self.size
+	
+	Gallery:
+		id: Gallery
+		size_hint: 0.7, 0.8
+		pos_hint: {"center_x": 0.5, "center_y": 0.45}
+		spacing: self.height * 0.05, self.height * 0.05
+	
+	ImageButton:
+		id: Title
+		source: 'GUI/images/back.png'
+		pressed_src: 'GUI/images/back_pressed.png'
+		size_hint: 0.1, 0.1
+		pos_hint: {"top": 1, "left": 0}
+		on_release: root.manager.transition.direction = 'right'
+		on_release: root.manager.current = 'main screen'
+
+	ImageButton:
+		id: PreviousButton
+		source: 'GUI/images/prev.png'
+		pressed_src: 'GUI/images/prev_pressed.png'
+		size_hint: 0.1, 0.8
+		pos_hint: {"left": 0, "center_y": 0.45}
+
+	ImageButton:
+		id: NextButton
+		source: 'GUI/images/next.png'
+		pressed_src: 'GUI/images/next_pressed.png'
+		size_hint: 0.1, 0.8
+		pos_hint: {"right": 1, "center_y": 0.45}
+
+
+

@@ -1,0 +1,17 @@
+#: kivy 1.0.10
+
+<DrawingScreen>:
+	
+	canvas:
+		Color:
+			rgba: 0, 0, 0, 1
+		Rectangle:
+			size: root.size
+			pos: root.pos
+
+	Label:
+		text: 'Drawing...'
+		color: 1, 1, 1, 1
+		font_size: self.height * 0.6
+		size_hint: 0.7, 0.1
+		pos_hint: {'center': (0.5, 0.5)}

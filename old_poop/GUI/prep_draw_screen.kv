@@ -1,0 +1,45 @@
+#: kivy 1.0.10
+
+<PrepDrawScreen>
+	back_button: BackButton
+	draw_button: DrawButton
+	preview: Preview
+	background_color: 0, 0, 0, 1
+
+	canvas:
+		Color:
+			rgba: self.background_color
+		Rectangle:
+			size: self.size
+	canvas:
+		Color:
+			rgba: 1, 1, 1, 1
+		Rectangle:
+			size: self.width * 0.9, self.height * 0.8
+			pos: self.width * 0.05, self.height * 0.05
+
+
+	ImageButton:
+		id: BackButton
+		source: 'GUI/images/back.png'
+		pressed_src: 'GUI/images/back_pressed.png'
+		size_hint: 0.1, 0.1
+		pos_hint: {"top": 1, "left": 0}
+		on_release: root.manager.transition.direction = 'down'
+		on_release: root.manager.current = 'gallery screen'
+
+	Image:
+		id: Preview
+		size_hint: 0.9, 0.8
+		pos_hint: {'center_x': 0.5, 'center_y': 0.45}
+	
+	ImageButton:
+		id: DrawButton
+		source: 'GUI/images/draw.png'
+		pressed_src: 'GUI/images/draw_pressed.png'
+		size_hint: 0.2, 0.1
+		pos_hint: {'top': 1, 'right': 1}
+		
+	
+
+
