@@ -1,0 +1,3 @@
+
+- Rewire so that Y axis is on 2ndary board and z axis is axis1 on primary board
+- Y should be axis0

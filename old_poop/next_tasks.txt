@@ -1,5 +1,8 @@
 NEXT TASKS:
 
+Implement sensored homing somehow
+
+
 1) The joystick pen swapping code needs to be greatly improved. Right now, sending commands to the Planner class too quickly will
 cause the Gantry Game motors to become confused, meaning the Odrive will try to solve many different commands at the same time. This can
 easily result in the pen lowering before the carriage has reached the empty pen location, smashing the pen into the drawing frame. Easiest

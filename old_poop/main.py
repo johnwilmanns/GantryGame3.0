@@ -1,5 +1,5 @@
 import kivy
-kivy.require('1.0.10')
+# kivy.require('1.0.10')
 import os
 import json
 

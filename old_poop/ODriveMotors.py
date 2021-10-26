@@ -4,23 +4,22 @@ from odrive.enums import *
 import ODrive_Ease_Lib
 import time
 import usb.core
-import svg.path
+# import svg.path
 from xml.dom import minidom
-from pidev import stepper
-import numpy
+from pidev.stepper import stepper
+# import numpy
 import math
 import pickle
-from colormath.color_objects import sRGBColor, LabColor, HSVColor
-from colormath.color_conversions import convert_color
-from colormath.color_diff import delta_e_cie2000
+# from colormath.color_objects import sRGBColor, LabColor, HSVColor
+# from colormath.color_conversions import convert_color
+# from colormath.color_diff import delta_e_cie2000
 
-# for future note: two motor vert serial # 61951538836535
-#                  one motor hori serial # 61985896477751
 
 # xavier refers to the x axis, yannie to the y
 
-xavier_serial = 61985896477751
-yannie_serial = 61951538836535
+
+xavier_serial = "20793595524B"
+yannie_serial = "20673593524B" # axis 0 not in use
 
 '''
 Here, I use color math to represent the colors as HSV (Hue, Saturation, Value). I used to compare the 
@@ -28,19 +27,20 @@ hues to raw images to attain the closest color to the image, but since I now use
 of unnecessary. Make some junior or have you replace these with string comparisons
 '''
 
-RED = convert_color(sRGBColor.new_from_rgb_hex('#c40909'), HSVColor).get_value_tuple()[0]
-ORANGE = convert_color(sRGBColor.new_from_rgb_hex('#e86f25'), HSVColor).get_value_tuple()[0]
-YELLOW = convert_color(sRGBColor.new_from_rgb_hex('#e8d725'), HSVColor).get_value_tuple()[0]
-GREEN = convert_color(sRGBColor.new_from_rgb_hex('#075b3a'), HSVColor).get_value_tuple()[0]
-BLUE = convert_color(sRGBColor.new_from_rgb_hex('#1505a8'), HSVColor).get_value_tuple()[0]
-PURPLE = convert_color(sRGBColor.new_from_rgb_hex('#a500a5'), HSVColor).get_value_tuple()[0]
-LIGHT_BLUE = convert_color(sRGBColor.new_from_rgb_hex('#52bfe8'), HSVColor).get_value_tuple()[0]
-LIME_GREEN = convert_color(sRGBColor.new_from_rgb_hex('#8df41e'), HSVColor).get_value_tuple()[0] 
-RED_ORANGE = convert_color(sRGBColor.new_from_rgb_hex('#ff4800'), HSVColor).get_value_tuple()[0]
-PINK = convert_color(sRGBColor.new_from_rgb_hex('#ff00ae'), HSVColor).get_value_tuple()[0]
-LILAC = convert_color(sRGBColor.new_from_rgb_hex('#9c00ff'), HSVColor).get_value_tuple()[0]
-BLACK = convert_color(sRGBColor.new_from_rgb_hex('#000000'), HSVColor).get_value_tuple()[0]
+# RED = convert_color(sRGBColor.new_from_rgb_hex('#c40909'), HSVColor).get_value_tuple()[0]
+# ORANGE = convert_color(sRGBColor.new_from_rgb_hex('#e86f25'), HSVColor).get_value_tuple()[0]
+# YELLOW = convert_color(sRGBColor.new_from_rgb_hex('#e8d725'), HSVColor).get_value_tuple()[0]
+# GREEN = convert_color(sRGBColor.new_from_rgb_hex('#075b3a'), HSVColor).get_value_tuple()[0]
+# BLUE = convert_color(sRGBColor.new_from_rgb_hex('#1505a8'), HSVColor).get_value_tuple()[0]
+# PURPLE = convert_color(sRGBColor.new_from_rgb_hex('#a500a5'), HSVColor).get_value_tuple()[0]
+# LIGHT_BLUE = convert_color(sRGBColor.new_from_rgb_hex('#52bfe8'), HSVColor).get_value_tuple()[0]
+# LIME_GREEN = convert_color(sRGBColor.new_from_rgb_hex('#8df41e'), HSVColor).get_value_tuple()[0]
+# RED_ORANGE = convert_color(sRGBColor.new_from_rgb_hex('#ff4800'), HSVColor).get_value_tuple()[0]
+# PINK = convert_color(sRGBColor.new_from_rgb_hex('#ff00ae'), HSVColor).get_value_tuple()[0]
+# LILAC = convert_color(sRGBColor.new_from_rgb_hex('#9c00ff'), HSVColor).get_value_tuple()[0]
+# BLACK = convert_color(sRGBColor.new_from_rgb_hex('#000000'), HSVColor).get_value_tuple()[0]
 
+STEP_TO_ROTATION = 8048 # this is a mediocre way to update stuff quickly, when the odrive
 class GGMotors(object):
 
     '''
@@ -48,20 +48,20 @@ class GGMotors(object):
     sheathes for the pens being at a constant position. This includes how high the lids are positioned.
     '''
 
-    Z_IN = 20000 # Z position for grabbing pen
-    Z_RETURN = 10000 # Z position for returning pen (yes they are different on purpose)
-    Z_BARELY = 280000 # Z position for... something or other. Delete?
-    Z_HIGH = 700000 # Z position for highest I am willing to let pen carriage go
-    Z_HOVER = 400000 # Z position for hovering over paper
-    Z_TOUCH = 300000 # Z position for drawing on paper
+    Z_IN = 20000 / STEP_TO_ROTATION # Z position for grabbing pen
+    Z_RETURN = 10000 / STEP_TO_ROTATION# Z position for returning pen (yes they are different on purpose)
+    Z_BARELY = 280000 / STEP_TO_ROTATION# Z position for... something or other. Delete?
+    Z_HIGH = 700000 / STEP_TO_ROTATION# Z position for highest I am willing to let pen carriage go
+    Z_HOVER = 400000 / STEP_TO_ROTATION# Z position for hovering over paper
+    Z_TOUCH = 300000 / STEP_TO_ROTATION# Z position for drawing on paper
 
-    X_PEN1 = -145100 # X position for first row of pens
-    X_PEN2 = -161360 # X position for second row of pens
+    X_PEN1 = -145100 / STEP_TO_ROTATION# X position for first row of pens
+    X_PEN2 = -161360 / STEP_TO_ROTATION# X position for second row of pens
     
-    Y_PEN_BASE = 82500 # Y position for first pen
-    Y_PEN_INTERVAL = 16400 # Distance between each pen
+    Y_PEN_BASE = 82500 / STEP_TO_ROTATION# Y position for first pen
+    Y_PEN_INTERVAL = 16400 / STEP_TO_ROTATION# Distance between each pen
 
-    COLOR = [RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE, LIGHT_BLUE, LIME_GREEN, RED_ORANGE, PINK, LILAC, BLACK] # List of colors for drawing function to choose from.
+    # COLOR = [RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE, LIGHT_BLUE, LIME_GREEN, RED_ORANGE, PINK, LILAC, BLACK] # List of colors for drawing function to choose from.
 
     def __init__(self):
         
@@ -70,124 +70,188 @@ class GGMotors(object):
         with the usb connections themselves, rather than a software problem. Test those problems first.
         '''
 
-        dev = usb.core.find(find_all=1, idVendor=0x1209, idProduct=0x0d32) # finds all usb devices
-        od = []
+        # dev = usb.core.find(find_all=1, idVendor=0x1209, idProduct=0x0d32) # finds all usb devices
+        # od = []
+        #
+        #
+        #
+        # a = next(dev)
+        # od.append(odrive.find_any('usb:%s:%s' % (a.bus, a.address))) # looks for an odrive with address
+        # a = next(dev)
+        # od.append(odrive.find_any('usb:%s:%s' % (a.bus, a.address)))
+        #
+        # print(od)
+        #
+        # if od[0].serial_number == xavier_serial:
+        #     self._xavier = od[0]
+        #     self._yannie = od[1]
+        # else:
+        #     self._xavier = od[1]
+        #     self._yannie = od[0]
 
-        a = next(dev)
-        od.append(odrive.find_any('usb:%s:%s' % (a.bus, a.address))) # looks for an odrive with address
-        a = next(dev)
-        od.append(odrive.find_any('usb:%s:%s' % (a.bus, a.address)))
-        
-        if od[0].serial_number == xavier_serial:
-            self._xavier = od[0]
-            self._yannie = od[1]
-        else:
-            self._xavier = od[1]
-            self._yannie = od[0]
+        self._xavier = odrive.find_any(serial_number=xavier_serial)
+        self._yannie = odrive.find_any(serial_number=yannie_serial)
+
         
         self._xavier_axis0 = ODrive_Ease_Lib.ODrive_Axis(self._xavier.axis0)
         self._xavier_axis1 = ODrive_Ease_Lib.ODrive_Axis(self._xavier.axis1)
 
-        self._yannie_axis0 = ODrive_Ease_Lib.ODrive_Axis(self._yannie.axis0)
+        # self._yannie_axis0 = ODrive_Ease_Lib.ODrive_Axis(self._yannie.axis0)
         self._yannie_axis1 = ODrive_Ease_Lib.ODrive_Axis(self._yannie.axis1)
 
+        self.axes = {
+            "y": self._xavier_axis0,
+            "x": self._yannie_axis1,
+            "z": self._xavier_axis1,
+        }
         '''
         Calibrating motors
         '''
 
-        self._xavier.axis0.requested_state = AXIS_STATE_ENCODER_OFFSET_CALIBRATION
-        self._xavier.axis1.requested_state = AXIS_STATE_ENCODER_OFFSET_CALIBRATION
-        self._yannie.axis0.requested_state = AXIS_STATE_ENCODER_OFFSET_CALIBRATION
-        self._yannie.axis1.requested_state = AXIS_STATE_ENCODER_OFFSET_CALIBRATION
+        # self._xavier_axis0.calibrate()
+        # self._xavier_axis1.calibrate()
+        # # self._yannie_axis0.calibrate()
+        # self._yannie_axis1.calibrate()
 
-        start = time.time()
+        self._xavier_axis0.clear_errors()
+        self._xavier_axis1.clear_errors()
+        # self._yannie_axis0.calibrate()
+        self.axes['x'].clear_errors()
 
-        while (self._xavier.axis0.current_state != AXIS_STATE_IDLE or
-               self._xavier.axis1.current_state != AXIS_STATE_IDLE or
-               self._yannie.axis0.current_state != AXIS_STATE_IDLE or
-               self._yannie.axis1.current_state != AXIS_STATE_IDLE):
-            time.sleep(0.1)
-            if time.time() - start > 15:
-                print("could not calibrate, try rebooting odrive")
-                return
+        for motor in (self._xavier_axis0, self._xavier_axis1, self.axes['x']):
+            motor.calibrate_no_hold()
+        for motor in (self._xavier_axis0, self._xavier_axis1, self.axes['x']):
+            motor.hold_until_calibrated()
+
+
+        # self._xavier_axis0.calibrate()
+        # self._xavier_axis1.calibrate()
+        # # self._yannie_axis0.calibrate()
+        # self.axes['x'].calibrate()
+
+        self.home()
+
+        # self.axes["x"].set_vel()
+
+        print(odrive.utils.dump_errors(self._xavier))
+        print(odrive.utils.dump_errors(self._yannie))
+
+        # self._xavier.axis0.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
+        # self._xavier.axis1.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
+        # self._yannie.axis0.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
+        # self._yannie.axis1.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
+
+        # self._xavier.axis0.requested_state = AXIS_STATE_ENCODER_OFFSET_CALIBRATION
+        # self._xavier.axis1.requested_state = AXIS_STATE_ENCODER_OFFSET_CALIBRATION
+        # self._yannie.axis0.requested_state = AXIS_STATE_ENCODER_OFFSET_CALIBRATION
+        # self._yannie.axis1.requested_state = AXIS_STATE_ENCODER_OFFSET_CALIBRATION
+        # self._yannie.clear_errors() #todo  we really should delete this
+        # self._xavier.clear_errors()
+        # self._xavier.axis0.requested_state = AXIS_STATE_ENCODER_OFFSET_CALIBRATION
+        # self._xavier.axis1.requested_state = AXIS_STATE_ENCODER_OFFSET_CALIBRATION
+        # self._yannie.axis0.requested_state = AXIS_STATE_ENCODER_OFFSET_CALIBRATION
+        # self._yannie.axis1.requested_state = AXIS_STATE_ENCODER_OFFSET_CALIBRATION
+
+        # start = time.time()
+        #
+        # while (self._xavier.axis0.current_state != AXIS_STATE_IDLE or
+        #        self._xavier.axis1.current_state != AXIS_STATE_IDLE or
+        #        self._yannie.axis0.current_state != AXIS_STATE_IDLE or
+        #        self._yannie.axis1.current_state != AXIS_STATE_IDLE):
+        #     time.sleep(0.1)
+        #     if time.time() - start > 15:
+        #         print("could not calibrate, try rebooting odrive")
+        #         return
+        # time.sleep(10)
         
         '''
         Pen gripper parameters. Make sure that the pen holder is in the open position before attempting
         this code.
         '''
 
-        self._holder = stepper(port=0, microsteps=64, spd=200)
-        self._holder.set_max_speed(300)
-        self._holder.set_speed(110)
-        self._holder.set_micro_steps(64)
+        # self._holder = stepper(port=0, micro_steps=64, speed=200)
+        # self._holder.set_max_speed(300)
+        # self._holder.set_speed(110)
+        # self._holder.set_micro_steps(64)
 
         '''
         Parameters for velocity, acceleration, position, etc. Tune to your heart's content
         '''
 
-        self.set_x_vel_limit(50000)
-        self.set_y_vel_limit(50000)
-        self.set_x_accel_limit(1000000)
-        self.set_y_accel_limit(200000)
-        self.set_x_decel_limit(1000000)
-        self.set_y_decel_limit(200000)
-        self.set_x_A_per_css(0) # Changes how much current is used to achieve a certain acceleration
-        self.set_y_A_per_css(0)
-        self.set_x_current_limit(15)
-        self.set_y_current_limit(15)
+       #  self.set_x_vel_limit(50000/ STEP_TO_ROTATION)
+       #  self.set_y_vel_limit(50000/ STEP_TO_ROTATION)
+       #  self.set_x_accel_limit(1000000/ STEP_TO_ROTATION)
+       #  self.set_y_accel_limit(200000/ STEP_TO_ROTATION)
+       #  self.set_x_decel_limit(1000000/ STEP_TO_ROTATION)
+       #  self.set_y_decel_limit(200000/ STEP_TO_ROTATION)
+       #  self.set_x_A_per_css(0) # Changes how much current is used to achieve a certain acceleration
+       #  self.set_y_A_per_css(0)
+       #  self.set_x_current_limit(15)
+       #  self.set_y_current_limit(15)
+       #
+       #
+       # # self._xavier.axis0.controller.config.vel_limit_tolerance = 0
+       # # self._xavier.axis1.controller.config.vel_limit_tolerance = 0
+       # # self._yannie.axis0.controller.config.vel_limit_tolerance = 0
+       # # self._yannie.axis1.controller.config.vel_limit_tolerance = 0
+       #
+       #
+       #  self.set_z_vel_limit(500000 / STEP_TO_ROTATION)
+       #  self.set_z_accel_limit(1000000 / STEP_TO_ROTATION)
+       #  self.set_z_decel_limit(1000000 / STEP_TO_ROTATION)
+       #  self.set_z_A_per_css(0)
+       #  self.set_z_current_limit(15)
+       #
+       #  '''
+       #  The following values affect how exact the motor wants to be, or how much effort it'll spend
+       #  getting to the exact location. Higher pos_gain means that the motor wants to be more accurate to
+       #  its predicted position. Higher vel_gain means that the motor wants to be more accurate to its
+       #  predicted velocity. You can change these values in other code by opening odrivetool in terminal
+       #  '''
+       #
+       #  self.set_x_pos_gain(100 / STEP_TO_ROTATION)
+       #  self.set_y_pos_gain(100 / STEP_TO_ROTATION)
+       #  self.set_x_vel_gain(0.0004 / STEP_TO_ROTATION)
+       #  self.set_y_vel_gain(0.0004 / STEP_TO_ROTATION)
+       #
+       #  # '''
+       #  # Sensorless Homing code. homes at startup now
+       #  # '''
+       #  #
+       #  # self.set_x_vel_no_pid(50000)
+       #  # self.set_y_vel_no_pid(-10000)
+       #  # self.set_z_vel_no_pid(-50000)
+       #  # time.sleep(8)
+       #  # self.set_y_vel_no_pid(-100000)
+       #  # time.sleep(8)
+       #  # self.set_x_vel_no_pid(0)
+       #  # self.set_y_vel_no_pid(0)
+       #  # self.set_z_vel_no_pid(0)
 
+        # self._xavier.axis0.requested_state = AXIS_STATE_HOMING
+        # self._xavier.axis1.requested_state = AXIS_STATE_HOMING
+        # self._yannie.axis1.requested_state = AXIS_STATE_HOMING
+        # self._yannie.clear_errors() #todo  we really should delete this
+        # self._xavier.clear_errors()
+        # #im leaving this here because removing it is going to break stuff
+        # self.set_x_zero()
+        # self.set_y_zero()
+        # self.set_z_zero()
+        #
+        # '''
+        # Is the carriage holding a pen? 0 if nothing, 1-12 if otherwise (marked on the pen panel)
+        # '''
+        #
+        # self.holding_pen = 0
+        #
+        # time.sleep(1)
+        #
+        # self.center()
 
-       # self._xavier.axis0.controller.config.vel_limit_tolerance = 0
-       # self._xavier.axis1.controller.config.vel_limit_tolerance = 0
-       # self._yannie.axis0.controller.config.vel_limit_tolerance = 0
-       # self._yannie.axis1.controller.config.vel_limit_tolerance = 0
-
-
-        self.set_z_vel_limit(500000)
-        self.set_z_accel_limit(1000000)
-        self.set_z_decel_limit(1000000)
-        self.set_z_A_per_css(0)
-        self.set_z_current_limit(15)
-
-        '''
-        The following values affect how exact the motor wants to be, or how much effort it'll spend 
-        getting to the exact location. Higher pos_gain means that the motor wants to be more accurate to
-        its predicted position. Higher vel_gain means that the motor wants to be more accurate to its 
-        predicted velocity. You can change these values in other code by opening odrivetool in terminal
-        '''
-
-        self.set_x_pos_gain(100)
-        self.set_y_pos_gain(100)
-        self.set_x_vel_gain(0.0004)
-        self.set_y_vel_gain(0.0004)
-
-        '''
-        Homing code.
-        '''
-
-        self.set_x_vel_no_pid(50000)
-        self.set_y_vel_no_pid(-10000)
-        self.set_z_vel_no_pid(-50000)
-        time.sleep(8)
-        self.set_y_vel_no_pid(-100000)
-        time.sleep(8)
-        self.set_x_vel_no_pid(0)
-        self.set_y_vel_no_pid(0)
-        self.set_z_vel_no_pid(0)
-
-        self.set_x_zero()
-        self.set_y_zero()
-        self.set_z_zero()
-
-        '''
-        Is the carriage holding a pen? 0 if nothing, 1-12 if otherwise (marked on the pen panel)
-        '''
-
-        self.holding_pen = 0
-        
-        time.sleep(1)
-
-        self.center()
+    def __del__(self):
+        self._xavier.axis0.requested_state = 1
+        self._xavier.axis1.requested_state = 1
+        self._yannie.axis1.requested_state = 1
 
     def release(self):
         self._holder.go_to_position(0)
@@ -210,8 +274,7 @@ class GGMotors(object):
         self._xavier_axis0.set_vel(vel)
 
     def set_y_vel_no_pid(self, vel):
-        self._yannie_axis0.set_vel(vel)
-        self._yannie_axis1.set_vel(vel)
+        self.axes['x'].set_vel(vel)
 
     def set_z_vel_no_pid(self, vel):
         self._xavier_axis1.set_vel(vel)
@@ -220,7 +283,9 @@ class GGMotors(object):
         return self._xavier_axis0.get_vel()
 
     def get_y_vel(self):
-        return (self._yannie_axis0.get_vel() + self._yannie_axis1.get_vel()) / 2
+        return self.axes['x'].get_vel()
+
+        #return (self._yannie_axis0.get_vel() + self.axes['x'].get_vel()) / 2 old code for two motors
 
     def set_x_vel_limit(self, limit):
         self._xavier.axis0.controller.config.vel_limit = limit
@@ -230,13 +295,12 @@ class GGMotors(object):
         return self._xavier.axis0.controller.config.vel_limit
 
     def set_y_vel_limit(self, limit):
-        self._yannie.axis0.controller.config.vel_limit = int(limit * 1.1)
-        self._yannie.axis1.controller.config.vel_limit = int(limit * 1.1)
-        self._yannie.axis0.trap_traj.config.vel_limit = limit
-        self._yannie.axis1.trap_traj.config.vel_limit = limit
+        #self._yannie.axis0.controller.config.vel_limit = int(limit * 1.1) leaving here because idk what the limit * 1.1 is supposed to do???
+        return self._yannie.axis1.controller.config.vel_limit
+
 
     def get_y_vel_limit(self):
-        return self._yannie.axis0.trap_traj.config.vel_limit
+        return self._yannie.axis1.trap_traj.config.vel_limit
 
     def set_z_vel_limit(self, limit):
         self._xavier.axis1.controller.config.vel_limit = limit
@@ -252,11 +316,10 @@ class GGMotors(object):
         return self._xavier.axis0.trap_traj.config.accel_limit
     
     def set_y_accel_limit(self, limit):
-        self._yannie.axis0.trap_traj.config.accel_limit = limit
         self._yannie.axis1.trap_traj.config.accel_limit = limit
 
     def get_y_accel_limit(self):
-        return self._yannie.axis0.trap_traj.config.accel_limit
+        return self._yannie.axis1.trap_traj.config.accel_limit
 
     def set_z_accel_limit(self, limit):
         self._xavier.axis1.trap_traj.config.accel_limit
@@ -271,11 +334,10 @@ class GGMotors(object):
         return self._xavier.axis0.trap_traj.config.decel_limit
 
     def set_y_decel_limit(self, limit):
-        self._yannie.axis0.trap_traj.config.decel_limit = limit
         self._yannie.axis1.trap_traj.config.decel_limit = limit
-    
+
     def get_y_decel_limit(self):
-        return self._yannie.axis0.trap_traj.config.decel_limit
+        return self._yannie.axis1.trap_traj.config.decel_limit
 
     def set_z_decel_limit(self, limit):
         self._xavier.axis1.trap_traj.config.decel_limit = limit
@@ -290,11 +352,10 @@ class GGMotors(object):
         return self._xavier.axis0.motor.config.current_lim
 
     def set_y_current_limit(self, limit):
-        self._yannie.axis0.motor.config.current_lim = limit
         self._yannie.axis1.motor.config.current_lim = limit
-    
+
     def get_y_current_limit(self):
-        return self._yannie.axis0.motor.config.current_lim
+        return self._yannie.axis1.motor.config.current_lim
 
     def set_z_current_limit(self, limit):
         self._xavier.axis1.motor.config.current_lim = limit
@@ -314,11 +375,10 @@ class GGMotors(object):
         return self._xavier.axis0.trap_traj.config.A_per_css
 
     def set_y_A_per_css(self, A):
-        self._yannie.axis0.trap_traj.config.A_per_css = A
         self._yannie.axis1.trap_traj.config.A_per_css = A
 
     def get_y_A_per_css(self):
-        return self._yannie.axis0.trap_traj.config.A_per_css
+        return self._yannie.axis1.trap_traj.config.A_per_css
 
     def set_z_A_per_css(self, A):
         self._xavier.axis1.trap_traj.config.A_per_css = A
@@ -333,10 +393,9 @@ class GGMotors(object):
         self._xavier.axis0.controller.config.vel_gain = gain
 
     def get_y_vel_gain(self):
-        return self._yannie.axis0.controller.config.vel_gain
+        return self._yannie.axis1.controller.config.vel_gain
 
     def set_y_vel_gain(self, gain):
-        self._yannie.axis0.controller.config.vel_gain = gain
         self._yannie.axis1.controller.config.vel_gain = gain
 
     def set_z_vel_gain(self, gain):
@@ -352,10 +411,9 @@ class GGMotors(object):
         self._xavier.axis0.controller.config.pos_gain = gain
 
     def get_y_pos_gain(self):
-        return self._yannie.axis0.controller.config.pos_gain
+        return self._yannie.axis1.controller.config.pos_gain
 
     def set_y_pos_gain(self, gain):
-        self._yannie.axis0.controller.config.pos_gain = gain
         self._yannie.axis1.controller.config.pos_gain = gain
 
     def set_z_pos_gain(self, gain):
@@ -368,7 +426,8 @@ class GGMotors(object):
         return self._xavier_axis0.get_pos()
     
     def get_y_pos(self):
-        return (self._yannie_axis0.get_pos() + self._yannie_axis1.get_pos()) / 2
+        return self.axes['x'].get_pos()
+        #return (self._yannie_axis0.get_pos() + self.axes['x'].get_pos()) / 2 old code
 
     def get_z_pos(self):
         return self._xavier_axis1.get_pos()
@@ -387,12 +446,10 @@ class GGMotors(object):
         self._xavier.axis0.controller.pos_setpoint = pos + self._xavier_axis0.zero
 
     def set_y_pos_no_pid(self, pos):
-        self._yannie_axis0.set_pos(pos)
-        self._yannie_axis1.set_pos(pos)
-    
+        self.axes['x'].set_pos(pos)
+
     def set_y_pos(self, pos):
-        self._yannie.axis0.controller.pos_setpoint = pos + self._yannie_axis0.zero
-        self._yannie.axis1.controller.pos_setpoint = pos + self._yannie_axis1.zero
+        self._yannie.axis1.controller.input_pos = pos + self.axes['x'].zero
 
     def set_x_pos_trap(self, pos):
         self._xavier_axis0.set_pos_trap(pos)
@@ -407,7 +464,7 @@ class GGMotors(object):
     Just a test I'm running, in case I forget to delete it by summer.
     '''
     
-    def set_x_pos_pos_pid(self, pos, vel, t_kp=200, t_ki=0.0, t_kd=0.0, dt=0.001):
+    def set_x_pos_pos_pid(self, pos, vel, t_kp=200, t_ki=0.0, t_kd=0.0, dt=0.001): #todo, figure out what these do??? do they need to be / STEP_TO_ROTATION 'd?
         step = numpy.sign(pos - self.get_x_pos()) * abs(vel) * dt
         targ_pos = self.get_x_pos()
 
@@ -553,7 +610,7 @@ class GGMotors(object):
         while(self.is_z_busy()):
             pass
         
-        self.set_z_vel_no_pid(-50000)
+        self.set_z_vel_no_pid(-50000/ STEP_TO_ROTATION)
         
         '''
         This section wiggles the pen carriage around so it can settle onto the pen nicely.
@@ -619,7 +676,7 @@ class GGMotors(object):
         while(self.is_y_busy()):
             pass
 
-        self.set_x_pos_trap(-50000)
+        self.set_x_pos_trap(-50000 / STEP_TO_ROTATION)
         time.sleep(0.25)
         while(self.is_x_busy()):
             pass
@@ -629,22 +686,21 @@ class GGMotors(object):
     '''
         
     def circle_pos(self, times, vel, dt=0.001):
-        self.set_x_pos_no_pid(-25000)
-        self.set_y_pos_trap(30000)
+        self.set_x_pos_no_pid(-25000 / STEP_TO_ROTATION)
+        self.set_y_pos_trap(30000 / STEP_TO_ROTATION)
         time.sleep(2)
 
-        targ_x = [1 * 25000 - 50000]
-        targ_y = [0 * 25000 + 30000]
+        targ_x = [(1 * 25000 - 50000) / STEP_TO_ROTATION]
+        targ_y = [(0 * 25000 + 30000) / STEP_TO_ROTATION]
 
-        num_pieces = int(50000 * math.pi / (vel * dt))
-        piece = vel * dt / 25000
+        num_pieces = int(50000 * math.pi / (vel * dt)) / STEP_TO_ROTATION
+        piece = vel * dt / 25000 / STEP_TO_ROTATION
 
         for x in range(0, num_pieces):
-            targ_x.append(numpy.cos(x * piece) * 25000 - 50000)
-            targ_y.append(numpy.sin(x * piece) * 25000 + 30000)
+            targ_x.append((numpy.cos(x * piece) * 25000 - 50000) / STEP_TO_ROTATION)
+            targ_y.append((numpy.sin(x * piece) * 25000 + 30000) / STEP_TO_ROTATION)
 
         self._xavier_axis0.set_pos_ctrl()
-        self._yannie_axis0.set_pos_ctrl()
         self._yannie_axis1.set_pos_ctrl()
 
         mark = time.time()
@@ -668,7 +724,8 @@ class GGMotors(object):
     Deprecated. You shouldn't have to run calculations for image conversion on the pi.
     '''
 
-    def calc_draw(file_name, save_name, test_scale=30, vel=20000, dt=0.005):
+    def calc_draw(file_name, save_name, test_scale=(30 / STEP_TO_ROTATION), vel=(20000 / STEP_TO_ROTATION), dt=0.005): #todo does test_scale need to be devided by the steps stuff too?
+
         doc = minidom.parse("drawings/" + file_name)
         path_data = doc.getElementsByTagName('path')
         path_strings = [path.getAttribute('d') for path in path_data]
@@ -700,7 +757,7 @@ class GGMotors(object):
     
         origin_pt = paths[0][0].point(0)
     
-        while (origin_pt.real - x_trans) * scale > 110000 or (origin_pt.imag - y_trans) * scale > 70000:
+        while (origin_pt.real - x_trans) * scale > 110000 / STEP_TO_ROTATION or (origin_pt.imag - y_trans) * scale > 70000 / STEP_TO_ROTATION:
             scale -= 1
         
         print("New scale: " + str(scale))
@@ -721,7 +778,7 @@ class GGMotors(object):
     
                 for y in range(0, num_stp):
                     pt.append(paths[i][x].point(stp_lng * y / l))
-                    if((pt[y].real - x_trans) * scale > 110000 or (pt[y].imag - y_trans) * scale > 70000):
+                    if((pt[y].real - x_trans) * scale > 110000 / STEP_TO_ROTATION or (pt[y].imag - y_trans) * scale > 70000 / STEP_TO_ROTATION):
                         print(str(pt[y].real) + " " + str(pt[y].imag))
                         return
     
@@ -789,7 +846,7 @@ class GGMotors(object):
                         while(self.is_z_busy()):
                             pass
                         time.sleep(0.05)
-                        self.set_x_pos_trap(-110000 + (plans[i][x][0].real - x_trans) * scale)
+                        self.set_x_pos_trap(-110000 / STEP_TO_ROTATION + (plans[i][x][0].real - x_trans) * scale)
                         self.set_y_pos_trap((plans[i][x][0].imag - y_trans) * scale)
                         time.sleep(0.2)
                         while self.is_x_busy() or self.is_y_busy() or self.is_z_busy():
@@ -799,12 +856,11 @@ class GGMotors(object):
                     self.set_z_pos(self.Z_TOUCH)
                     mark = time.time() # mark when we started sending commands
                     self._xavier_axis0.set_pos_ctrl()
-                    self._yannie_axis0.set_pos_ctrl()
                     self._yannie_axis1.set_pos_ctrl()
                     while self.is_z_busy():
                         pass
                     for stp in plans[i][x]: # Iterate through points
-                        self.set_x_pos(-110000 + (stp.real - x_trans) * scale)
+                        self.set_x_pos(-110000  + (stp.real - x_trans) * scale) #bookmark
                         self.set_y_pos((stp.imag - y_trans) * scale)
                         while time.time() < mark + dt:
                             # Wait until time in step is finished, allowing motors to move.
@@ -845,6 +901,26 @@ class GGMotors(object):
     def sign(self, x, y): # Fun stuff
         self.draw_from_file("obama", scale=100, vel=10000, x_trans=x, y_trans=y)
 
+    def home(self):
+
+
+        self.axes['x'].scuffed_home()
+        # self.axes['y'].scuffed_home()
+        # self.axes['z'].scuffed_home()
+
+        # self.axes['z'].scuffed_home(dir = -1, torque = .4, seconds= 10)
+        # # self._yannie_axis0.calibrate()
+        # self.axes['x'].scuffed_home(dir = 1, torque = .2)
+
+        self.set_x_zero()
+        self.set_y_zero()
+        self.set_z_zero()
+        print("homed")
+
+
+
+
+
     def center(self): # Important function, resets the carrriage to home
         self.set_x_pos_trap(-50000)
         self.set_y_pos_trap(35000)
@@ -854,7 +930,6 @@ class GGMotors(object):
         self._xavier_axis0.set_zero(self._xavier_axis0.get_raw_pos())
 
     def set_y_zero(self):
-        self._yannie_axis0.set_zero(self._yannie_axis0.get_raw_pos())
         self._yannie_axis1.set_zero(self._yannie_axis1.get_raw_pos())
 
     def set_z_zero(self):
@@ -864,7 +939,11 @@ class GGMotors(object):
         return self._xavier_axis0.is_busy()
 
     def is_y_busy(self):
-        return self._yannie_axis0.is_busy() or self._yannie_axis1.is_busy()
+        return self._yannie_axis1.is_busy()
 
     def is_z_busy(self):
         return self._xavier_axis1.is_busy()
+
+if __name__ == '__main__':
+    ggmotor = GGMotors()
+    ggmotor.home()

@@ -1,0 +1,36 @@
+system: no error
+axis0
+  axis: Error(s):
+    AXIS_ERROR_MAX_ENDSTOP_PRESSED
+  motor: no error
+  sensorless_estimator: no error
+  encoder: no error
+  controller: no error
+axis1
+  axis: no error
+  motor: no error
+  sensorless_estimator: no error
+  encoder: no error
+  controller: no error
+None
+system: no error
+axis0
+  axis: no error
+  motor: Error(s):
+    MOTOR_ERROR_PHASE_RESISTANCE_OUT_OF_RANGE
+  sensorless_estimator: no error
+  encoder: no error
+  controller: no error
+axis1
+  axis: no error
+  motor: Error(s):
+    MOTOR_ERROR_UNKNOWN_PHASE_ESTIMATE
+  sensorless_estimator: no error
+  encoder: Error(s):
+    ENCODER_ERROR_NO_RESPONSE
+  controller: no error
+
+
+
+
+
