@@ -26,9 +26,10 @@ def reboot_ODrive(od):
         print('it threw an error????')
 
 class Axis(object):
-    def __init__(self, axis):
+    def __init__(self, axis, enstop_pin = None):
         self.axis = axis
         self.zero = 0
+        self.enstop_pin = enstop_pin
 
     #odrive control methods
 
@@ -89,7 +90,7 @@ class Axis(object):
         while self.get_vel() > threshold:
             pass
 
-    def velocity_home(self, vel = 1, ):
+    def sensorless_home(self, vel = 1, ):
         print("homing")
         print(f"Current Limit: {self.get_curr_limit()}")
 
@@ -107,15 +108,22 @@ class Axis(object):
             if vel < .2:
                 break
 
-        def home_with_endstop(self, vel, offset, min_gpio_num):
-            self.axis.controller.config.homing_speed = vel  # flip sign to turn CW or CCW
-            self.axis.min_endstop.config.gpio_num = min_gpio_num
-            self.axis.min_endstop.config.offset = offset
-            self.axis.min_endstop.config.enabled = True
+    def sensored_home(self, vel, offset, dir = 1, endstop_pin = None):
 
-    def home_with_endstop(self, min_gpio_num, offset):
+        if self.enstop_pin == None and endstop_pin == None:
+            raise Exception("you have to set the gpio pin 4hedius")
+        self.axis.controller.config.homing_speed = vel * dir
+        self.axis.min_endstop.config.gpio_num = endstop_pin
+        self.axis.min_endstop.config.offset = offset
+        self.axis.min_endstop.config.enabled = True
+        self.axis.requested_state = AXIS_STATE_HOMING
+        time.sleep(1)
+        while self.is_busy():
+            time.sleep(1)
+        self.set_home()
         self.axis.error = 0
         self.axis.min_endstop.config.enabled = False
+
 
     def is_calibrated(self):
         return self.axis.motor.is_calibrated
@@ -134,3 +142,5 @@ class Axis(object):
     def set_calibration_current(self, current):
         self.axis.motor.config.calibration_current = current
 
+    def set_endstop_pin(self, pin):
+        self.enstop_pin = pin
