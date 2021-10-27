@@ -55,6 +55,7 @@ while True:
             
         else:
             target, val = text.split("=")
+            val = int(val)
 
             if target == "vg":
                 axis.controller.config.vel_gain = val
@@ -69,6 +70,13 @@ while True:
         print(f"ERROR: {e}")
 
     
+
+# odrv0.axis0.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
+# odrv0.axis0.motor.config.pre_calibrated = True
+# odrv0.axis0.config.startup_encoder_offset_calibration = True
+# odrv0.axis0.config.startup_closed_loop_control = True
+# odrv0.save_configuration()
+# odrv0.reboot()
 
 
 
