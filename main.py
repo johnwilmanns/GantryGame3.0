@@ -1,8 +1,9 @@
 import controller
 
 def main():
-    gantry = Gantry()
-
+    gantry = controller.Gantry()
+    gantry.startup()
     
 
 if __name__ == "__main__":
+    main()

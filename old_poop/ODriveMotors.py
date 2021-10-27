@@ -903,7 +903,6 @@ class GGMotors(object):
 
     def home(self):
 
-
         self.axes['x'].scuffed_home()
         # self.axes['y'].scuffed_home()
         # self.axes['z'].scuffed_home()
