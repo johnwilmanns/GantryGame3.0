@@ -1,4 +1,4 @@
-#import time
+import time
 
 import odrive
 import usb.core
@@ -26,10 +26,10 @@ def reboot_ODrive(od):
         print('it threw an error????')
 
 class Axis(object):
-    def __init__(self, axis, enstop_pin = None):
+    def __init__(self, axis, endstop_pin = None):
         self.axis = axis
         self.zero = 0
-        self.enstop_pin = enstop_pin
+        self.endstop_pin = endstop_pin
 
     #odrive control methods
 
@@ -60,6 +60,9 @@ class Axis(object):
     def get_pos(self):
         return self.axis.encoder.pos_estimate - self.zero
 
+    def get_raw_pos(self):
+        return self.axis.encoder.pos_estimate
+
     def get_vel(self):
         return self.axis.encoder.vel_estimate
 
@@ -72,6 +75,9 @@ class Axis(object):
             if time.time() - start > 15:
                 print("could not calibrate, try rebooting odrive")
                 return False
+
+    def calibrate_encoder(self):
+        self.axis.requested_state = AXIS_STATE_ENCODER_OFFSET_CALIBRATION
 
     def calibrate_no_hold(self):
         self.axis.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
@@ -87,7 +93,7 @@ class Axis(object):
     #misc utilities, lots of stuff for homing
 
     def hold_until_stopped(self, velocity_threshold = .05):
-        while self.get_vel() > threshold:
+        while self.get_vel() > velocity_threshold:
             pass
 
     def sensorless_home(self, vel = 1, ):
@@ -108,9 +114,17 @@ class Axis(object):
             if vel < .2:
                 break
 
-    def sensored_home(self, vel, offset, dir = 1, endstop_pin = None):
+    def clear_errors(self):
+        self.axis.error = 0
+        self.axis.encoder.error = 0
+        self.axis.motor.error = 0
+        self.axis.controller.error = 0
 
-        if self.enstop_pin == None and endstop_pin == None:
+    def sensored_home(self, vel = 1, offset = -.25, dir = 1, endstop_pin = None):
+
+        if endstop_pin == None:
+            endstop_pin = self.endstop_pin
+        if endstop_pin == None:
             raise Exception("you have to set the gpio pin 4hedius")
         self.axis.controller.config.homing_speed = vel * dir
         self.axis.min_endstop.config.gpio_num = endstop_pin
@@ -118,15 +132,24 @@ class Axis(object):
         self.axis.min_endstop.config.enabled = True
         self.axis.requested_state = AXIS_STATE_HOMING
         time.sleep(1)
-        while self.is_busy():
-            time.sleep(1)
+        self.hold_until_stopped()
         self.set_home()
         self.axis.error = 0
         self.axis.min_endstop.config.enabled = False
+        print("homed")
 
 
     def is_calibrated(self):
         return self.axis.motor.is_calibrated
+
+    def idle(self):
+        self.axis.requested_state = 1
+
+    #liveplotter stuff
+
+    def start_pos_liveplotter(self):
+        start_liveplotter(lambda: [self.axis.encoder.pos_estimate, self.axis.controller.pos_setpoint])
+
 
     #setting odrive values
 
