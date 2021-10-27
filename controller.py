@@ -9,10 +9,9 @@ class Gantry:
         self.odrv0_serial = "20793595524B" # Previously Xavier
         self.odrv1_serial = "20673593524B" # Previously Yannie
 
-        ODrive_Ease_Lib.odrive.find
 
-        self.odrv0 = odrive.find_any(serial_number=xavier_serial)
-        self.odrv1 = odrive.find_any(serial_number=yannie_serial)
+        self.odrv0 = odrive.find_any(serial_number=self.odrv0_serial)
+        self.odrv1 = odrive.find_any(serial_number=self.odrv1_serial)
 
         self.x = ODrive_Ease_Lib.ODrive_Axis(self.odrv1.axis1) # X
         self.y = ODrive_Ease_Lib.ODrive_Axis(self.odrv0.axis0) # Y
