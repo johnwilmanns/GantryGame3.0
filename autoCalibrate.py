@@ -10,7 +10,7 @@ int_range = [0, 3]
 
 mov_dist = 1
 iteration_shift_factor = 1.1
-total_trials = 3
+total_trials = 100
 
 
 # DEFAULTS
@@ -27,9 +27,13 @@ def main(start_values, vel_range, pos_range, int_range):
 
     tuning.startup()
 
+    # tuning.start_liveplotter(lambda:[tuning.axis.controller.config.vel_gain])
+
     tuning.axis.controller.config.vel_gain = start_values[0]
     tuning.axis.controller.config.pos_gain = start_values[1]
     tuning.axis.controller.config.vel_integrator_gain = start_values[2]
+
+
 
     tuning.axis.controller.input_pos = 0
     time.sleep(3)
@@ -40,7 +44,7 @@ def main(start_values, vel_range, pos_range, int_range):
     for i in range(total_trials):
 
 
-        baselines = tuning.evaluate_values(current_values, mov_dist)
+        baseline = tuning.evaluate_values(current_values, mov_dist, print_vals = True)
 
         deltas = []
 
@@ -48,12 +52,14 @@ def main(start_values, vel_range, pos_range, int_range):
             test_values = current_values[:]
             test_values[i] *= iteration_shift_factor
             cost = tuning.evaluate_values(test_values, mov_dist)
-            deltas.append(baselines[i] - cost)
+            deltas.append(baseline - cost)
 
-        current_values = [value-delta for value, delta in zip(current_values, deltas)]
+        current_values = [(value / iteration_shift_factor) * (delta > 0) + (value * iteration_shift_factor) * (delta < 0)  for value, delta in zip(current_values, deltas)]
 
-        print(f"{deltas=}")
-        print(f"{current_values=}")
+        # print(f"deltas = {deltas}")
+        print(f"current_values = {current_values}")
+
+
 
 
 

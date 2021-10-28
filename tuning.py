@@ -52,32 +52,37 @@ def analyze_move(t = 1):
     rmse = rmse_calc(values, input_pos)
     var = vibration_calc(values)
 
+    # print(f"Computed with {values.size} values")
     return rmse, var
 
-def evaluate_values(values, mov_dist = 1, rmse_weight = 1, variance_weight = 1):
+def evaluate_values(values, mov_dist = 1, rmse_weight = 1, variance_weight = 3, print_vals = False):
 
-    assert -0.05 < axis.encoder.pos_estimate < .05
+    # assert -0.05 < axis.encoder.pos_estimate < .05
 
     axis.controller.config.vel_gain = values[0]
     axis.controller.config.pos_gain = values[1]
     axis.controller.config.vel_integrator_gain = values[2]
 
     axis.controller.input_pos = mov_dist
-    base_rmse, base_variance = analyze_move(2)
+    base_rmse, base_variance = analyze_move(1)
     axis.controller.input_pos = 0
-    move = analyze_move(2)
+    move = analyze_move(1)
     base_rmse += move[0]
     base_variance += move[1]
     base_rmse /= 2
     base_variance /= 2
 
+    cost = base_rmse ** rmse_weight * base_variance ** variance_weight
 
-    print(f"rmse = {base_rmse}, variance = {base_variance}")
+    if print_vals:
+        print(f"rmse = {base_rmse}, variance = {base_variance}")
+        print(f"cost = {cost}")
 
-    return base_rmse ** rmse_weight * base_variance ** variance_weight
+
+    return cost
 
 
-def start_plotter(data_list = [axis.encoder.pos_estimate, axis.controller.input_pos]):
+def start_plotter(data_list):
     start_liveplotter(lambda:data_list)
 
 
