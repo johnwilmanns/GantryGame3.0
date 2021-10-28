@@ -187,7 +187,17 @@ def main():
         except Exception as e:
             print(f"ERROR: {e}")
 
-    
+def save_configuration(odrive_number, values):
+
+    axis.controller.config.vel_gain = values[0]
+    axis.controller.config.pos_gain = values[1]
+    axis.controller.config.vel_integrator_gain = values[2]
+
+    print("saving configuration!!")
+    if odrive_number:
+        odrv1.save_configuration()
+    else:
+        odrv0.save_configuration()
 
 # odrv0.axis0.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
 # odrv0.axis0.motor.config.pre_calibrated = True

@@ -12,8 +12,8 @@ int_range = [0, 3]
 
 mov_dist = 1
 iteration_shift_factor = 1.1
-total_trials = 100
-
+total_trials = 5
+odrv_num = 1
 
 # DEFAULTS
 # vel_gain = .16
@@ -27,8 +27,9 @@ total_trials = 100
 
 def main(start_values, vel_range, pos_range, int_range):
 
-    tuning.startup()
-
+    tuning.startup(odrv_num)
+    absolute_min = 9223372036854775807
+    best_values = []
     # tuning.start_liveplotter(lambda:[tuning.axis.controller.config.vel_gain])
 
     tuning.axis.controller.config.vel_gain = start_values[0]
@@ -45,6 +46,7 @@ def main(start_values, vel_range, pos_range, int_range):
 
     for i in range(total_trials):
 
+        print(f"\nTrial No: {i} ")
 
         baseline = tuning.evaluate_values(current_values, mov_dist, print_vals = True)
 
@@ -53,17 +55,29 @@ def main(start_values, vel_range, pos_range, int_range):
 
         test_values = current_values[:]
         test_values[index] *= shift
-        cost_delta = tuning.evaluate_values(test_values, mov_dist) - baseline
+        cost = tuning.evaluate_values(test_values, mov_dist)
+        cost_delta = cost - baseline
 
-        print(cost_delta)
         if cost_delta < 0:
             current_values[index] *= shift
+
+            if cost < absolute_min:
+                print(f"old absolute_min: {absolute_min}")
+                absolute_min = cost
+                print(f"new absolute_min: {absolute_min}")
+                best_values = current_values
         else:
             current_values[index] /= shift
 
 
         # print(f"deltas = {deltas}")
         print(f"current_values = {current_values}")
+    print("calibraiton finished")
+    #grapher.show_graph()
+
+    print(f"Lowest cost: {absolute_min} \n At Values {best_values}")
+    if input("Would you like to keep these values? y/N: ") == "y":
+        tuning.save_configuration(odrv_num, best_values)
 
 
 
@@ -73,4 +87,3 @@ def main(start_values, vel_range, pos_range, int_range):
 
 if __name__ == "__main__":
     main(start_values, vel_range, pos_range, int_range)
-    grapher.show_graph()
