@@ -3,7 +3,7 @@ from odrive.enums import *
 from odrive.utils import start_liveplotter
 import time
 import numpy as np
-import grapher
+import math
 
 odrv0_serial = "20793595524B"  # Previously Xavier
 odrv1_serial = "20673593524B"  # Previously Yannie
@@ -28,8 +28,20 @@ def move2(t = 1):
     time.sleep(t)
     axis.controller.input_pos = startpos
 
-def rmse_calc(values: np.array, input_pos: float):
-       return np.sqrt(((values - input_pos) ** 2).mean())
+def rmse_calc(values: np.array, start_pos, target_pos):
+
+    sum = 0
+    for val in values:
+        if (start_pos < val < target_pos) or (target_pos < val < start_pos):
+            sum += abs(val - target_pos)
+        else:
+            sum += abs(val - target_pos) * 5
+
+    return sum/values.size
+
+
+
+       # return np.sqrt(((values - input_pos) ** 2).mean())
 
 def smre_calc(values: np.array):
     return ((np.sqrt(np.absolute(values))).mean()) ** 2
@@ -48,11 +60,12 @@ def analyze_move(t = 1):
 
     values = np.array([])
     input_pos = axis.controller.input_pos
+    start_pos = axis.encoder.pos_estimate
 
     while(time.time()-t0 < t):
         values = np.append(values, axis.encoder.pos_estimate)
 
-    rmse = rmse_calc(values, input_pos)
+    rmse = rmse_calc(values, start_pos, input_pos)
     var = vibration_calc(values)
 
     # print(f"Computed with {values.size} values")
@@ -81,7 +94,7 @@ def evaluate_values(values, mov_dist = 1, mov_time = 1, rmse_weight = 1, varianc
         print(f"rmse = {base_rmse}, variance = {base_variance}")
         print(f"cost = {cost}")
 
-    grapher.costs.append([cost, base_rmse, base_variance])
+
 
     return cost
 
@@ -206,7 +219,7 @@ def save_configuration(odrive_number, values):
 # odrv0.save_configuration()
 # odrv0.reboot()
 
-print("done!")
+# print("done!")
 
 if __name__ == "main":
     main()
