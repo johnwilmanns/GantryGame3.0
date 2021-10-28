@@ -1,6 +1,7 @@
 import numpy as np
 import tuning
 import time
+import random as rd
 
 
 start_values = [.16,20,.32]
@@ -33,7 +34,7 @@ def main(start_values, vel_range, pos_range, int_range):
     tuning.axis.controller.config.pos_gain = start_values[1]
     tuning.axis.controller.config.vel_integrator_gain = start_values[2]
 
-
+    tuning.start_liveplotter(lambda: [tuning.axis.controller.input_pos, tuning.axis.encoder.pos_estimate])
 
     tuning.axis.controller.input_pos = 0
     time.sleep(3)
@@ -46,15 +47,19 @@ def main(start_values, vel_range, pos_range, int_range):
 
         baseline = tuning.evaluate_values(current_values, mov_dist, print_vals = True)
 
-        deltas = []
+        shift = rd.choice([1/iteration_shift_factor, iteration_shift_factor])
+        index = rd.randrange(0,3)
 
-        for i in range(3):
-            test_values = current_values[:]
-            test_values[i] *= iteration_shift_factor
-            cost = tuning.evaluate_values(test_values, mov_dist)
-            deltas.append(baseline - cost)
+        test_values = current_values[:]
+        test_values[index] *= shift
+        cost_delta = tuning.evaluate_values(test_values, mov_dist) - baseline
 
-        current_values = [(value / iteration_shift_factor) * (delta > 0) + (value * iteration_shift_factor) * (delta < 0)  for value, delta in zip(current_values, deltas)]
+        print(cost_delta)
+        if cost_delta < 0:
+            current_values[index] *= shift
+        else:
+            current_values[index] /= shift
+
 
         # print(f"deltas = {deltas}")
         print(f"current_values = {current_values}")
