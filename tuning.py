@@ -72,7 +72,7 @@ def evaluate_values(values, mov_dist = 1, rmse_weight = 1, variance_weight = 1):
     base_variance /= 2
 
 
-    print(f"{base_rmse=}, {base_variance=}")
+    print(f"rmse = {base_rmse}, variance = {base_variance}")
 
     return base_rmse ** rmse_weight * base_variance ** variance_weight
 
