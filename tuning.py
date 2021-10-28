@@ -67,6 +67,7 @@ def evaluate_values(values, mov_dist = 1, rmse_weight = 1, variance_weight = 1):
     axis.controller.input_pos = 0
     base_rmse, base_variance += analyze_move(2)
     base_rmse, base_variance /= 2
+    print(f"{base_rmse=}, {base_variance=}")
 
     return base_rmse ** rmse_weight * base_variance ** variance_weight
 

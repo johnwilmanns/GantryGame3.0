@@ -55,47 +55,7 @@ def main(start_values, vel_range, pos_range, int_range):
         print(f"{deltas=}")
         print(f"{current_values=}")
 
-        
-        # tuning.axis.controller.input_pos = mov_dist
-        # base_rmse, base_variance = tuning.analyze_move(2)
-        # tuning.axis.controller.input_pos = 0
-        # base_rmse, base_variance += tuning.analyze_move(2)
-        # base_rmse, base_variance /= 2
 
-        # tuning.axis.controller.config.vel_gain *= iteration_shift_factor
-
-
-
-
-
-        # for i in range(measure_trials):
-        #     tuning.axis.controller.input_pos = 0
-        #     time.sleep(1)
-        #     tuning.axis.controller.input_pos = mov_dist
-        #     Rmse, Variance = tuning.analyze_move(2)
-
-        #     rmse.append(Rmse)
-        #     variance.append(Variance)
-
-        #     rmse.append(Rmse)
-        #     variance.append(Variance)
-            
-        # rmse = sum(rmse)/len(rmse)
-        # variance = sum(variance)/len(variance)
-
-
-
-
-
-
-
-
-
-
-
-
-    #
-    
 
 
 
