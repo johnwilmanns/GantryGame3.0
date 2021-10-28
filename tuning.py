@@ -2,17 +2,16 @@ import odrive
 from odrive.enums import *
 from odrive.utils import start_liveplotter
 import time
-import numpy
+import numpy as np
 
 
 odrv0_serial = "20793595524B"  # Previously Xavier
 odrv1_serial = "20673593524B"  # Previously Yannie
 
-
 odrv0 = odrive.find_any(serial_number=odrv0_serial)
 odrv1 = odrive.find_any(serial_number=odrv1_serial)
 
-axis = odrv1.axis1
+axis = None
 
 def move(dist = 5):
     axis.controller.input_pos = 0
@@ -29,81 +28,149 @@ def move2(t = 1):
     time.sleep(t)
     axis.controller.input_pos = startpos
 
+def rmse_calc(values: np.array, input_pos: float):
+       return np.sqrt(((values - input_pos) ** 2).mean())
 
-start_liveplotter(lambda:[axis.encoder.pos_estimate, axis.controller.input_pos])
+def vibration_calc(values: np.array):
+    	
+    variances = np.array([])
+    for i in range(len(values)-2):
+        variance = (values[i] + values[i+2])/2 - values[i+1]
+        variances = np.append(variances,variance)
+              
+    return rmse_calc(variances, 0)
 
+def analyze_move(t = 1):
+    t0 = time.time()
 
-axis.requested_state =  AXIS_STATE_FULL_CALIBRATION_SEQUENCE
+    values = np.array([])
+    input_pos = axis.controller.input_pos
 
-while axis.current_state != AXIS_STATE_IDLE:
-    pass
-time.sleep(1)
+    while(time.time()-t0 < t):
+        values = np.append(values, axis.encoder.pos_estimate)
 
-axis.controller.config.vel_limit = 20
-axis.controller.config.enable_overspeed_error = False
+    rmse = rmse_calc(values, input_pos)
+    var = vibration_calc(values)
 
-axis.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
-axis.controller.config.control_mode = CONTROL_MODE_POSITION_CONTROL
-axis.controller.config.input_mode = INPUT_MODE_PASSTHROUGH
+    return rmse, var
 
-axis.controller.input_pos = 1
+def evaluate_values(values, mov_dist = 1, rmse_weight = 1, variance_weight = 1):
 
-time.sleep(1)
+    assert -0.05 < axis.encoder.pos_estimate < .05
 
+    axis.controller.config.vel_gain = values[0]
+    axis.controller.config.pos_gain = values[1]
+    axis.controller.config.vel_integrator_gain = values[2]
 
-print(axis.controller.input_pos)
-print(axis.controller.pos_setpoint)
-print(axis.encoder.pos_estimate)
+    axis.controller.input_pos = mov_dist
+    base_rmse, base_variance = analyze_move(2)
+    axis.controller.input_pos = 0
+    base_rmse, base_variance += analyze_move(2)
+    base_rmse, base_variance /= 2
 
-
-
-
-
-while True:
-    print(f"""
-    vel_gain (v) = {axis.controller.config.vel_gain}
-    pos_gain (p) = {axis.controller.config.pos_gain}
-    vel_integrator_gain (i) = {axis.controller.config.vel_integrator_gain}""")
-
-    text = input()
-
-    try:
-
-        if text == "d":
-            axis.controller.config.vel_gain = .16
-            axis.controller.config.pos_gain = 20
-            axis.controller.config.vel_integrator_gain = .32
+    return base_rmse ** rmse_weight * base_variance ** variance_weight
 
 
-        elif text[0:2] == 'm2':
-
-            val = float(text.split(" ")[1])
-            print(f"moving vel {val}")
-            move2(float(val))
-
-        elif text[0] == 'm':
-
-            val = float(text.split(" ")[1])
-            print(f"moving {val}")
-            move(float(val))
+def start_plotter(data_list = [axis.encoder.pos_estimate, axis.controller.input_pos]):
+    start_liveplotter(lambda:data_list)
 
 
-            
+
+def startup(odrv_num = 1, axis_num = 1):
+    global axis
+
+    assert odrv_num == 1 or odrv_num == 0
+    assert axis_num == 1 or axis_num == 0
+
+    odrv0_serial = "20793595524B"  # Previously Xavier
+    odrv1_serial = "20673593524B"  # Previously Yannie
+
+    odrv0 = odrive.find_any(serial_number=odrv0_serial)
+    odrv1 = odrive.find_any(serial_number=odrv1_serial)
+
+    if odrv_num:
+        if axis_num:
+            axis = odrv1.axis1
         else:
-            target, val = text.split(" ")
-            val = float(val)
+            axis = odrv1.axis0
+    else:
+        if axis_num:
+            axis = odrv0.axis1
+        else:
+            axis = odrv0.axis0
 
-            if target == "v":
-                axis.controller.config.vel_gain = val
-            elif target == "p":
-                axis.controller.config.pos_gain = val
-            elif target == "i":
-                axis.controller.config.vel_integrator_gain = val
-            
 
+    axis.requested_state =  AXIS_STATE_FULL_CALIBRATION_SEQUENCE
+
+    while axis.current_state != AXIS_STATE_IDLE:
+        pass
+    time.sleep(1)
+
+    axis.controller.config.vel_limit = 20
+    axis.controller.config.enable_overspeed_error = False
+
+    axis.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
+    axis.controller.config.control_mode = CONTROL_MODE_POSITION_CONTROL
+    axis.controller.config.input_mode = INPUT_MODE_PASSTHROUGH
+    time.sleep(1)
+
+def main():
+
+
+    start_plotter()
+    startup()
+    
+
+    print("Type the key letter, a space, and then a number to set gain value. EX: \"P 50\"")
+    print("Type \"d\" to reset all values to their default")
+    print("Type \"m\" to move by position, type \"m2\" to move by velocity, can be followed by a space and distance")
+
+    while True:
+        print(f"""
+        vel_gain (v) = {axis.controller.config.vel_gain}
+        pos_gain (p) = {axis.controller.config.pos_gain}
+        vel_integrator_gain (i) = {axis.controller.config.vel_integrator_gain}""")
         
-    except Exception as e:
-        print(f"ERROR: {e}")
+
+        text = input()
+
+        try:
+
+            if text == "d":
+                axis.controller.config.vel_gain = .16
+                axis.controller.config.pos_gain = 20
+                axis.controller.config.vel_integrator_gain = .32
+
+
+            elif text[0:2] == 'm2':
+
+                val = float(text.split(" ")[1])
+                print(f"moving vel {val}")
+                move2(float(val))
+
+            elif text[0] == 'm':
+
+                val = float(text.split(" ")[1])
+                print(f"moving {val}")
+                move(float(val))
+
+
+                
+            else:
+                target, val = text.split(" ")
+                val = float(val)
+
+                if target == "v":
+                    axis.controller.config.vel_gain = val
+                elif target == "p":
+                    axis.controller.config.pos_gain = val
+                elif target == "i":
+                    axis.controller.config.vel_integrator_gain = val
+                
+
+            
+        except Exception as e:
+            print(f"ERROR: {e}")
 
     
 
@@ -114,13 +181,8 @@ while True:
 # odrv0.save_configuration()
 # odrv0.reboot()
 
-
-
-
-
-# start_liveplotter(lambda:[odrv0.axis0.encoder.pos_estimate, odrv0.axis0.controller.pos_setpoint])
-
 print("done!")
 
-
+if __name__ == "main":
+    main()
 
