@@ -1,6 +1,7 @@
-from numpy.core.fromnumeric import var
+import numpy as np
 import tuning
 import time
+
 
 start_values = [.16,20,.32]
 vel_range = [0, .3]
@@ -49,13 +50,12 @@ def main(start_values, vel_range, pos_range, int_range):
             cost = tuning.evaluate_values(test_values, mov_dist)
             deltas.append(baselines[i] - cost)
 
+        current_values = [value-delta for value, delta in zip(current_values, deltas)]
+
+        print(f"{deltas=}")
+        print(f"{current_values=}")
+
         
-
-
-
-
-
-
         # tuning.axis.controller.input_pos = mov_dist
         # base_rmse, base_variance = tuning.analyze_move(2)
         # tuning.axis.controller.input_pos = 0
