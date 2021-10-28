@@ -31,16 +31,21 @@ def move2(t = 1):
 def rmse_calc(values: np.array, input_pos: float):
        return np.sqrt(((values - input_pos) ** 2).mean())
 
+
 def vibration_calc(values: np.array):
     	
     variances = np.array([])
     for i in range(len(values)-2):
         variance = (values[i] + values[i+2])/2 - values[i+1]
         variances = np.append(variances,variance)
-              
+
     return rmse_calc(variances, 0)
 
-def analyze_move(t = 1):
+
+"""Gathers data along a movement, returns a numpy array"""
+
+
+def analyze_move(t=1):
     t0 = time.time()
 
     values = np.array([])
@@ -54,7 +59,11 @@ def analyze_move(t = 1):
 
     return rmse, var
 
-def evaluate_values(values, mov_dist = 1, rmse_weight = 1, variance_weight = 1):
+
+"""Evaluates the sucsess of the values based on the vibration and rsme distance"""
+
+
+def evaluate_values(values, mov_dist=1, rmse_weight=1, variance_weight=1):
 
     assert -0.05 < axis.encoder.pos_estimate < .05
 
