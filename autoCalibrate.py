@@ -33,7 +33,6 @@ def in_range(val, range):
 
 
 
-
 def main(start_values, vel_range, pos_range, int_range):
 
     tuning.startup(odrv_num, axis_num)
