@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pandas.plotting
 import sys
-
+import csv
 
 
 def init():
@@ -29,6 +29,14 @@ def show_graph():
     except:
         pass
 
+def export_values():
+    try:
+        with open("outputstuff.csv", "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerows([costs, values])
+    except:
+        print("it appears I am retarded")
+        pass
 
 
 def exepthook(type, value, tb):
