@@ -31,14 +31,17 @@ def move2(t = 1):
 def rmse_calc(values: np.array, input_pos: float):
        return np.sqrt(((values - input_pos) ** 2).mean())
 
+def smre_calc(values: np.array):
+    return ((np.sqrt(np.absolute(values))).mean()) ** 2
+
+
 def vibration_calc(values: np.array):
-    	
     variances = np.array([])
-    for i in range(len(values)-2):
-        variance = (values[i] + values[i+2])/2 - values[i+1]
-        variances = np.append(variances,variance)
-              
-    return rmse_calc(variances, 0)
+    for i in range(len(values) - 2):
+        variance = (values[i] + values[i + 2]) / 2 - values[i + 1]
+        variances = np.append(variances, variance)
+
+    return smre_calc(variances)
 
 def analyze_move(t = 1):
     t0 = time.time()
@@ -57,7 +60,7 @@ def analyze_move(t = 1):
 
 def evaluate_values(values, mov_dist = 1, rmse_weight = 1, variance_weight = 3, print_vals = False):
 
-    # assert -0.05 < axis.encoder.pos_estimate < .05
+    assert -0.05 < axis.encoder.pos_estimate < .05
 
     axis.controller.config.vel_gain = values[0]
     axis.controller.config.pos_gain = values[1]

@@ -13,14 +13,18 @@ b = np.array(b)
 def rmse_calc(values: np.array, input_pos: float):
        return np.sqrt(((values - input_pos) ** 2).mean())
 
+
+def smre_calc(values: np.array):
+    return ((np.sqrt(np.absolute(values))).mean()) ** 2
+
+
 def vibration_calc(values: np.array):
-    	
     variances = np.array([])
-    for i in range(len(values)-2):
-        variance = (values[i] + values[i+2])/2 - values[i+1]
-        variances = np.append(variances,variance)
-              
-    return rmse_calc(variances, 0)
+    for i in range(len(values) - 2):
+        variance = (values[i] + values[i + 2]) / 2 - values[i + 1]
+        variances = np.append(variances, variance)
+
+    return smre_calc(variances)
 
 
 
