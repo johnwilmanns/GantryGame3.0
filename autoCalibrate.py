@@ -4,6 +4,7 @@ import time
 import random as rd
 import grapher
 
+
 grapher.init()
 start_values = [.16,20,.32]
 vel_range = [0, .3]
