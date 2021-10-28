@@ -58,7 +58,7 @@ def analyze_move(t = 1):
     # print(f"Computed with {values.size} values")
     return rmse, var
 
-def evaluate_values(values, mov_dist = 1, rmse_weight = 1, variance_weight = 3, print_vals = False):
+def evaluate_values(values, mov_dist = 1, mov_time = 1, rmse_weight = 1, variance_weight = 3, print_vals = False):
 
     assert -0.05 < axis.encoder.pos_estimate < .05
 
@@ -67,9 +67,9 @@ def evaluate_values(values, mov_dist = 1, rmse_weight = 1, variance_weight = 3, 
     axis.controller.config.vel_integrator_gain = values[2]
 
     axis.controller.input_pos = mov_dist
-    base_rmse, base_variance = analyze_move(1)
+    base_rmse, base_variance = analyze_move(mov_time)
     axis.controller.input_pos = 0
-    move = analyze_move(1)
+    move = analyze_move(mov_time)
     base_rmse += move[0]
     base_variance += move[1]
     base_rmse /= 2
