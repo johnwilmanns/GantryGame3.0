@@ -5,6 +5,21 @@ import random as rd
 import grapher
 
 
+mov_dist = 1
+mov_time = 1
+iteration_shift_factor = 1.1
+odrv_num = 1
+axis_num = 1
+
+rmse_weight = 1
+variance_weight = 3
+
+
+
+# DEFAULTS
+# vel_gain = .16
+# pos_gain = 20
+# vel_integrator_gain = .32
 grapher.init()
 start_values = [.16,20,.32]
 vel_range = [0, .3]
@@ -14,16 +29,6 @@ int_range = [0, 3]
 def in_range(val, range):
     return range[0] <= val <= range[1]
 
-    
-mov_dist = 1
-iteration_shift_factor = 1.1
-odrv_num = 1
-
-# DEFAULTS
-# vel_gain = .16
-# pos_gain = 20
-# vel_integrator_gain = .32
-
 
 
 
@@ -31,7 +36,7 @@ odrv_num = 1
 
 def main(start_values, vel_range, pos_range, int_range):
 
-    tuning.startup(odrv_num)
+    tuning.startup(odrv_num, axis_num)
     absolute_min = float("inf")
     best_values = []
     # tuning.start_liveplotter(lambda:[tuning.axis.controller.config.vel_gain])
@@ -68,8 +73,8 @@ def main(start_values, vel_range, pos_range, int_range):
                 print(f"attempted to go out of bounds: {e}")
                 continue
 
-            baseline = tuning.evaluate_values(current_values, mov_dist, print_vals = True)
-            cost = tuning.evaluate_values(test_values, mov_dist)
+            baseline = tuning.evaluate_values(current_values, mov_dist, rmse_weight, variance_weight, mov_time, print_vals = True)
+            cost = tuning.evaluate_values(test_values, mov_dist, mov_time)
 
 
             cost_delta = cost - baseline
