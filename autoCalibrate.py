@@ -10,9 +10,12 @@ vel_range = [0, .3]
 pos_range = [0, 250]
 int_range = [0, 3]
 
+def in_range(val, range):
+    return range[0] <= val <= range[1]
+
+    
 mov_dist = 1
 iteration_shift_factor = 1.1
-total_trials = 5
 odrv_num = 1
 
 # DEFAULTS
@@ -28,7 +31,7 @@ odrv_num = 1
 def main(start_values, vel_range, pos_range, int_range):
 
     tuning.startup(odrv_num)
-    absolute_min = 9223372036854775807
+    absolute_min = float("inf")
     best_values = []
     # tuning.start_liveplotter(lambda:[tuning.axis.controller.config.vel_gain])
 
@@ -44,40 +47,55 @@ def main(start_values, vel_range, pos_range, int_range):
 
     current_values = start_values[:]
 
-    for i in range(total_trials):
+    print("press ctrl + c to exit")
 
-        print(f"\nTrial No: {i} ")
+    try:
+        while True:
 
-        baseline = tuning.evaluate_values(current_values, mov_dist, print_vals = True)
+            print(f"\nTrial No: {i} ")
 
-        shift = rd.choice([1/iteration_shift_factor, iteration_shift_factor])
-        index = rd.randrange(0,3)
+            try:
+                shift = rd.choice([1/iteration_shift_factor, iteration_shift_factor])
+                index = rd.randrange(0,3)
+                test_values = current_values[:]
+                test_values[index] *= shift
 
-        test_values = current_values[:]
-        test_values[index] *= shift
-        cost = tuning.evaluate_values(test_values, mov_dist)
-        cost_delta = cost - baseline
+                assert in_range(test_values[0], vel_range)
+                assert in_range(test_values[1], pos_range)
+                assert in_range(test_values[2], int_range)
+            except AssertionError as e:
+                print(f"attempted to go out of bounds: {e}")
+                continue
 
-        if cost_delta < 0:
-            current_values[index] *= shift
-
-            if cost < absolute_min:
-                print(f"old absolute_min: {absolute_min}")
-                absolute_min = cost
-                print(f"new absolute_min: {absolute_min}")
-                best_values = current_values
-        else:
-            current_values[index] /= shift
+            baseline = tuning.evaluate_values(current_values, mov_dist, print_vals = True)
+            cost = tuning.evaluate_values(test_values, mov_dist)
 
 
-        # print(f"deltas = {deltas}")
-        print(f"current_values = {current_values}")
-    print("calibraiton finished")
-    #grapher.show_graph()
+            cost_delta = cost - baseline
 
-    print(f"Lowest cost: {absolute_min} \n At Values {best_values}")
-    if input("Would you like to keep these values? y/N: ") == "y":
-        tuning.save_configuration(odrv_num, best_values)
+            if cost_delta < 0:
+                current_values[index] *= shift #TODO: multipy shift by the magnitude of delta
+
+                if cost < absolute_min: #TODO: retry to unsure it truly is abs minimum
+                    print(f"old absolute_min: {absolute_min}")
+                    absolute_min = cost
+                    print(f"new absolute_min: {absolute_min}")
+                    best_values = current_values
+            else:
+                current_values[index] /= shift
+
+
+            # print(f"deltas = {deltas}")
+            print(f"current_values = {current_values}")
+
+    except KeyboardInterrupt:
+            
+        print("calibraiton finished")
+        #grapher.show_graph()
+
+        print(f"Lowest cost: {absolute_min} \n At Values {best_values}")
+        if input("Would you like to keep these values? y/N: ") == "y":
+            tuning.save_configuration(odrv_num, best_values)
 
 
 
