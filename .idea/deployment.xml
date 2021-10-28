@@ -5,7 +5,7 @@
       <paths name="pi@gantry-game-pi.local:22 agent">
         <serverdata>
           <mappings>
-            <mapping deploy="/home/pi/Documents/3testing" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/home/pi/Desktop/john-hekupfolder" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>

@@ -1,8 +1,9 @@
 import numpy as np
 import tuning
 import time
+import grapher
 
-
+grapher.init()
 start_values = [.16,20,.32]
 vel_range = [0, .3]
 pos_range = [0, 250]
@@ -10,7 +11,7 @@ int_range = [0, 3]
 
 mov_dist = 1
 iteration_shift_factor = 1.1
-total_trials = 100
+total_trials = 3
 
 
 # DEFAULTS
@@ -48,13 +49,14 @@ def main(start_values, vel_range, pos_range, int_range):
 
         deltas = []
 
-        for i in range(3):
+        for i in range(1):
             test_values = current_values[:]
             test_values[i] *= iteration_shift_factor
             cost = tuning.evaluate_values(test_values, mov_dist)
             deltas.append(baseline - cost)
 
         current_values = [(value / iteration_shift_factor) * (delta > 0) + (value * iteration_shift_factor) * (delta < 0)  for value, delta in zip(current_values, deltas)]
+        grapher.values.append(current_values)
 
         # print(f"deltas = {deltas}")
         print(f"current_values = {current_values}")
@@ -67,3 +69,4 @@ def main(start_values, vel_range, pos_range, int_range):
 
 if __name__ == "__main__":
     main(start_values, vel_range, pos_range, int_range)
+    grapher.show_graph()

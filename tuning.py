@@ -3,7 +3,7 @@ from odrive.enums import *
 from odrive.utils import start_liveplotter
 import time
 import numpy as np
-
+import grapher
 
 odrv0_serial = "20793595524B"  # Previously Xavier
 odrv1_serial = "20673593524B"  # Previously Yannie
@@ -78,6 +78,7 @@ def evaluate_values(values, mov_dist = 1, rmse_weight = 1, variance_weight = 3, 
         print(f"rmse = {base_rmse}, variance = {base_variance}")
         print(f"cost = {cost}")
 
+    grapher.costs.append([cost, base_rmse, base_variance])
 
     return cost
 
