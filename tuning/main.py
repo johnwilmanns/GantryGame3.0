@@ -2,32 +2,30 @@ import numpy as np
 import tuning
 import time
 import random as rd
+from config import *
 
 
+# mov_dist = 1
+# mov_time = 2
+# iteration_shift_factor = 1.1
+# test_to_set_ratio = 1
+# odrv_num = 1
+# axis_num = 0
 
-mov_dist = 1
-mov_time = 2
-iteration_shift_factor = 1.1
-test_to_set_ratio = 1
-odrv_num = 1
-axis_num = 0
-
-rmse_weight = 1
-variance_weight = 3
-
-
+# rmse_weight = 1
+# variance_weight = 3
 
 # DEFAULTS
 # vel_gain = .16
 # pos_gain = 20
 # vel_integrator_gain = .32
-start_values = [.16,20,.32]
-ranges = [[0,.2], [0,250], [0,3]]
+# start_values = [.16,20,.32]
+# ranges = [[0,.2], [0,250], [0,3]]
 
 
-vel_range = [0, .2]
-pos_range = [0, 250]
-int_range = [0, 3]
+# vel_range = [0, .2]
+# pos_range = [0, 250]
+# int_range = [0, 3]
 
 def in_range(val, range):
     return range[0] <= val <= range[1]
@@ -38,12 +36,14 @@ def in_range(val, range):
 
 def main(start_values, vel_range, pos_range, int_range):
 
-    tuning.startup(odrv_num, axis_num)
+    tuning.startup(vel_limit, odrive_serial, axis_num)
     absolute_min = float("inf")
     best_values = []
     # tuning.start_liveplotter(lambda:[tuning.axis.controller.config.vel_gain])
 
-    # start_values = [tuning.axis.controller.config.vel_gain, tuning.axis.controller.config.pos_gain, tuning.axis.controller.config.vel_integrator_gain]
+
+    if start_values == []:
+        start_values = [tuning.axis.controller.config.vel_gain, tuning.axis.controller.config.pos_gain, tuning.axis.controller.config.vel_integrator_gain]
 
     tuning.axis.controller.config.vel_gain = start_values[0]
     tuning.axis.controller.config.pos_gain = start_values[1]

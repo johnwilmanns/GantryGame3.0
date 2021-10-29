@@ -99,31 +99,25 @@ def start_plotter(data_list):
 
 
 
-def startup(odrv_num = 1, axis_num = 1):
+def startup(vel_limit, odrv_serial, axis_num):
     global axis
     global odrv
 
-    assert odrv_num == 1 or odrv_num == 0
+
     assert axis_num == 1 or axis_num == 0
 
-    odrv1_serial = "20793595524B"  # Previously Xavier
-    odrv0_serial = "20673593524B"  # Previously Yannie
 
-    odrv0 = odrive.find_any(serial_number=odrv0_serial)
-    odrv1 = odrive.find_any(serial_number=odrv1_serial)
-
-    if odrv_num:
-        odrv = odrv1
-        if axis_num:
-            axis = odrv1.axis1
-        else:
-            axis = odrv1.axis0
+    if odrv_serial != "":
+        odrv = odrive.find_any(serial_number=odrive_serial)
     else:
-        odrv = odrv0
-        if axis_num:
-            axis = odrv0.axis1
-        else:
-            axis = odrv0.axis0
+        odrv = odrive.find_any()
+
+
+    if axis_num:
+        axis = odrv.axis1
+    else:
+        axis = odrv.axis0
+
 
     axis.requested_state =  AXIS_STATE_FULL_CALIBRATION_SEQUENCE
 
