@@ -6,11 +6,11 @@ import random as rd
 
 
 mov_dist = 1
-mov_time = 1
+mov_time = 2
 iteration_shift_factor = 1.1
 test_to_set_ratio = 1
 odrv_num = 1
-axis_num = 1
+axis_num = 0
 
 rmse_weight = 1
 variance_weight = 3
@@ -92,6 +92,7 @@ def main(start_values, vel_range, pos_range, int_range):
 
             if cost_delta < 0:
                 current_values[index] *= shift
+
             else:
                 current_values[index] /= shift
 
@@ -100,6 +101,7 @@ def main(start_values, vel_range, pos_range, int_range):
                 absolute_min = cost
                 print(f"new absolute_min: {absolute_min}")
                 best_values = current_values
+
 
 
 

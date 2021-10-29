@@ -5,12 +5,6 @@ import time
 import numpy as np
 import math
 
-odrv0_serial = "20793595524B"  # Previously Xavier
-odrv1_serial = "20673593524B"  # Previously Yannie
-
-odrv0 = odrive.find_any(serial_number=odrv0_serial)
-odrv1 = odrive.find_any(serial_number=odrv1_serial)
-
 axis = None
 
 def move(dist = 5):
@@ -110,8 +104,8 @@ def startup(odrv_num = 1, axis_num = 1):
     assert odrv_num == 1 or odrv_num == 0
     assert axis_num == 1 or axis_num == 0
 
-    odrv0_serial = "20793595524B"  # Previously Xavier
-    odrv1_serial = "20673593524B"  # Previously Yannie
+    odrv1_serial = "20793595524B"  # Previously Xavier
+    odrv0_serial = "20673593524B"  # Previously Yannie
 
     odrv0 = odrive.find_any(serial_number=odrv0_serial)
     odrv1 = odrive.find_any(serial_number=odrv1_serial)
@@ -127,8 +121,10 @@ def startup(odrv_num = 1, axis_num = 1):
         else:
             axis = odrv0.axis0
 
-
+    print(axis.current_state)
     axis.requested_state =  AXIS_STATE_FULL_CALIBRATION_SEQUENCE
+    print(axis.current_state)
+
 
     while axis.current_state != AXIS_STATE_IDLE:
         pass

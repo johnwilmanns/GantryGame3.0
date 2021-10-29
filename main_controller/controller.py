@@ -6,16 +6,16 @@ class Gantry:
 
     def __init__(self,odrv0_serial, odrv1_serial):
 
-        self.odrv0_serial = "20793595524B" # Previously Xavier
-        self.odrv1_serial = "20673593524B" # Previously Yannie
+        self.odrv1_serial = "20793595524B" # Previously Xavier
+        self.odrv0_serial = "20673593524B" # Previously Yannie
 
 
-        self.odrv0 = odrive.find_any(serial_number=self.odrv0_serial)
         self.odrv1 = odrive.find_any(serial_number=self.odrv1_serial)
+        self.odrv0 = odrive.find_any(serial_number=self.odrv0_serial)
 
-        self.x = ODrive_Ease_Lib.ODrive_Axis(self.odrv1.axis1) # X
-        self.y = ODrive_Ease_Lib.ODrive_Axis(self.odrv0.axis0) # Y
-        self.z = ODrive_Ease_Lib.ODrive_Axis(self.odrv0.axis1) # Z
+        self.x = ODrive_Ease_Lib.ODrive_Axis(self.odrv0.axis1) # X
+        self.y = ODrive_Ease_Lib.ODrive_Axis(self.odrv1.axis0) # Y
+        self.z = ODrive_Ease_Lib.ODrive_Axis(self.odrv1.axis1) # Z
 
     def startup(self):
         self.calibrate()
