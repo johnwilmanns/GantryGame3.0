@@ -43,7 +43,7 @@ def main(start_values, vel_range, pos_range, int_range):
     best_values = []
     # tuning.start_liveplotter(lambda:[tuning.axis.controller.config.vel_gain])
 
-    start_values = [tuning.axis.controller.config.vel_gain, tuning.axis.controller.config.pos_gain, tuning.axis.controller.config.vel_integrator_gain]
+    # start_values = [tuning.axis.controller.config.vel_gain, tuning.axis.controller.config.pos_gain, tuning.axis.controller.config.vel_integrator_gain]
 
     tuning.axis.controller.config.vel_gain = start_values[0]
     tuning.axis.controller.config.pos_gain = start_values[1]
@@ -94,7 +94,7 @@ def main(start_values, vel_range, pos_range, int_range):
                 current_values[index] *= shift
 
             else:
-                current_values[index] /= shift
+                current_values[index] /= shift / 2
 
             if cost < absolute_min:  # TODO: retry to unsure it truly is abs minimum
                 print(f"old absolute_min: {absolute_min}")
@@ -121,7 +121,7 @@ def main(start_values, vel_range, pos_range, int_range):
 
         print(f"Lowest cost: {absolute_min} \n At Values {best_values}")
         if input("Would you like to keep these values? y/N: ") == "y":
-            tuning.save_configuration(odrv_num, best_values)
+            tuning.save_configuration(best_values)
 
 
 

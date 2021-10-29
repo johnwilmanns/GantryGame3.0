@@ -1,11 +1,12 @@
 import odrive
 from odrive.enums import *
-from odrive.utils import start_liveplotter
+from odrive.utils import *
 import time
 import numpy as np
 import math
 
 axis = None
+odrv = None
 
 def move(dist = 5):
     axis.controller.input_pos = 0
@@ -100,6 +101,7 @@ def start_plotter(data_list):
 
 def startup(odrv_num = 1, axis_num = 1):
     global axis
+    global odrv
 
     assert odrv_num == 1 or odrv_num == 0
     assert axis_num == 1 or axis_num == 0
@@ -111,19 +113,20 @@ def startup(odrv_num = 1, axis_num = 1):
     odrv1 = odrive.find_any(serial_number=odrv1_serial)
 
     if odrv_num:
+        odrv = odrv1
         if axis_num:
             axis = odrv1.axis1
         else:
             axis = odrv1.axis0
     else:
+        odrv = odrv0
         if axis_num:
             axis = odrv0.axis1
         else:
             axis = odrv0.axis0
 
-    print(axis.current_state)
     axis.requested_state =  AXIS_STATE_FULL_CALIBRATION_SEQUENCE
-    print(axis.current_state)
+
 
 
     while axis.current_state != AXIS_STATE_IDLE:
@@ -137,6 +140,7 @@ def startup(odrv_num = 1, axis_num = 1):
     axis.controller.config.control_mode = CONTROL_MODE_POSITION_CONTROL
     axis.controller.config.input_mode = INPUT_MODE_PASSTHROUGH
     time.sleep(1)
+
 
 def main():
 
@@ -196,17 +200,15 @@ def main():
         except Exception as e:
             print(f"ERROR: {e}")
 
-def save_configuration(odrive_number, values):
+def save_configuration(values):
+
 
     axis.controller.config.vel_gain = values[0]
     axis.controller.config.pos_gain = values[1]
     axis.controller.config.vel_integrator_gain = values[2]
 
     print("saving configuration!!")
-    if odrive_number:
-        odrv1.save_configuration()
-    else:
-        odrv0.save_configuration()
+    odrv.save_configuration()
 
 # odrv0.axis0.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
 # odrv0.axis0.motor.config.pre_calibrated = True
