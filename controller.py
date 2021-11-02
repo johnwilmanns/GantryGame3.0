@@ -23,7 +23,7 @@ class Gantry:
         self.calibrate()
         self.sensorless_home()
         self.print_positions()
-        self.print_errors()
+        self.dump_errors()
 
 
     def __del__(self):
@@ -37,9 +37,6 @@ class Gantry:
         yield self.y
         yield self.z
 
-    def print_errors(self):
-        print(odrive.utils.dump_errors(self._xavier))
-        print(odrive.utils.dump_errors(self._yannie))
 
     def calibrate(self):
         for motor in self.axes():

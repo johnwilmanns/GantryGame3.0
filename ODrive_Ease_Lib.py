@@ -96,8 +96,9 @@ class Axis(object):
         while self.get_vel() > velocity_threshold:
             pass
 
-    def sensorless_home(self, vel = 1, ):
+    def sensorless_home(self, vel = 1):
         print("homing")
+        vel *= -1
         # print(f"Current Limit: {self.get_curr_limit()}")
 
         self.set_vel(vel)
@@ -113,6 +114,8 @@ class Axis(object):
 
             if vel < .2:
                 break
+        self.set_home()
+        self.set_pos(.2)
         print("homed" + str(type(self.axis)))
 
     def clear_errors(self):
