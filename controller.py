@@ -21,7 +21,7 @@ class Gantry:
 
     def startup(self):
         self.calibrate()
-        self.home()
+        self.sensorless_home()
         self.print_positions()
         self.print_errors()
 
