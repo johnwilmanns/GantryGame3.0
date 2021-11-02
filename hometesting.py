@@ -1,7 +1,8 @@
 import controller
 
 g = controller.Gantry()
+g.dump_errors()
 g.sensorless_home([True, True, True])
-print("wut")
+g.dump_errors()
+g.__del__()
 
-Exception("i'm stupid so I do this stuff")

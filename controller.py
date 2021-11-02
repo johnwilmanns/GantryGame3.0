@@ -1,7 +1,7 @@
 import ODrive_Ease_Lib
 import odrive
 import time
-
+from odrive.utils import *
 class Gantry:
 
     def __init__(self):
@@ -12,6 +12,8 @@ class Gantry:
 
         self.odrv1 = odrive.find_any(serial_number=self.odrv1_serial)
         self.odrv0 = odrive.find_any(serial_number=self.odrv0_serial)
+
+        self.clear_errors()
 
         self.x = ODrive_Ease_Lib.Axis(self.odrv0.axis1) # X
         self.y = ODrive_Ease_Lib.Axis(self.odrv1.axis0) # Y
@@ -25,6 +27,7 @@ class Gantry:
 
 
     def __del__(self):
+        print("setting all states to idle")
         self.x.idle()
         self.y.idle()
         self.z.idle()
@@ -78,7 +81,13 @@ class Gantry:
             if home_axes[num]:
                 axis.sensorless_home()
 
+    def dump_errors(self):
+        print(dump_errors(self.odrv0))
+        print(dump_errors(self.odrv1))
 
+    def clear_errors(self):
+        self.odrv0.clear_errors()
+        self.odrv1.clear_errors()
 
     def print_positions(self):
         print(f"X = {self.x}")
