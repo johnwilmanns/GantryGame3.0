@@ -113,7 +113,7 @@ class Axis(object):
 
             if vel < .2:
                 break
-        print("homed" + type(self.axis))
+        print("homed" + str(type(self.axis)))
 
     def clear_errors(self):
         self.axis.error = 0
