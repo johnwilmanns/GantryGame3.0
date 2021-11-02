@@ -98,7 +98,7 @@ class Axis(object):
 
     def sensorless_home(self, vel = 1, ):
         print("homing")
-        print(f"Current Limit: {self.get_curr_limit()}")
+        # print(f"Current Limit: {self.get_curr_limit()}")
 
         self.set_vel(vel)
         time.sleep(3)
@@ -113,6 +113,7 @@ class Axis(object):
 
             if vel < .2:
                 break
+        print("homed" + type(self.axis))
 
     def clear_errors(self):
         self.axis.error = 0
@@ -156,8 +157,14 @@ class Axis(object):
     def set_vel_limit(self, vel):
         self.axis.controller.config.vel_limit = vel
 
+    def get_current_limit(self):
+        return self.axis.controller.config.vel_limit
+
     def set_current_limit(self, val):
         self.axis.motor.config.current_lim = val
+
+    def get_current_limit(self):
+        return self.axis.motor.config.current_lim
 
     def set_home(self):
         self.zero = self.get_raw_pos()
