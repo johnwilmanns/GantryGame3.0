@@ -35,14 +35,14 @@ class Axis(object):
 
     def set_pos(self, pos):
         desired_pos = pos + self.zero
-        if self.axis.current_state != 8:
+        if self.axis.requested_state != 8:
             self.axis.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
         if self.axis.controller.config.control_mode != 3:
             self.axis.controller.config.control_mode = CONTROL_MODE_POSITION_CONTROL
         self.axis.controller.input_pos = desired_pos
 
     def set_vel(self, vel):
-        if self.axis.current_state != 8:
+        if self.axis.requested_state != 8:
             self.axis.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
         if self.axis.controller.config.control_mode != 2:
             self.axis.controller.config.control_mode = CONTROL_MODE_VELOCITY_CONTROL

@@ -9,9 +9,10 @@ odrv0_serial = "20673593524B"  # Previously Yannie
 odrv1 = odrive.find_any(serial_number=odrv1_serial)
 odrv0 = odrive.find_any(serial_number=odrv0_serial)
 
-# odrv0.erase_configuration()
-# odrv1.erase_configuration()
-
+"""
+odrv0.erase_configuration()
+odrv1.erase_configuration()
+"""
 odrv0.axis0.motor.config.current_lim = 30
 odrv0.axis1.motor.config.current_lim = 30
 
@@ -30,10 +31,6 @@ odrv0.axis0.config.startup_closed_loop_control = True
 odrv0.axis1.config.startup_closed_loop_control = True
 
 
-try:
-    odrv0.save_configuration()
-except:
-    pass
 
 odrv1.axis0.motor.config.current_lim = 30
 odrv1.axis1.motor.config.current_lim = 30
@@ -52,6 +49,12 @@ odrv1.axis1.config.startup_encoder_offset_calibration = True
 odrv1.axis0.config.startup_closed_loop_control = True
 odrv1.axis1.config.startup_closed_loop_control = True
 
+time.sleep(30)
+
+try:
+    odrv0.save_configuration()
+except:
+    pass
 
 try:
     odrv1.save_configuration()
