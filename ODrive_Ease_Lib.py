@@ -125,7 +125,7 @@ class Axis(object):
 
         while True:
             self.set_home()
-            self.set_torque(current * direction)
+            self.set_torque(current * direction * -1)
             time.sleep(4)
 
 

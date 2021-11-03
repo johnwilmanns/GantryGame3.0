@@ -1,4 +1,4 @@
-import controller
+import gantry
 
 g = controller.Gantry()
 g.dump_errors()
