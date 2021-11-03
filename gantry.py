@@ -105,6 +105,7 @@ class Gantry:
             self.z.set_pos(z)
 
         while True:
+            print(f"waiting: {x}, {y}, {z}")
             if abs(self.x.get_pos() - x) <= .05 or x == -1:
                 if abs(self.x.get_pos() - y) <= .05 or y == -1:
                     if abs(self.x.get_pos() - z) <= .05 or z == -1:
