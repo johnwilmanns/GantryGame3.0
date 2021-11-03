@@ -35,14 +35,14 @@ class Axis(object):
 
     def set_pos(self, pos):
         desired_pos = pos + self.zero
-        if self.axis.current_state != 8:
+        if self.axis.requested_state != 8:
             self.axis.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
         if self.axis.controller.config.control_mode != 3:
             self.axis.controller.config.control_mode = CONTROL_MODE_POSITION_CONTROL
         self.axis.controller.input_pos = desired_pos
 
     def set_vel(self, vel):
-        if self.axis.current_state != 8:
+        if self.axis.requested_state != 8:
             self.axis.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
         if self.axis.controller.config.control_mode != 2:
             self.axis.controller.config.control_mode = CONTROL_MODE_VELOCITY_CONTROL
@@ -96,9 +96,10 @@ class Axis(object):
         while self.get_vel() > velocity_threshold:
             pass
 
-    def sensorless_home(self, vel = 1, ):
+    def sensorless_home(self, vel = 1):
         print("homing")
-        print(f"Current Limit: {self.get_curr_limit()}")
+        vel *= -1
+        # print(f"Current Limit: {self.get_curr_limit()}")
 
         self.set_vel(vel)
         time.sleep(3)
@@ -113,6 +114,27 @@ class Axis(object):
 
             if vel < .2:
                 break
+        self.set_home()
+        self.set_pos(.2)
+        print("homed" + str(type(self.axis)))
+
+    def scuffed_home(self, current = .3, direction = 1):
+        assert direction == 1 or direction == -1
+
+        oldvel = self.get_vel_limit()
+
+        while True:
+            self.set_home()
+            self.set_torque(current * direction)
+            time.sleep(4)
+
+
+            if abs(self.get_pos()) <= .05:
+                self.set_torque(0)
+                self.set_vel_limit(oldvel)
+                return
+
+
 
     def clear_errors(self):
         self.axis.error = 0
@@ -156,8 +178,18 @@ class Axis(object):
     def set_vel_limit(self, vel):
         self.axis.controller.config.vel_limit = vel
 
+    def get_vel_limit(self):
+        return self.axis.controller.config.vel_limit
+
+
+    def get_current_limit(self):
+        return self.axis.controller.config.vel_limit
+
     def set_current_limit(self, val):
         self.axis.motor.config.current_lim = val
+
+    def get_current_limit(self):
+        return self.axis.motor.config.current_lim
 
     def set_home(self):
         self.zero = self.get_raw_pos()
