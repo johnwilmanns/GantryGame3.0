@@ -5,39 +5,42 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 
-import controller
-
 
 class MyGrid(GridLayout):
     def __init__(self, **kwargs):
-        self.controller = controller.Controller
-
         super(MyGrid, self).__init__(**kwargs)
         self.cols = 1
 
-        self.x = GridLayout()
-        self.x.cols = 2
+        self.inside = GridLayout()
+        self.inside.cols = 2
 
-        self.x.add_widget(Label(text="x: "))
-        self.y = TextInput(multiline=False)
-        self.x.add_widget(self.y)
+        self.inside.add_widget(Label(text="First Name: "))
+        self.name = TextInput(multiline=False)
+        self.inside.add_widget(self.name)
 
-        self.x.add_widget(Label(text="Y: "))
+        self.inside.add_widget(Label(text="Last Name: "))
         self.lastName = TextInput(multiline=False)
-        self.x.add_widget(self.lastName)
+        self.inside.add_widget(self.lastName)
 
-        self.x.add_widget(Label(text="Z: "))
-        self.z = TextInput(multiline=False)
-        self.x.add_widget(self.z)
+        self.inside.add_widget(Label(text="Email: "))
+        self.email = TextInput(multiline=False)
+        self.inside.add_widget(self.email)
 
-        self.add_widget(self.x)
+        self.add_widget(self.inside)
 
-        self.go = Button(text="Go", font_size=40)
-        self.go.bind(on_press=self.pressed)
-        self.add_widget(self.go)
+        self.submit = Button(text="Submit", font_size=40)
+        self.submit.bind(on_press=self.pressed)
+        self.add_widget(self.submit)
 
     def pressed(self, instance):
+        name = self.name.text
+        last = self.lastName.text
+        email = self.email.text
 
+        print("Name:", name, "Last Name:", last, "Email:", email)
+        self.name.text = ""
+        self.lastName.text = ""
+        self.email.text = ""
 
 class MyApp(App):
     def build(self):
