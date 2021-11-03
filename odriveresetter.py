@@ -57,11 +57,11 @@ time.sleep(30)
 
 try:
     odrv0.save_configuration()
-except:
-    pass
+except Exception as e:
+    print(e)
 
 try:
     odrv1.save_configuration()
-except:
-    pass
+except Exception as e:
+    print(e)
 
