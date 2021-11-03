@@ -1,0 +1,17 @@
+<MainScreen>:
+
+    name: 'main'
+    FloatLayout:
+        size_hint: 1, 1
+
+    DPEAButton:
+        id: test_button
+        text: 'test'
+        size: 100, 100
+        x: root.width * 0.75
+        y: root.height * 0.5
+        color: 0, 1, 0, 1
+        on_press: root.pressed()
+
+    DPEAButton:
+

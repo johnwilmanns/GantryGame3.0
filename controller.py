@@ -4,6 +4,8 @@ import time
 class Controller:
 
     def __init__(self):
-        gantry = controller.Gantry()
-        gantry.startup()
+        self.gantry = controller.Gantry()
+        self.gantry.startup()
 
+    def set_pos(self, x, y, z):
+        self.gantry.set_pos(x, y, z)
