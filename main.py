@@ -1,4 +1,4 @@
-import controller
+import gantry
 
 def main():
     gantry = controller.Gantry()
