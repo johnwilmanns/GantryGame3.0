@@ -48,7 +48,7 @@ class Gantry:
     def home(self, axis=[True, True, True]):
         print("homing")
         if axis[0]:  # x axis
-            self.x.set_vel(1)
+            self.x.set_vel(-1)
             while True:
                 print(self.odrv0.get_gpio_states() & 0b00100)
                 if self.odrv0.get_gpio_states() & 0b00100 == 0:  # needs to be changed upon rewire
@@ -58,6 +58,8 @@ class Gantry:
                     print("yes")
                     break
                 time.sleep(.1)
+
+
 
         print("homed x")
 
@@ -76,7 +78,7 @@ class Gantry:
     def sensorless_home(self, home_axes = [True, True, True]):
         for num, axis in enumerate(self.axes()) :
             if home_axes[num]:
-                axis.sensorless_home()
+                axis.scuffed_home()
 
     def dump_errors(self):
         print(dump_errors(self.odrv0))

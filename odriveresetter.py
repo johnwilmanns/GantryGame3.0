@@ -19,6 +19,10 @@ odrv0.axis1.motor.config.current_lim = 30
 odrv0.axis0.controller.config.vel_limit = 20
 odrv0.axis1.controller.config.vel_limit = 20
 
+
+odrv0.axis0.controller.config.enable_overspeed_error = False
+odrv0.axis1.controller.config.enable_overspeed_error = False
+
 odrv0.config.enable_brake_resistor = True
 
 odrv0.axis0.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE

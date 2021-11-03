@@ -118,6 +118,24 @@ class Axis(object):
         self.set_pos(.2)
         print("homed" + str(type(self.axis)))
 
+    def scuffed_home(self, current = .3, direction = 1):
+        assert direction == 1 or direction == -1
+
+        oldvel = self.get_vel_limit()
+
+        while True:
+            self.set_home()
+            self.set_torque(current * direction)
+            time.sleep(4)
+
+
+            if abs(self.get_pos()) <= .05:
+                self.set_torque(0)
+                self.set_vel_limit(oldvel)
+                return
+
+
+
     def clear_errors(self):
         self.axis.error = 0
         self.axis.encoder.error = 0
@@ -159,6 +177,10 @@ class Axis(object):
 
     def set_vel_limit(self, vel):
         self.axis.controller.config.vel_limit = vel
+
+    def get_vel_limit(self):
+        return self.axis.controller.config.vel_limit
+
 
     def get_current_limit(self):
         return self.axis.controller.config.vel_limit
