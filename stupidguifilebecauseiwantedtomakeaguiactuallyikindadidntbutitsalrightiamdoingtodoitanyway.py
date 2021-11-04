@@ -8,7 +8,7 @@ import controller
 
 class MyGrid(GridLayout):
     def __init__(self, **kwargs):
-        self.controller = controller.Controller()
+
         super(MyGrid, self).__init__(**kwargs)
         self.cols = 1
 
@@ -32,6 +32,7 @@ class MyGrid(GridLayout):
         self.submit = Button(text="Go", font_size=40)
         self.submit.bind(on_press=self.pressed)
         self.add_widget(self.submit)
+        self.controller = controller.Controller()
 
     def pressed(self, instance):
         x = float(self.name.text)

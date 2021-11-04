@@ -66,7 +66,7 @@ class Axis(object):
         self.axis.trap_traj.config.accel_limit = accel
         self.axis.trap_traj.config.vel_limit = vel
         self.axis.trap_traj.config.decel_limit = decel
-        if intertia != 0:
+        if inertia != 0:
             self.axis.controller.config.inertia = inertia
 
         if self.axis.current_state != AXIS_STATE_CLOSED_LOOP_CONTROL:
