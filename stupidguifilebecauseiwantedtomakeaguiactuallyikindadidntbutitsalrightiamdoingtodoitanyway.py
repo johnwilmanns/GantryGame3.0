@@ -38,7 +38,7 @@ class MyGrid(GridLayout):
         y = float(self.lastName.text)
         z = float(self.email.text)
 
-        self.controller.set_pos(x, y, z)
+        self.controller.trap_move(x, y)
         print("position set")
         self.name.text = ""
         self.lastName.text = ""
