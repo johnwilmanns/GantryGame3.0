@@ -193,6 +193,12 @@ class Axis(object):
 
     def set_trap_vals(self, vel_limit, accel_limit, decel_limit, inertia = -1):
 
+        self.axis.trap_traj.config.vel_limit = vel_limit
+        self.axis.trap_traj.config.accel_limit = accel_limit
+        self.axis.trap_traj.config.decel_limit = decel_limit
+        if inertia != -1:
+            self.axis.controller.config.inertia = inertia
+
 
     def set_home(self):
         self.zero = self.get_raw_pos()
