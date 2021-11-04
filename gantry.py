@@ -25,6 +25,7 @@ class Gantry:
         self.x_max_vel = 10
         self.y_max_vel = 10
 
+    #todo these should really be stored in the ease lib axis, but I really don't feel like fixing that right now
     def set_max_accel(self, xmax, ymax):
         self.x_max_accel = xmax
         self.y_max_accel = ymax
@@ -98,6 +99,7 @@ class Gantry:
         for num, axis in enumerate(self.axes()) :
             if home_axes[num]:
                 axis.scuffed_home()
+        self.requested_pos = [0, 0]
 
     def dump_errors(self):
         print(dump_errors(self.odrv0))
@@ -125,19 +127,48 @@ class Gantry:
 
         while True:
             print(f"waiting: {x}, {y}, {z}")
-            if abs(self.x.get_pos() - x) <= .05 or x == -1:
-                if abs(self.x.get_pos() - y) <= .05 or y == -1:
-                    if abs(self.x.get_pos() - z) <= .05 or z == -1:
+            if abs(self.x.get_pos() - x) <= .1 or x == -1:
+                if abs(self.x.get_pos() - y) <= .1 or y == -1:
+                    if abs(self.x.get_pos() - z) <= .1 or z == -1:
+                        self.requested_pos = [x, y]
                         return
 
 
 
+    def trap_move(self, new_x, new_y):
+        
+        #the ratio is the x to the y movement distance
+        
+        ratio = new_x - self.requested_pos[0] / new_y - self.requested_pos[1]
+        
+        #compares to see if it should be limited by x or y
+        #the reason we have to have this so many times is because we have to compare each one individually, isn't that fun. 
+        
+        if ratio > self.x_max_vel / self.y_max_vel:
+            x_vel = self.y_max_vel / ratio
+            y_vel = self.y_max_vel
+        else:
+            y_vel =  self.x_max_vel * ratio
+            x_vel = self.x_max_vel
+            
 
-    def set_pos_trap(self):
-        pass
+        if ratio > self.x_max_accel / self.y_max_accel:
+            x_accel = self.y_max_accel / ratio
+            y_accel = self.y_max_accel
+        else:
+            y_accel = self.x_max_accel * ratio
+            x_accel = self.x_max_accel
+            
+        if ratio > self.x_max_decel / self.y_max_decel:
+            x_decel = self.y_max_decel / ratio
+            y_decel = self.y_max_decel
+        else:
+            y_decel =  self.x_max_decel * ratio
+            x_decel = self.x_max_decel
+            
+        self.x.set_pos_traj(new_x, x_vel, x_accel, x_decel)
+        self.y.set_pos_traj(new_x, y_vel, y_accel, y_decel)
 
-    def set_pos_trap_calc(self):
-        pass
 
     def set_pos_noblock(self, x = -1, y = -1, z = -1):
 
@@ -149,6 +180,8 @@ class Gantry:
 
         if z != -1:
             self.z.set_pos(z)
+
+        self.requested_pos = [x, y]
 
 
 
