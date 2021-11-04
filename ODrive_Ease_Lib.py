@@ -28,13 +28,13 @@ def reboot_ODrive(od):
 class Axis(object):
     def __init__(self, axis, endstop_pin = None):
         self.axis = axis
-        self.zero = 0
+        self.home = 0
         self.endstop_pin = endstop_pin
 
     #odrive control methods
 
     def set_pos(self, pos):
-        desired_pos = pos + self.zero
+        desired_pos = pos + self.home
         if self.axis.requested_state != 8:
             self.axis.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
         if self.axis.controller.config.control_mode != 3:
@@ -66,7 +66,7 @@ class Axis(object):
         self.axis.trap_traj.config.accel_limit = accel
         self.axis.trap_traj.config.vel_limit = vel
         self.axis.trap_traj.config.decel_limit = decel
-        if intertia != 0
+        if intertia != 0:
             self.axis.controller.config.inertia = inertia
 
         if self.axis.current_state != AXIS_STATE_CLOSED_LOOP_CONTROL:
@@ -92,7 +92,7 @@ class Axis(object):
     #get info about current state of odrive
 
     def get_pos(self):
-        return self.axis.encoder.pos_estimate - self.zero
+        return self.axis.encoder.pos_estimate - self.home
 
     def get_raw_pos(self):
         return self.axis.encoder.pos_estimate
@@ -235,7 +235,7 @@ class Axis(object):
 
 
     def set_home(self):
-        self.zero = self.get_raw_pos()
+        self.home = self.get_raw_pos()
 
     def set_calibration_current(self, current):
         self.axis.motor.config.calibration_current = current
