@@ -130,7 +130,7 @@ class Gantry:
                     if abs(self.x.get_pos() - z) <= .05 or z == -1:
                         return
 
-    def set_trap_vals(axis, vel_limit, accel_limit, decel_limit, inertia):
+
 
 
     def set_pos_trap(self):

@@ -191,6 +191,9 @@ class Axis(object):
     def get_current_limit(self):
         return self.axis.motor.config.current_lim
 
+    def set_trap_vals(self, vel_limit, accel_limit, decel_limit, inertia = -1):
+
+
     def set_home(self):
         self.zero = self.get_raw_pos()
 
