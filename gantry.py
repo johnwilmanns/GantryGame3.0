@@ -18,6 +18,19 @@ class Gantry:
         self.x = ODrive_Ease_Lib.Axis(self.odrv0.axis1) # X
         self.y = ODrive_Ease_Lib.Axis(self.odrv1.axis0) # Y
         self.z = ODrive_Ease_Lib.Axis(self.odrv1.axis1) # Z
+        self.x_maximum_accel = 4
+        self.y_maximum_accel = 4
+        self.x_maximum_vel = 10
+        self.y_maximum_vel = 10
+
+    def set_max_accel(self, xmax, ymax):
+        self.x_maximum_accel = xmax
+        self.y_maximum_accel = ymax
+
+    def set_max_vel(self, xmax, ymax):
+        self.x_maximum_vel = xmax
+        self.y_maximum_vel = ymax
+
 
     def startup(self):
         self.calibrate()
