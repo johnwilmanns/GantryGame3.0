@@ -60,13 +60,15 @@ class Axis(object):
     def set_pos_traj(self, pos, accel, vel, decel, inertia=0):
         # BUG: trajectory control not working when invoked after a velocity control, this line is used to
         # uselessly revert back to position control
-        self.set_relative_pos(0)
 
+        assert accel >= 0 and vel >= 0 and decel >= 0 and inertia >= 0, "Values must be positive"
+        self.set_relative_pos(0)
         self.axis.trap_traj.config.accel_limit = accel
         self.axis.trap_traj.config.vel_limit = vel
         self.axis.trap_traj.config.decel_limit = decel
-        self.axis.controller.config.inertia = inertia
-        assert accel >= 0 and vel >= 0 and decel >= 0 and inertia >= 0, "Values must be positive"
+        if intertia != 0
+            self.axis.controller.config.inertia = inertia
+
         if self.axis.current_state != AXIS_STATE_CLOSED_LOOP_CONTROL:
             self.axis.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
         self.axis.controller.config.control_mode = CONTROL_MODE_POSITION_CONTROL
