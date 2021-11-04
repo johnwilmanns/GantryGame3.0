@@ -36,7 +36,6 @@ class MyGrid(GridLayout):
     def pressed(self, instance):
         x = float(self.name.text)
         y = float(self.lastName.text)
-        z = float(self.email.text)
 
         self.controller.trap_move(x, y)
         print("position set")

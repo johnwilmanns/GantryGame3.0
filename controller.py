@@ -12,4 +12,4 @@ class Controller:
         self.gantry.set_pos_noblock(x, y, z)
 
     def trap_move(self, x, y):
-        self.trap_move(x, y)
+        self.gantry.trap_move(x, y)

@@ -41,6 +41,9 @@ class Axis(object):
             self.axis.controller.config.control_mode = CONTROL_MODE_POSITION_CONTROL
         self.axis.controller.input_pos = desired_pos
 
+    def set_relative_pos(self, pos):
+        self.set_raw_pos(pos + self.get_raw_pos())
+
     def set_pos_traj(self, pos, accel, vel, decel, inertia=0):
         # BUG: trajectory control not working when invoked after a velocity control, this line is used to
         # uselessly revert back to position control

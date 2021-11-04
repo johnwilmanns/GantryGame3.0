@@ -18,12 +18,12 @@ class Gantry:
         self.x = ODrive_Ease_Lib.Axis(self.odrv0.axis1) # X
         self.y = ODrive_Ease_Lib.Axis(self.odrv1.axis0) # Y
         self.z = ODrive_Ease_Lib.Axis(self.odrv1.axis1) # Z
-        self.x_max_accel = 4
-        self.y_max_accel = 4
-        self.x_max_decel = 4
-        self.y_max_decel = 4
-        self.x_max_vel = 10
-        self.y_max_vel = 10
+        self.x_max_accel = 2
+        self.y_max_accel = 2
+        self.x_max_decel = 2
+        self.y_max_decel = 2
+        self.x_max_vel = 3
+        self.y_max_vel = 3
 
     #todo these should really be stored in the ease lib axis, but I really don't feel like fixing that right now
     def set_max_accel(self, xmax, ymax):
