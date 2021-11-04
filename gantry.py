@@ -48,6 +48,7 @@ class Gantry:
 
     def __del__(self):
         print("setting all states to idle")
+        dump_errors()
         self.x.idle()
         self.y.idle()
         self.z.idle()
