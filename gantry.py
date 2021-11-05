@@ -1,6 +1,7 @@
 import ODrive_Ease_Lib
 import odrive
 import time
+import math
 from odrive.utils import *
 class Gantry:
 
@@ -40,6 +41,7 @@ class Gantry:
 
 
     def startup(self):
+        self.clear_errors()
         self.calibrate()
         self.sensorless_home()
         self.print_positions()
@@ -140,7 +142,7 @@ class Gantry:
 
         # the ratio is the x to the y movement distance
 
-        ratio = new_x - self.x.get_pos() / new_y - self.y.get_pos()
+        ratio = abs(new_x - self.x.get_pos() / new_y - self.y.get_pos())
 
         x_accel = self.x_max_accel
         y_accel = x_accel / ratio
@@ -164,7 +166,26 @@ class Gantry:
             x_vel = y_vel * ratio
 
         self.x.set_pos_traj(new_x, x_vel, x_accel, x_decel)
+        print(f"x: {x_vel, x_accel, x_decel}")
         self.y.set_pos_traj(new_x, y_vel, y_accel, y_decel)
+        print(f"y: {y_vel, y_accel, y_decel}")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
