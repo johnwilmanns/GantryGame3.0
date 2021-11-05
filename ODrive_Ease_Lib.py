@@ -111,7 +111,8 @@ class Axis(object):
                 return False
 
     def calibrate_encoder(self):
-        self.axis.requested_state = AXIS_STATE_ENCODER_OFFSET_CALIBRATION
+        if not self.axis.encoder.is_ready:
+            self.axis.requested_state = AXIS_STATE_ENCODER_OFFSET_CALIBRATION
 
     def calibrate_no_hold(self):
         self.axis.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
