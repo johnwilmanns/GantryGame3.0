@@ -42,7 +42,7 @@ class MyGrid(GridLayout):
         print("position set")
         self.name.text = ""
         self.lastName.text = ""
-        self.email.text = ""
+        self.email.text = str(self.controller.gantry.dump_errors())
 
 class MyApp(App):
     def build(self):
