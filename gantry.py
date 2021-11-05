@@ -39,7 +39,7 @@ class Gantry:
         self.x_max_vel = xmax
         self.y_max_vel = ymax
 
-
+    #todo, add assert statments
     def startup(self):
         self.clear_errors()
         self.calibrate()
@@ -50,10 +50,10 @@ class Gantry:
 
     def __del__(self):
         print("setting all states to idle")
-        dump_errors()
         self.x.idle()
         self.y.idle()
         self.z.idle()
+        dump_errors()
 
     def axes(self):
         yield self.x
@@ -136,6 +136,12 @@ class Gantry:
                         self.requested_pos = [x, y]
                         return
 
+    def mirror_move(self, new_x, new_y):
+        ratio = new_x - self.x.get_pos() / new_y - self.y.get_pos()
+        print(ratio)
+        #y is the dominant axis
+        self.x.mirror_sub(self.y.axis, ratio)
+        self.y.set_pos(new_y)
 
 
     def trap_move(self, new_x, new_y):
@@ -143,7 +149,7 @@ class Gantry:
         # the ratio is the x to the y movement distance
 
         ratio = abs(new_x - self.x.get_pos() / new_y - self.y.get_pos())
-
+        print(ratio)
         x_accel = self.x_max_accel
         y_accel = x_accel / ratio
 

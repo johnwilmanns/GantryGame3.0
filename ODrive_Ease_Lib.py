@@ -117,6 +117,12 @@ class Axis(object):
     def calibrate_no_hold(self):
         self.axis.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
 
+    def mirror_sub(self, axis, ratio):
+        self.axis.controller.config.input_mode = INPUT_MODE_MIRROR
+        self.axis.controller.config.axis_to_mirror = axis
+        self.axis.controller.config.mirror_ratio = ratio
+
+
     def hold_until_calibrated(self):  # use with calibrate no hold to do all 3 axis at once
         start = time.time()
         while self.axis.current_state != AXIS_STATE_IDLE:
@@ -169,6 +175,9 @@ class Axis(object):
                 self.set_vel_limit(oldvel)
                 return
 
+
+    def check_status(self):
+        assert self.axis.encoder.is_ready and self.axis.motor.is_calibrated
 
 
     def clear_errors(self):
