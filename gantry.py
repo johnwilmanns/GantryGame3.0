@@ -63,7 +63,7 @@ class Gantry:
 
     def calibrate(self):
         for motor in self.axes():
-            motor.calibrate_no_hold()
+            motor.calibrate_encoder()
         for motor in self.axes():
             motor.hold_until_calibrated()
         print("calibrated")
