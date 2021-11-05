@@ -137,21 +137,50 @@ class Gantry:
 
 
     def trap_move(self, new_x, new_y):
-        
-        #the ratio is the x to the y movement distance
-        
-        ratio = new_x - self.requested_pos[0] / new_y - self.requested_pos[1]
-        
-        #compares to see if it should be limited by x or y
-        #the reason we have to have this so many times is because we have to compare each one individually, isn't that fun. 
-        
+
+        # the ratio is the x to the y movement distance
+
+        ratio = new_x - self.x.get_pos() / new_y - self.y.get_pos()
+
+        x_accel = self.x_max_accel
+        y_accel = x_accel / ratio
+
+        if y_accel > self.y_max_accel:
+            y_accel = self.y_max_accel
+            x_accel = y_accel * ratio
+
+        x_decel = self.x_max_decel
+        y_decel = x_decel / ratio
+
+        if y_decel > self.y_max_decel:
+            y_decel = self.y_max_decel
+            x_decel = y_decel * ratio
+
+        x_vel = self.x_max_vel
+        y_vel = x_vel / ratio
+
+        if y_vel > self.y_max_vel:
+            y_vel = self.y_max_vel
+            x_vel = y_vel * ratio
+
+        self.x.set_pos_traj(new_x, x_vel, x_accel, x_decel)
+        self.y.set_pos_traj(new_x, y_vel, y_accel, y_decel)
+
+
+
+
+
+
+
+        # compares to see if it should be limited by x or y
+        # the reason we have to have this so many times is because we have to compare each one individually, isn't that fun.
+
         if ratio > self.x_max_vel / self.y_max_vel:
             x_vel = self.y_max_vel / ratio
             y_vel = self.y_max_vel
         else:
-            y_vel =  self.x_max_vel * ratio
+            y_vel = self.x_max_vel * ratio
             x_vel = self.x_max_vel
-            
 
         if ratio > self.x_max_accel / self.y_max_accel:
             x_accel = self.y_max_accel / ratio
@@ -159,14 +188,14 @@ class Gantry:
         else:
             y_accel = self.x_max_accel * ratio
             x_accel = self.x_max_accel
-            
+
         if ratio > self.x_max_decel / self.y_max_decel:
             x_decel = self.y_max_decel / ratio
             y_decel = self.y_max_decel
         else:
-            y_decel =  self.x_max_decel * ratio
+            y_decel = self.x_max_decel * ratio
             x_decel = self.x_max_decel
-            
+
         self.x.set_pos_traj(new_x, x_vel, x_accel, x_decel)
         self.y.set_pos_traj(new_x, y_vel, y_accel, y_decel)
 
