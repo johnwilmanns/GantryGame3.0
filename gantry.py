@@ -64,11 +64,12 @@ class Gantry:
 
 
     def calibrate(self):
+        print("warming up sphincter")
         for motor in self.axes():
             motor.calibrate_no_hold()
         for motor in self.axes():
             motor.hold_until_calibrated()
-        print("calibrated")
+        print("anus initialized")
 
     def home(self, axis=[True, True, True]):
         print("homing")
