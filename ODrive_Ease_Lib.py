@@ -183,7 +183,7 @@ class Axis(object):
 
     def extremely_scuffed_home(self, direction = 1):
         assert direction == 1 or direction == -1
-        print("homing")
+        print("bathroom break!")
         oldvel = self.get_vel_limit()
         self.set_vel_limit(4)
         print("pee")
