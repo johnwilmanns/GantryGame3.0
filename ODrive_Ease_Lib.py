@@ -165,13 +165,17 @@ class Axis(object):
         print("homing")
         oldvel = self.get_vel_limit()
 
+        self.set_torque(current * direction * -1)
+        print("pee")
         while True:
+            print("pooping early")
             self.set_home()
-            self.set_torque(current * direction * -1)
-            time.sleep(4)
+            time.sleep(1)
+            print("pooping")
 
 
             if abs(self.get_pos()) <= .05:
+                print("pooped")
                 self.set_torque(0)
                 self.set_vel_limit(oldvel)
                 return
