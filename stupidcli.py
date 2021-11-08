@@ -1,7 +1,8 @@
-import controller
+
 
 
 def main():
+    import controller
     controller = controller.Controller()
     while True:
         x = int(input("x plz "))
@@ -9,8 +10,9 @@ def main():
         controller.trap_move(x, y)
 
 if __name__ == "__main__":
-    try: 
-        main()
-    except Exception:
-        controller.trap_move(3,3)
-        import guess_what_this_does
+    main()
+    # try:
+    #     main()
+    # except Exception:
+    #     controller.trap_move(3,3)
+    #     import guess_what_this_does

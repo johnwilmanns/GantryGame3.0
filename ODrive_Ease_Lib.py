@@ -34,12 +34,14 @@ class Axis(object):
 
     #odrive control methods
 
-    def set_pos(self, pos):
+    def set_pos(self, pos, ensure_control_mode=True):
         desired_pos = pos + self.home
-        if self.axis.requested_state != 8:
-            self.axis.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
-        if self.axis.controller.config.control_mode != 3:
-            self.axis.controller.config.control_mode = CONTROL_MODE_POSITION_CONTROL
+
+        if ensure_control_mode:
+            if self.axis.requested_state != 8:
+                self.axis.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
+            if self.axis.controller.config.control_mode != 3:
+                self.axis.controller.config.control_mode = CONTROL_MODE_POSITION_CONTROL
         self.axis.controller.input_pos = desired_pos
 
     def set_relative_pos(self, pos):
@@ -57,23 +59,22 @@ class Axis(object):
         self.axis.controller.input_pos = pos
 
 
-
-    def set_pos_traj(self, pos, accel, vel, decel, inertia=0):
-        # BUG: trajectory control not working when invoked after a velocity control, this line is used to
-        # uselessly revert back to position control
-
+    def set_trap_values(self, accel, vel, decel, inertia=0):
         assert accel >= 0 and vel >= 0 and decel >= 0 and inertia >= 0, "Values must be positive"
-        self.set_relative_pos(0)
+        # self.set_relative_pos(0)
         self.axis.trap_traj.config.accel_limit = accel
         self.axis.trap_traj.config.vel_limit = vel
         self.axis.trap_traj.config.decel_limit = decel
-        if inertia != 0:
-            self.axis.controller.config.inertia = inertia
+        self.axis.controller.config.inertia = inertia
 
         if self.axis.current_state != AXIS_STATE_CLOSED_LOOP_CONTROL:
             self.axis.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
         self.axis.controller.config.control_mode = CONTROL_MODE_POSITION_CONTROL
         self.axis.controller.config.input_mode = INPUT_MODE_TRAP_TRAJ
+
+    def set_pos_traj(self, pos):
+        # BUG: trajectory control not working when invoked after a velocity control, this line is used to
+        # uselessly revert back to position control
         self.axis.controller.input_pos = pos + self.home
 
     def set_vel(self, vel):

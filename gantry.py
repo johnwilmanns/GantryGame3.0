@@ -16,13 +16,14 @@ class Gantry:
 
         self.clear_errors()
 
-        self.x = ODrive_Ease_Lib.Axis(self.odrv0.axis1) # X
+
+        self.x = ODrive_Ease_Lib.Axis(self.odrv1.axis1) # X
         self.y = ODrive_Ease_Lib.Axis(self.odrv1.axis0) # Y
-        self.z = ODrive_Ease_Lib.Axis(self.odrv1.axis1) # Z
-        self.x_max_accel = 2
-        self.y_max_accel = 2
-        self.x_max_decel = 5
-        self.y_max_decel = 5
+        self.z = ODrive_Ease_Lib.Axis(self.odrv0.axis1) # Z
+        self.x_max_accel = 20
+        self.y_max_accel = 20
+        self.x_max_decel = 10
+        self.y_max_decel = 10
         self.x_max_vel = 20
         self.y_max_vel = 20
 
@@ -50,7 +51,9 @@ class Gantry:
         self.y.axis.controller.config.enable_overspeed_error = False
 
         self.clear_errors()
-        self.x.start_pos_liveplotter()
+        # self.x.start_pos_liveplotter()
+        start_liveplotter(lambda: [self.x.axis.encoder.pos_estimate, self.x.axis.controller.pos_setpoint,self.y.axis.encoder.pos_estimate, self.y.axis.controller.pos_setpoint,])
+
         try:
             self.x.check_status()
             self.y.check_status()
@@ -191,10 +194,13 @@ class Gantry:
             x_vel = y_vel * ratio
 
 
-        self.x.set_pos_traj(new_x, x_vel, x_accel, x_decel)
+        self.x.set_trap_values(x_vel, x_accel, x_decel)
         print(f"x: {x_vel, x_accel, x_decel}")
-        self.y.set_pos_traj(new_y, y_vel, y_accel, y_decel)
+        self.y.set_trap_values(y_vel, y_accel, y_decel)
         print(f"y: {y_vel, y_accel, y_decel}")
+
+        self.x.set_pos(new_x, False)
+        self.y.set_pos(new_y, False)
 
 
     def set_pos_noblock(self, x = -1, y = -1, z = -1):
