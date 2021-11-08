@@ -56,6 +56,10 @@ class Gantry:
             self.y.check_status()
         except:
             self.calibrate()
+
+        self.x.check_status()
+        self.y.check_status()
+
         self.sensorless_home()
         self.print_positions()
         self.dump_errors()

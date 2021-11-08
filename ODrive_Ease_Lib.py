@@ -196,11 +196,13 @@ class Axis(object):
 
 
             if abs(self.get_pos()) <= .05:
-                print("pooped")
+                print("almost done pooping")
                 self.set_torque(0)
                 self.set_vel_limit(oldvel)
                 self.idle()
+                print("pooped")
                 return
+                print("forbidden poop")
 
 
     def check_status(self):
