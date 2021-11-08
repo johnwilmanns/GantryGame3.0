@@ -185,12 +185,11 @@ class Gantry:
             y_vel = self.y_max_vel
             x_vel = y_vel * ratio
 
-        self.x.set_pos(new_x)
-        self.y.set_pos(new_y)
-        # self.x.set_pos_traj(new_x, x_vel, x_accel, x_decel)
-        # print(f"x: {x_vel, x_accel, x_decel}")
-        # self.y.set_pos_traj(new_x, y_vel, y_accel, y_decel)
-        # print(f"y: {y_vel, y_accel, y_decel}")
+
+        self.x.set_pos_traj(new_x, x_vel, x_accel, x_decel)
+        print(f"x: {x_vel, x_accel, x_decel}")
+        self.y.set_pos_traj(new_x, y_vel, y_accel, y_decel)
+        print(f"y: {y_vel, y_accel, y_decel}")
 
 
     def set_pos_noblock(self, x = -1, y = -1, z = -1):
