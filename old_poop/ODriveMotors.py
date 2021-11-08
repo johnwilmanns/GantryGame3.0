@@ -443,13 +443,13 @@ class GGMotors(object):
     '''
         
     def set_x_pos(self, pos):
-        self._xavier.axis0.controller.pos_setpoint = pos + self._xavier_axis0.zero
+        self._xavier.axis0.controller.pos_setpoint = pos + self._xavier_axis0.home
 
     def set_y_pos_no_pid(self, pos):
         self.axes['x'].set_pos(pos)
 
     def set_y_pos(self, pos):
-        self._yannie.axis1.controller.input_pos = pos + self.axes['x'].zero
+        self._yannie.axis1.controller.input_pos = pos + self.axes['x'].home
 
     def set_x_pos_trap(self, pos):
         self._xavier_axis0.set_pos_trap(pos)

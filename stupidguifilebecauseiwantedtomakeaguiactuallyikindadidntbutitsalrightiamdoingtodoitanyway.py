@@ -8,7 +8,7 @@ import controller
 
 class MyGrid(GridLayout):
     def __init__(self, **kwargs):
-        self.controller = controller.Controller()
+
         super(MyGrid, self).__init__(**kwargs)
         self.cols = 1
 
@@ -32,17 +32,17 @@ class MyGrid(GridLayout):
         self.submit = Button(text="Go", font_size=40)
         self.submit.bind(on_press=self.pressed)
         self.add_widget(self.submit)
+        self.controller = controller.Controller()
 
     def pressed(self, instance):
         x = float(self.name.text)
         y = float(self.lastName.text)
-        z = float(self.email.text)
 
-        self.controller.set_pos(x, y, z)
+        self.controller.trap_move(x, y)
         print("position set")
         self.name.text = ""
         self.lastName.text = ""
-        self.email.text = ""
+        self.email.text = str(self.controller.gantry.dump_errors())
 
 class MyApp(App):
     def build(self):
