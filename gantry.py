@@ -55,6 +55,7 @@ class Gantry:
             self.x.check_status()
             self.y.check_status()
         except:
+            print("gotta crank one out rq")
             self.calibrate()
 
         self.x.check_status()
