@@ -19,12 +19,12 @@ class Gantry:
         self.x = ODrive_Ease_Lib.Axis(self.odrv0.axis1) # X
         self.y = ODrive_Ease_Lib.Axis(self.odrv1.axis0) # Y
         self.z = ODrive_Ease_Lib.Axis(self.odrv1.axis1) # Z
-        self.x_max_accel = 2
-        self.y_max_accel = 2
-        self.x_max_decel = 2
-        self.y_max_decel = 2
-        self.x_max_vel = 3
-        self.y_max_vel = 3
+        self.x_max_accel = 5
+        self.y_max_accel = 5
+        self.x_max_decel = 5
+        self.y_max_decel = 5
+        self.x_max_vel = 10
+        self.y_max_vel = 10
 
     #todo these should really be stored in the ease lib axis, but I really don't feel like fixing that right now
     def set_max_accel(self, xmax, ymax):
@@ -41,7 +41,9 @@ class Gantry:
 
     #todo, add assert statments
     def startup(self):
+        print("starting up")
         self.clear_errors()
+        self.x.start_pos_liveplotter()
         self.calibrate()
         self.sensorless_home()
         self.print_positions()
@@ -63,7 +65,7 @@ class Gantry:
 
     def calibrate(self):
         for motor in self.axes():
-            motor.calibrate_encoder()
+            motor.calibrate_no_hold()
         for motor in self.axes():
             motor.hold_until_calibrated()
         print("calibrated")
@@ -148,7 +150,7 @@ class Gantry:
 
         # the ratio is the x to the y movement distance
 
-        ratio = abs(new_x - self.x.get_pos() / new_y - self.y.get_pos())
+        ratio = abs((new_x - self.x.get_pos()) / (new_y - self.y.get_pos()))
         print(ratio)
         x_accel = self.x_max_accel
         y_accel = x_accel / ratio
@@ -171,60 +173,12 @@ class Gantry:
             y_vel = self.y_max_vel
             x_vel = y_vel * ratio
 
-        self.x.set_pos_traj(new_x, x_vel, x_accel, x_decel)
-        print(f"x: {x_vel, x_accel, x_decel}")
-        self.y.set_pos_traj(new_x, y_vel, y_accel, y_decel)
-        print(f"y: {y_vel, y_accel, y_decel}")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        # compares to see if it should be limited by x or y
-        # the reason we have to have this so many times is because we have to compare each one individually, isn't that fun.
-
-        if ratio > self.x_max_vel / self.y_max_vel:
-            x_vel = self.y_max_vel / ratio
-            y_vel = self.y_max_vel
-        else:
-            y_vel = self.x_max_vel * ratio
-            x_vel = self.x_max_vel
-
-        if ratio > self.x_max_accel / self.y_max_accel:
-            x_accel = self.y_max_accel / ratio
-            y_accel = self.y_max_accel
-        else:
-            y_accel = self.x_max_accel * ratio
-            x_accel = self.x_max_accel
-
-        if ratio > self.x_max_decel / self.y_max_decel:
-            x_decel = self.y_max_decel / ratio
-            y_decel = self.y_max_decel
-        else:
-            y_decel = self.x_max_decel * ratio
-            x_decel = self.x_max_decel
-
-        self.x.set_pos_traj(new_x, x_vel, x_accel, x_decel)
-        self.y.set_pos_traj(new_x, y_vel, y_accel, y_decel)
+        self.x.set_pos(new_x)
+        self.y.set_pos(new_y)
+        # self.x.set_pos_traj(new_x, x_vel, x_accel, x_decel)
+        # print(f"x: {x_vel, x_accel, x_decel}")
+        # self.y.set_pos_traj(new_x, y_vel, y_accel, y_decel)
+        # print(f"y: {y_vel, y_accel, y_decel}")
 
 
     def set_pos_noblock(self, x = -1, y = -1, z = -1):

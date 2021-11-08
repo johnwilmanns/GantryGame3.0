@@ -3,6 +3,7 @@ import time
 import odrive
 import usb.core
 from odrive.enums import *
+from odrive.utils import *
 
 
 def find_ODrives():
@@ -161,7 +162,7 @@ class Axis(object):
 
     def scuffed_home(self, current = .3, direction = 1):
         assert direction == 1 or direction == -1
-
+        print("homing")
         oldvel = self.get_vel_limit()
 
         while True:
