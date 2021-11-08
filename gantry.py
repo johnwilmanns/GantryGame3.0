@@ -51,7 +51,11 @@ class Gantry:
 
         self.clear_errors()
         self.x.start_pos_liveplotter()
-        self.calibrate()
+        try:
+            self.x.check_status()
+            self.y.check_status()
+        except:
+            self.calibrate()
         self.sensorless_home()
         self.print_positions()
         self.dump_errors()
@@ -111,7 +115,7 @@ class Gantry:
     def sensorless_home(self, home_axes = [True, True, True]):
         for num, axis in enumerate(self.axes()) :
             if home_axes[num]:
-                axis.scuffed_home()
+                axis.extremely_scuffed_home()
         self.requested_pos = [0, 0]
 
     def dump_errors(self):

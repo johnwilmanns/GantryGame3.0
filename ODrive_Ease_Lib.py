@@ -181,6 +181,27 @@ class Axis(object):
                 return
 
 
+    def extremely_scuffed_home(self, direction = 1):
+        assert direction == 1 or direction == -1
+        print("homing")
+        oldvel = self.get_vel_limit()
+        print("pee")
+        while True:
+            print("pooping early")
+            self.set_home()
+            self.set_pos(-10)
+            time.sleep(1)
+            print("pooping")
+
+
+            if abs(self.get_pos()) <= .05:
+                print("pooped")
+                self.set_torque(0)
+                self.set_vel_limit(oldvel)
+                self.idle()
+                return
+
+
     def check_status(self):
         assert self.axis.encoder.is_ready and self.axis.motor.is_calibrated
 
