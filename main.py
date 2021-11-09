@@ -18,7 +18,7 @@ def main():
             time.sleep(.005)
 
     def move(point):
-        print("starting move at" + str(time.time()))
+
         x,y = point
         x *= scale_factor
         y *= scale_factor

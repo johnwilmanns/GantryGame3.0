@@ -22,8 +22,8 @@ class Gantry:
         self.z = ODrive_Ease_Lib.Axis(self.odrv0.axis1) # Z
         self.x_max_accel = 100
         self.y_max_accel = 100
-        self.x_max_decel = 150
-        self.y_max_decel = 150
+        self.x_max_decel = 10000
+        self.y_max_decel = 10000
         self.x_max_vel = 20
         self.y_max_vel = 20
         self.has_goal = False #for trajectory management
@@ -203,11 +203,12 @@ class Gantry:
         self.y.set_trap_values(y_vel, y_accel, y_decel)
         print(f"y: {y_vel, y_accel, y_decel}")
 
-        threshold = .1
+        threshold = .5
 
         if self.has_goal:
             while abs(self.x.get_pos() - self.x_goal) > threshold or abs(self.y.get_pos() - self.y_goal) > threshold:
                 time.sleep(.001)
+        print("finished move at " + str(time.time()))
 
 
         self.x.set_pos(new_x, False)
