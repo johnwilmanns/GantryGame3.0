@@ -1,5 +1,5 @@
 def main():
-    import gantry
+    # import gantry
     import pickle
     import time
 
@@ -15,7 +15,9 @@ def main():
 
     def move(point):
         x,y = point
-        x,y *= scale_factor
+        x *= scale_factor
+        y *= scale_factor
+
 
         x += offset[0]
         y += offset[1]
@@ -25,20 +27,42 @@ def main():
         time.sleep(.2)
         while any(axis.is_moving() for axis in gantry.axes()):
             time.sleep(.1)
+
+    def pen_up():
+        print('up')
+
+    def pen_down():
+        print('down')
+    
+    def move(point):
+
+        x,y = point
+        x *= scale_factor
+        y *= scale_factor
+
+
+        x += offset[0]
+        y += offset[1]
+        
+        point = (x,y)
+
+        print(f"Going to {point}")
         
         
     segments = None
+    import os
+    import sys
 
-    with open("path.pickle", "rb") as file:
+    with open(os.path.join(sys.path[0], "path.pickle"), "rb") as file:
         segments = pickle.load(file)
-        print(segments)
+        # print(segments)
 
 
 
-    gantry = gantry.Gantry()
-    gantry.startup()
+    # gantry = gantry.Gantry()
+    # gantry.startup()
 
-    
+    pen_up()
     for seg in segments:
         move(seg[0])
         pen_down()
