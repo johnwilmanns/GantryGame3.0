@@ -1,8 +1,10 @@
-import gantry
-
 def main():
-    gantry = controller.Gantry()
+    import gantry
+    gantry = gantry.Gantry()
     gantry.startup()
+
+
+    
     
 
 if __name__ == "__main__":
