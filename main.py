@@ -1,5 +1,5 @@
 def main():
-    # import gantry
+    import gantry
     import pickle
     import time
 
@@ -28,25 +28,6 @@ def main():
         while any(axis.is_moving() for axis in gantry.axes()):
             time.sleep(.1)
 
-    def pen_up():
-        print('up')
-
-    def pen_down():
-        print('down')
-    
-    def move(point):
-
-        x,y = point
-        x *= scale_factor
-        y *= scale_factor
-
-
-        x += offset[0]
-        y += offset[1]
-        
-        point = (x,y)
-
-        print(f"Going to {point}")
         
         
     segments = None
@@ -59,8 +40,8 @@ def main():
 
 
 
-    # gantry = gantry.Gantry()
-    # gantry.startup()
+    gantry = gantry.Gantry()
+    gantry.startup()
 
     pen_up()
     for seg in segments:
