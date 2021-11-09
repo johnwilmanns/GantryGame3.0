@@ -2,12 +2,25 @@ def main():
     import gantry
     import pickle
 
+    scale_factor = 8
+    offset = (0,0)
 
     def pen_up():
         pass
     def pen_down():
         pass
-    
+    def move(point):
+        x,y = point
+        x,y *= scale_factor
+
+        x += offset[0]
+        y += offset[1]
+
+        gantry.trap_move(x,y)
+        
+
+
+
     segments = None
 
     with open("path.pickle", "rb") as file:
@@ -21,8 +34,14 @@ def main():
 
     
     for seg in segments:
-        for point in seg:
-            gantry.trap_move(*point)
+        move(seg[0])
+        pen_down()
+        for point in seg[1:]:
+            move(point)
+        pen_up()
+
+    print("done")
+
 
 
     
