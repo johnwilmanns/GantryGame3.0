@@ -8,10 +8,14 @@ def main():
 
     def pen_up():
         gantry.set_pos_noblock(z=5)
-        time.sleep(1)
+        time.sleep(.2)
+        while any(axis.is_moving() for axis in gantry.axes()):
+            time.sleep(.1)
     def pen_down():
         gantry.set_pos_noblock(z=0)
-        time.sleep(1)
+        time.sleep(.2)
+        while any(axis.is_moving() for axis in gantry.axes()):
+            time.sleep(.1)
 
     def move(point):
         x,y = point
