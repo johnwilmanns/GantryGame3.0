@@ -18,6 +18,7 @@ def main():
             time.sleep(.005)
 
     def move(point):
+        print("starting move at" + str(time.time()))
         x,y = point
         x *= scale_factor
         y *= scale_factor
@@ -34,8 +35,8 @@ def main():
 
         threshold = .1
 
-        while abs(gantry.x.get_pos() - x) > threshold or abs(gantry.y.get_pos() - y) > threshold:
-            time.sleep(.001)
+
+
         
         
     segments = None
@@ -50,6 +51,7 @@ def main():
 
     gantry = gantry.Gantry()
     gantry.startup()
+    print("started")
 
 
     # while True:
@@ -57,7 +59,7 @@ def main():
 
     pen_up()
 
-    input("press any key to start")
+    input("press return to start")
 
     pen_up()
     for seg in segments:

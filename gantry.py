@@ -26,6 +26,10 @@ class Gantry:
         self.y_max_decel = 150
         self.x_max_vel = 20
         self.y_max_vel = 20
+        self.has_goal = False #for trajectory management
+        self.y_goal = 0
+        self.x_goal = 0
+
 
     #todo these should really be stored in the ease lib axis, but I really don't feel like fixing that right now
     def set_max_accel(self, xmax, ymax):
@@ -199,9 +203,19 @@ class Gantry:
         self.y.set_trap_values(y_vel, y_accel, y_decel)
         print(f"y: {y_vel, y_accel, y_decel}")
 
+        threshold = .1
+
+        if self.has_goal:
+            while abs(self.x.get_pos() - self.x_goal) > threshold or abs(self.y.get_pos() - self.y_goal) > threshold:
+                time.sleep(.001)
+
+
         self.x.set_pos(new_x, False)
         self.y.set_pos(new_y, False)
 
+        self.has_goal = True
+        self.y_goal = new_y
+        self.x_goal = new_x
 
     def set_pos_noblock(self, x = -1, y = -1, z = -1):
 
