@@ -21,8 +21,11 @@ def main():
             holder.go_to_position(600)
 
         curr_step = 0
-        with open('poo_poo.json', 'r') as stepper_pos_file:
-            curr_step = json.loads(stepper_pos_file.read())
+        try:
+            with open('poo_poo.json', 'r') as stepper_pos_file:
+                curr_step = json.loads(stepper_pos_file.read())
+        except:
+            curr_step = 0
         holder.go_to_position(-curr_step['step_pos'])
         holder.set_as_home()
 
