@@ -8,14 +8,14 @@ def main():
 
     def pen_up():
         gantry.set_pos_noblock(z=5)
-        time.sleep(.2)
+        time.sleep(.05)
         while any(axis.is_moving() for axis in gantry.axes()):
-            time.sleep(.1)
+            time.sleep(.005)
     def pen_down():
         gantry.set_pos_noblock(z=0)
-        time.sleep(.2)
+        time.sleep(.05)
         while any(axis.is_moving() for axis in gantry.axes()):
-            time.sleep(.1)
+            time.sleep(.005)
 
     def move(point):
         x,y = point
@@ -28,17 +28,21 @@ def main():
 
         gantry.trap_move(x,y)
 
-        time.sleep(.2)
-        while any(axis.is_moving() for axis in gantry.axes()):
-            time.sleep(.1)
+        # # time.sleep(.1)
+        # while any(axis.is_moving() for axis in gantry.axes()):
+        #     time.sleep(.1)
 
+        threshold = .1
+
+        while abs(gantry.x.get_pos() - x) > threshold or abs(gantry.y.get_pos() - y) > threshold:
+            time.sleep(.001)
         
         
     segments = None
     import os
     import sys
 
-    with open(os.path.join(sys.path[0], "path.pickle"), "rb") as file:
+    with open("path.pickle", "rb") as file:
         segments = pickle.load(file)
         # print(segments)
 
@@ -47,9 +51,18 @@ def main():
     gantry = gantry.Gantry()
     gantry.startup()
 
+
+    # while True:
+    #     gantry.set_pos_noblock(z=float(input()))
+
+    pen_up()
+
+    input("press any key to start")
+
     pen_up()
     for seg in segments:
-        move(seg[0])
+        # move(seg[0])
+        print(seg[0])
         pen_down()
         for point in seg[1:]:
             move(point)

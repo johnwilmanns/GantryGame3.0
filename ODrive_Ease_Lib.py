@@ -240,7 +240,7 @@ class Axis(object):
 
     def is_moving(self, threshold = .05):
 
-        vel = self.axis.get_vel() 
+        vel = self.get_vel()
         return vel > threshold or vel < -threshold
 
 

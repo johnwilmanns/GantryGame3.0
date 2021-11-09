@@ -20,10 +20,10 @@ class Gantry:
         self.x = ODrive_Ease_Lib.Axis(self.odrv1.axis1) # X
         self.y = ODrive_Ease_Lib.Axis(self.odrv1.axis0) # Y
         self.z = ODrive_Ease_Lib.Axis(self.odrv0.axis1) # Z
-        self.x_max_accel = 20
-        self.y_max_accel = 20
-        self.x_max_decel = 10
-        self.y_max_decel = 10
+        self.x_max_accel = 100
+        self.y_max_accel = 100
+        self.x_max_decel = 150
+        self.y_max_decel = 150
         self.x_max_vel = 20
         self.y_max_vel = 20
 
