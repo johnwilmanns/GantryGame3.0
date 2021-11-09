@@ -238,8 +238,16 @@ class Axis(object):
     def is_calibrated(self):
         return self.axis.motor.is_calibrated
 
+    def is_moving(self, threshold = .05):
+
+        vel = self.axis.get_vel() 
+        return vel > threshold or vel < -threshold
+
+
+
     def idle(self):
         self.axis.requested_state = 1
+    
 
     #liveplotter stuff
 

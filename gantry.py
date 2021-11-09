@@ -214,7 +214,7 @@ class Gantry:
         if z != -1:
             self.z.set_pos(z)
 
-        self.requested_pos = [x, y]
+        # self.requested_pos = [x, y]
 
 
 
