@@ -20,10 +20,10 @@ class Gantry:
         self.x = ODrive_Ease_Lib.Axis(self.odrv1.axis1) # X
         self.y = ODrive_Ease_Lib.Axis(self.odrv1.axis0) # Y
         self.z = ODrive_Ease_Lib.Axis(self.odrv0.axis1) # Z
-        self.x_max_accel = 20
-        self.y_max_accel = 20
-        self.x_max_decel = 20
-        self.y_max_decel = 20
+        self.x_max_accel = 100
+        self.y_max_accel = 100
+        self.x_max_decel = 300
+        self.y_max_decel = 300
         self.x_max_vel = 20
         self.y_max_vel = 20
         self.has_goal = False #for trajectory management
@@ -56,6 +56,8 @@ class Gantry:
 
         self.clear_errors()
         # self.x.start_pos_liveplotter()
+        # start_liveplotter(lambda: [self.x.axis.encoder.pos_estimate, self.x.axis.encoder.vel_estimate,
+        #                            self.y.axis.encoder.pos_estimate, self.y.axis.encoder.vel_estimaty ])
         start_liveplotter(lambda: [self.x.axis.encoder.pos_estimate, self.x.axis.controller.pos_setpoint,self.y.axis.encoder.pos_estimate, self.y.axis.controller.pos_setpoint,])
 
         try:
@@ -172,16 +174,21 @@ class Gantry:
 
     def trap_move(self, new_x, new_y):
 
-        threshold = .1
-
+        threshold = 1
+        x_pos = self.x.get_pos()
+        y_pos = self.y.get_pos()
         if self.has_goal:
-            while abs(self.x.get_pos() - self.x_goal) > threshold or abs(self.y.get_pos() - self.y_goal) > threshold:
-                pass
+            while abs(x_pos - self.x_goal) > threshold or abs(y_pos - self.y_goal) > threshold:
+
+                x_pos = self.x.get_pos()
+                y_pos = self.y.get_pos()
+
+
 
 
         # the ratio is the x to the y movement distance
-
-        ratio = abs((new_x - self.x.get_pos()) / (new_y - self.y.get_pos()))
+        t0 = time.time()
+        ratio = abs((new_x - x_pos) / (new_y - y_pos))
         print(ratio)
         x_accel = self.x_max_accel
         y_accel = x_accel / ratio
@@ -202,6 +209,7 @@ class Gantry:
         if y_vel > self.y_max_vel:
             y_vel = self.y_max_vel
             x_vel = y_vel * ratio
+        print("Time taken to calculate ratios:")
         print(time.time() - t0)
         t0 = time.time()
         self.x.set_trap_values(x_vel, x_accel, x_decel)
@@ -210,7 +218,7 @@ class Gantry:
         print(f"y: {y_vel, y_accel, y_decel}")
 
 
-
+        print("time taken to update trap vals")
         print(time.time() - t0)
 
 

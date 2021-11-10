@@ -60,7 +60,7 @@ def main():
 
     pen_up()
 
-    input("press return to start")
+    # input("press return to start")
 
     pen_up()
     for seg in segments:
