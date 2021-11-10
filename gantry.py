@@ -20,10 +20,10 @@ class Gantry:
         self.x = ODrive_Ease_Lib.Axis(self.odrv1.axis1) # X
         self.y = ODrive_Ease_Lib.Axis(self.odrv1.axis0) # Y
         self.z = ODrive_Ease_Lib.Axis(self.odrv0.axis1) # Z
-        self.x_max_accel = 20
-        self.y_max_accel = 20
-        self.x_max_decel = 20
-        self.y_max_decel = 20
+        self.x_max_accel = 1000
+        self.y_max_accel = 1000
+        self.x_max_decel = 1000
+        self.y_max_decel = 1000
         self.x_max_vel = 20
         self.y_max_vel = 20
         self.has_goal = False #for trajectory management
@@ -172,13 +172,20 @@ class Gantry:
 
     def trap_move(self, new_x, new_y):
 
-        # the ratio is the x to the y movement distance
+        threshold = .1
 
-        ratio = abs((new_x - self.x.get_pos()) / (new_y - self.y.get_pos()))
-        print(ratio)
+        if self.has_goal:
+            while abs(self.x.get_pos() - self.x_goal) > threshold or abs(self.y.get_pos() - self.y_goal) > threshold:
+                pass
+
+
+        # the ratio is the x to the y movement distance
+        x_pos = self.x.get_pos()
+        y_pos = self.y.get_pos()
+        t0 = time.time()
+        ratio = abs((new_x - x_pos()) / (new_y - y_pos))
         x_accel = self.x_max_accel
         y_accel = x_accel / ratio
-
         if y_accel > self.y_max_accel:
             y_accel = self.y_max_accel
             x_accel = y_accel * ratio
@@ -196,19 +203,16 @@ class Gantry:
         if y_vel > self.y_max_vel:
             y_vel = self.y_max_vel
             x_vel = y_vel * ratio
-
-
+        print(time.time() - t0)
+        t0 = time.time()
         self.x.set_trap_values(x_vel, x_accel, x_decel)
         print(f"x: {x_vel, x_accel, x_decel}")
         self.y.set_trap_values(y_vel, y_accel, y_decel)
         print(f"y: {y_vel, y_accel, y_decel}")
 
-        threshold = .5
 
-        if self.has_goal:
-            while abs(self.x.get_pos() - self.x_goal) > threshold or abs(self.y.get_pos() - self.y_goal) > threshold:
-                time.sleep(.001)
-        print("finishing move at " + str(time.time()))
+
+        print(time.time() - t0)
 
 
         self.x.set_pos(new_x, False)

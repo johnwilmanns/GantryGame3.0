@@ -72,7 +72,7 @@ def main():
         pen_up()
 
     print("done")
-
+    pen_up()
 
 
     
