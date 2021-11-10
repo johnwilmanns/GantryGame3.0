@@ -20,10 +20,10 @@ class Gantry:
         self.x = ODrive_Ease_Lib.Axis(self.odrv1.axis1) # X
         self.y = ODrive_Ease_Lib.Axis(self.odrv1.axis0) # Y
         self.z = ODrive_Ease_Lib.Axis(self.odrv0.axis1) # Z
-        self.x_max_accel = 100
-        self.y_max_accel = 100
-        self.x_max_decel = 300
-        self.y_max_decel = 300
+        self.x_max_accel = 50
+        self.y_max_accel = 50
+        self.x_max_decel = 100
+        self.y_max_decel = 100
         self.x_max_vel = 20
         self.y_max_vel = 20
         self.has_goal = False #for trajectory management
@@ -58,7 +58,7 @@ class Gantry:
         # self.x.start_pos_liveplotter()
         # start_liveplotter(lambda: [self.x.axis.encoder.pos_estimate, self.x.axis.encoder.vel_estimate,
         #                            self.y.axis.encoder.pos_estimate, self.y.axis.encoder.vel_estimaty ])
-        start_liveplotter(lambda: [self.x.axis.encoder.pos_estimate, self.x.axis.controller.pos_setpoint,self.y.axis.encoder.pos_estimate, self.y.axis.controller.pos_setpoint,])
+        # start_liveplotter(lambda: [self.x.axis.encoder.pos_estimate, self.x.axis.controller.pos_setpoint,self.y.axis.encoder.pos_estimate, self.y.axis.controller.pos_setpoint,])
 
         try:
             self.x.check_status()
@@ -174,7 +174,7 @@ class Gantry:
 
     def trap_move(self, new_x, new_y):
 
-        threshold = 1
+        threshold = .2
         x_pos = self.x.get_pos()
         y_pos = self.y.get_pos()
         if self.has_goal:
