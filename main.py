@@ -64,8 +64,8 @@ def main():
 
     pen_up()
     for seg in segments:
-        # move(seg[0])
-        print(seg[0])
+        move(seg[0])
+        # print(seg[0])
         pen_down()
         for point in seg[1:]:
             move(point)
