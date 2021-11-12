@@ -63,7 +63,9 @@ def main():
     # input("press return to start")
 
     pen_up()
-    for seg in segments:
+    for i, seg in enumerate(segments):
+        print(f"Currently on segment {i}/{len(segments)}")
+
         move(seg[0])
         # print(seg[0])
         pen_down()
