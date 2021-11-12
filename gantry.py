@@ -190,7 +190,7 @@ class Gantry:
         # the ratio is the x to the y movement distance
         t0 = time.time()
         ratio = abs((new_x - x_pos) / (new_y - y_pos))
-        print(ratio)
+        # print(ratio)
         x_accel = self.x_max_accel
         y_accel = x_accel / ratio
         if y_accel > self.y_max_accel:
@@ -210,17 +210,17 @@ class Gantry:
         if y_vel > self.y_max_vel:
             y_vel = self.y_max_vel
             x_vel = y_vel * ratio
-        print("Time taken to calculate ratios:")
-        print(time.time() - t0)
-        t0 = time.time()
+        # print("Time taken to calculate ratios:")
+        # print(time.time() - t0)
+        # t0 = time.time()
         self.x.set_trap_values(x_vel, x_accel, x_decel)
         print(f"x: {x_vel, x_accel, x_decel}")
         self.y.set_trap_values(y_vel, y_accel, y_decel)
         print(f"y: {y_vel, y_accel, y_decel}")
 
 
-        print("time taken to update trap vals")
-        print(time.time() - t0)
+        # print("time taken to update trap vals")
+        # print(time.time() - t0)
 
 
         self.x.set_pos(new_x, False)
