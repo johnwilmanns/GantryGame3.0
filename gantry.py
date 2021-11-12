@@ -172,20 +172,14 @@ class Gantry:
         self.y.set_pos(new_y)
 
 
-    def trap_move(self, new_x, new_y):
+    def trap_move(self, new_x, new_y, cords = None, threshold = .2):
 
-        threshold = .2
-        x_pos = self.x.get_pos()
-        y_pos = self.y.get_pos()
+        if cords is None:
+            x_pos = self.x.get_pos()
+            y_pos = self.y.get_pos()
+        else:
+            x_pos, y_pos = cords
 
-        if self.has_goal:
-            while abs(x_pos - self.x_goal) > threshold or abs(y_pos - self.y_goal) > threshold:
-
-                x_pos = self.x.get_pos()
-                y_pos = self.y.get_pos()
-
-        self.y_goal = new_y
-        self.x_goal = new_x
 
 
         # the ratio is the x to the y movement distance
@@ -227,7 +221,14 @@ class Gantry:
         self.x.set_pos(new_x, False)
         self.y.set_pos(new_y, False)
 
-        self.has_goal = True
+        x_pos = self.x.get_pos()
+        y_pos = self.y.get_pos()
+
+        while abs(x_pos - new_x) > threshold or abs(y_pos - new_y) > threshold:
+            x_pos = self.x.get_pos()
+            y_pos = self.y.get_pos()
+
+        return x_pos, y_pos
 
 
     def set_pos_noblock(self, x = -1, y = -1, z = -1):

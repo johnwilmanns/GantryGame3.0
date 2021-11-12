@@ -17,7 +17,7 @@ def main():
         while any(axis.is_moving() for axis in gantry.axes()):
             time.sleep(.005)
 
-    def move(point):
+    def move(point, cords=None):
 
         x,y = point
         x *= scale_factor
@@ -27,7 +27,7 @@ def main():
         x += offset[0]
         y += offset[1]
 
-        gantry.trap_move(x,y)
+        gantry.trap_move(x,y, cords)
 
         # # time.sleep(.1)
         # while any(axis.is_moving() for axis in gantry.axes()):
@@ -60,7 +60,7 @@ def main():
 
     pen_up()
 
-    # input("press return to start")
+    input("press return to start")
 
     pen_up()
     for i, seg in enumerate(segments):
@@ -69,8 +69,10 @@ def main():
         move(seg[0])
         # print(seg[0])
         pen_down()
+
+        cords = None
         for point in seg[1:]:
-            move(point)
+            cords = move(point, cords)
         pen_up()
 
     print("done")
