@@ -215,9 +215,9 @@ class Gantry:
         # print(time.time() - t0)
         # t0 = time.time()
         self.x.set_trap_values(x_vel, x_accel, x_decel)
-        print(f"x: {x_vel, x_accel, x_decel}")
+        # print(f"x: {x_vel, x_accel, x_decel}")
         self.y.set_trap_values(y_vel, y_accel, y_decel)
-        print(f"y: {y_vel, y_accel, y_decel}")
+        # print(f"y: {y_vel, y_accel, y_decel}")
 
 
         # print("time taken to update trap vals")
