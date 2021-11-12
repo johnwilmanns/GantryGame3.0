@@ -183,7 +183,8 @@ class Gantry:
                 x_pos = self.x.get_pos()
                 y_pos = self.y.get_pos()
 
-
+        self.y_goal = new_y
+        self.x_goal = new_x
 
 
         # the ratio is the x to the y movement distance
@@ -226,8 +227,7 @@ class Gantry:
         self.y.set_pos(new_y, False)
 
         self.has_goal = True
-        self.y_goal = new_y
-        self.x_goal = new_x
+
 
     def set_pos_noblock(self, x = -1, y = -1, z = -1):
 
