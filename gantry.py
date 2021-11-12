@@ -177,6 +177,7 @@ class Gantry:
         threshold = .2
         x_pos = self.x.get_pos()
         y_pos = self.y.get_pos()
+
         if self.has_goal:
             while abs(x_pos - self.x_goal) > threshold or abs(y_pos - self.y_goal) > threshold:
 
