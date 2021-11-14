@@ -1,3 +1,5 @@
+import multiprocessing as mp
+import cv2
 def main():
     import gantry
     import pickle
@@ -5,6 +7,24 @@ def main():
 
     scale_factor = 8
     offset = (0,0)
+
+    def draw_progress(queue):
+        def distance(x1, y1, x2, y2):
+            return (((x2-x1) ** 2 + (y2 - y1) ** 2) ** .5)
+        #figure out how to make a blank image, i'm too retarded / impatitiant to try to understand samir's shit
+        while True:
+            if queue.empty() is not False:
+                seg = queue.get()
+                color = tuple(rd.randrange(0,255) for i in range(3))
+                # i = 0
+                for i in range(len(seg)-1):
+
+                    # print(seg[i])
+                    if distance(seg[i][0], seg[i][1], seg[i+1][0], seg[i+1][1]) < 2000:
+                        x1,y1,x2,y2 = seg[i][0], seg[i][1], seg[i+1][0], seg[i+1][1]
+                        cv2.line(img,(x1,y1),(x2,y2),color,2)
+
+
 
     def pen_up():
         gantry.set_pos_noblock(z=5)
@@ -61,21 +81,26 @@ def main():
     pen_up()
 
     input("press return to start")
-
+    queue = mp.Queue()
+    visualizer = mp.Process(target=draw_progress, args=(queue))
+    visualizer.start()
     pen_up()
     for i, seg in enumerate(segments):
         print(f"Currently on segment {i}/{len(segments)}")
-
+        queue.put(seg)
         move(seg[0])
         # print(seg[0])
         pen_down()
-
         cords = None
         for point in seg[1:]:
             cords = move(point, cords)
         pen_up()
 
     print("done")
+    try:
+        visualizer.close()
+    except ValueError:
+        print("sucsessfully terminated visualizer")
     pen_up()
 
 
