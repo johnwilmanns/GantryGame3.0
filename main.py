@@ -28,6 +28,8 @@ def main():
             if queue2.empty() is not False:
                 x, y = queue2.get()
                 cv2.line(img,(old_x,old_y),(x,y),(0,0,0),2)
+            cv2.imshow('image', img)
+            cv2.waitKey(1) #probably NOT how this works
 
 
 
