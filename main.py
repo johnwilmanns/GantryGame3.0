@@ -57,7 +57,7 @@ def main():
         x += offset[0]
         y += offset[1]
 
-        gantry.trap_move(x,y, cords, queue2) #todo will this be defined?
+        gantry.trap_move(x,y, cords, visualizer=queue2) #todo will this be defined?
 
         # # time.sleep(.1)
         # while any(axis.is_moving() for axis in gantry.axes()):
@@ -93,7 +93,7 @@ def main():
     input("press return to start")
     queue1 = mp.Queue()
     queue2 = mp.Queue()
-    visualizer = mp.Process(target=draw_progress, args=(queue))
+    visualizer = mp.Process(target=draw_progress, args=(queue1, queue2))
     visualizer.start()
     pen_up()
     for i, seg in enumerate(segments):
