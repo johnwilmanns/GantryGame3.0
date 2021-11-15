@@ -1,6 +1,6 @@
 import multiprocessing as mp
 import cv2
-
+import numpy as np
 def main():
     import gantry
     import pickle
@@ -12,9 +12,7 @@ def main():
     def draw_progress(queue1, queue2):
 
         #figure out how to make a blank image, i'm too retarded / impatitiant to try to understand samir's shit
-        img = np.zeros((height, width, 3), np.uint8)
-        img[:, 0:width // 2] = (255, 0, 0)  # (B, G, R)
-        img[:, width // 2:width] = (0, 255, 0)
+        img = np.zeros((800, 800, 3), np.uint8)
         old_x = 0
         old_y = 0
         while True:
