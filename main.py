@@ -1,5 +1,5 @@
 import multiprocessing as mp
-from cv2 import cv2
+import cv2
 
 def main():
     import gantry
@@ -12,9 +12,9 @@ def main():
     def draw_progress(queue1, queue2):
 
         #figure out how to make a blank image, i'm too retarded / impatitiant to try to understand samir's shit
-        img = input_img.copy()
-        mask = cv2.inRange(img, (0,0,0), (255,255,255))
-        img[mask>0] = (255,255,255)
+        img = np.zeros((height, width, 3), np.uint8)
+        img[:, 0:width // 2] = (255, 0, 0)  # (B, G, R)
+        img[:, width // 2:width] = (0, 255, 0)
         old_x = 0
         old_y = 0
         while True:
@@ -26,10 +26,10 @@ def main():
 
                     # print(seg[i])
                     x1,y1,x2,y2 = seg[i][0], seg[i][1], seg[i+1][0], seg[i+1][1]
-                    cv2.line(img,(x1,y1),(x2,y2),color,2)
+                    cv2.line(img,(x1 * 8 * 100,y1 * 8 * 100),(x2 * 8 * 100,y2 * 8 *100),color,2)
             if queue2.empty() is False:
                 x, y = queue2.get()
-                cv2.line(img,(old_x,old_y),(x,y),(0,0,0),2)
+                cv2.line(img,(old_x * 100,old_y * 100),(x * 100,y * 100),(100,100,100),2)
                 old_x = x
                 old_y = y
             cv2.imshow('image', img)
