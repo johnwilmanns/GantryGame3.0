@@ -18,7 +18,7 @@ def main():
         old_x = 0
         old_y = 0
         while True:
-            if queue1.empty() is not False:
+            if queue1.empty() is False:
                 seg = queue1.get()
                 color = tuple(rd.randrange(0,255) for i in range(3))
                 i = 0
@@ -28,7 +28,7 @@ def main():
                     if distance(seg[i][0], seg[i][1], seg[i+1][0], seg[i+1][1]) < 2000:
                         x1,y1,x2,y2 = seg[i][0], seg[i][1], seg[i+1][0], seg[i+1][1]
                         cv2.line(img,(x1,y1),(x2,y2),color,2)
-            if queue2.empty() is not False:
+            if queue2.empty() is False:
                 x, y = queue2.get()
                 cv2.line(img,(old_x,old_y),(x,y),(0,0,0),2)
             cv2.imshow('image', img)
