@@ -12,6 +12,9 @@ def main():
         def distance(x1, y1, x2, y2):
             return (((x2-x1) ** 2 + (y2 - y1) ** 2) ** .5)
         #figure out how to make a blank image, i'm too retarded / impatitiant to try to understand samir's shit
+        img = input_img.copy()
+        mask = cv2.inRange(img, (0,0,0), (255,255,255))
+        img[mask>0] = (255,255,255)
         old_x = 0
         old_y = 0
         while True:
