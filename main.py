@@ -8,13 +8,15 @@ def main():
     scale_factor = 8
     offset = (0,0)
 
-    def draw_progress(queue):
+    def draw_progress(queue1, queue2):
         def distance(x1, y1, x2, y2):
             return (((x2-x1) ** 2 + (y2 - y1) ** 2) ** .5)
         #figure out how to make a blank image, i'm too retarded / impatitiant to try to understand samir's shit
+        old_x = 0
+        old_y = 0
         while True:
-            if queue.empty() is not False:
-                seg = queue.get()
+            if queue1.empty() is not False:
+                seg = queue1.get()
                 color = tuple(rd.randrange(0,255) for i in range(3))
                 i = 0
                 for i in range(len(seg)-1):
@@ -23,6 +25,9 @@ def main():
                     if distance(seg[i][0], seg[i][1], seg[i+1][0], seg[i+1][1]) < 2000:
                         x1,y1,x2,y2 = seg[i][0], seg[i][1], seg[i+1][0], seg[i+1][1]
                         cv2.line(img,(x1,y1),(x2,y2),color,2)
+            if queue2.empty() is not False:
+                x, y = queue2.get()
+                cv2.line(img,(old_x,old_y),(x,y),(0,0,0),2)
 
 
 
@@ -81,13 +86,14 @@ def main():
     pen_up()
 
     input("press return to start")
-    queue = mp.Queue()
+    queue1 = mp.Queue()
+    queue2 = mp.Queue()
     visualizer = mp.Process(target=draw_progress, args=(queue))
     visualizer.start()
     pen_up()
     for i, seg in enumerate(segments):
         print(f"Currently on segment {i}/{len(segments)}")
-        queue.put(seg)
+        queue1.put(seg)
         move(seg[0])
         # print(seg[0])
         pen_down()

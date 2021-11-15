@@ -172,7 +172,7 @@ class Gantry:
         self.y.set_pos(new_y)
 
 
-    def trap_move(self, new_x, new_y, cords = None, threshold = .2):
+    def trap_move(self, new_x, new_y, cords = None, threshold = .2, visualizer = None):
 
         if cords is None:
             x_pos = self.x.get_pos()
@@ -224,9 +224,15 @@ class Gantry:
         x_pos = self.x.get_pos()
         y_pos = self.y.get_pos()
 
-        while abs(x_pos - new_x) > threshold or abs(y_pos - new_y) > threshold:
-            x_pos = self.x.get_pos()
-            y_pos = self.y.get_pos()
+        if visualizer == None:
+            while abs(x_pos - new_x) > threshold or abs(y_pos - new_y) > threshold:
+                x_pos = self.x.get_pos()
+                y_pos = self.y.get_pos()
+        else:
+            while abs(x_pos - new_x) > threshold or abs(y_pos - new_y) > threshold:
+                x_pos = self.x.get_pos()
+                y_pos = self.y.get_pos()
+            visualizer.put([x,y])
 
         return x_pos, y_pos
 
