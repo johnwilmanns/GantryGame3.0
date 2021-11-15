@@ -57,7 +57,7 @@ def main():
         x += offset[0]
         y += offset[1]
 
-        gantry.trap_move(x,y, cords)
+        gantry.trap_move(x,y, cords, queue2) #todo will this be defined?
 
         # # time.sleep(.1)
         # while any(axis.is_moving() for axis in gantry.axes()):
