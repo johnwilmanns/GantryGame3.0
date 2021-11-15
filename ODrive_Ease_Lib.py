@@ -43,6 +43,7 @@ class Axis(object):
             if self.axis.controller.config.control_mode != 3:
                 self.axis.controller.config.control_mode = CONTROL_MODE_POSITION_CONTROL
         self.axis.controller.input_pos = desired_pos
+        # print("starting move at" + str(time.time()))
 
     def set_relative_pos(self, pos):
         self.set_raw_pos(pos + self.get_raw_pos())
@@ -238,8 +239,16 @@ class Axis(object):
     def is_calibrated(self):
         return self.axis.motor.is_calibrated
 
+    def is_moving(self, threshold = .05):
+
+        vel = self.get_vel()
+        return vel > threshold or vel < -threshold
+
+
+
     def idle(self):
         self.axis.requested_state = 1
+    
 
     #liveplotter stuff
 
