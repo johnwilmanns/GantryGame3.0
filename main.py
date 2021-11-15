@@ -18,7 +18,7 @@ def main():
         while True:
             if queue1.empty() is False:
                 seg = queue1.get()
-                color = tuple(rd.randrange(0,255) for i in range(3))
+                color = (255,0,0)
                 i = 0
                 for i in range(len(seg)-1):
 
