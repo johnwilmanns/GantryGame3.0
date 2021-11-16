@@ -24,10 +24,10 @@ def main():
 
                     # print(seg[i])
                     x1,y1,x2,y2 = seg[i][0], seg[i][1], seg[i+1][0], seg[i+1][1]
-                    cv2.line(img,(x1 * 8 * 100,y1 * 8 * 100),(x2 * 8 * 100,y2 * 8 *100),color,2)
+                    cv2.line(img,(int(x1 * 8 * 100),(y1 * 8 * 100)),(int(x2 * 8 * 100),int(y2 * 8 *100)),color,2)
             if queue2.empty() is False:
                 x, y = queue2.get()
-                cv2.line(img,(old_x * 100,old_y * 100),(x * 100,y * 100),(100,100,100),2)
+                cv2.line(img,(int(old_x * 100)int,(old_y * 100)),(int(x * 100),int(y * 100)),(100,100,100),2)
                 old_x = x
                 old_y = y
             cv2.imshow('image', img)
