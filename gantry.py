@@ -67,7 +67,7 @@ class Gantry:
             print("gotta crank one out rq")
             self.calibrate()
 
-        self.x.check_status()
+        self.x.check_status() #if these throw an assertion error, make sure the gantry is not up against the axis
         self.y.check_status()
 
         self.sensorless_home()
