@@ -89,7 +89,7 @@ def main():
 
     pen_up()
 
-    # input("press return to start")
+    input("press return to start")
     queue1 = mp.Queue()
     queue2 = mp.Queue()
     visualizer = mp.Process(target=draw_progress, args=(queue1, queue2))
