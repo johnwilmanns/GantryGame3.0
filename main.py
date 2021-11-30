@@ -2,6 +2,8 @@ import multiprocessing as mp
 import cv2
 import numpy as np
 from odrive.enums import *
+from face_full_processing import process_face
+
 def main():
     import gantry
     import pickle
@@ -98,10 +100,11 @@ def main():
     import os
     import sys
 
-    with open("path.pickle", "rb") as file:
-        segments = pickle.load(file)
-        # print(segments)
+    # with open("path.pickle", "rb") as file:
+    #     segments = pickle.load(file)
+    #     # print(segments)
 
+    segments, freq = process_face("s1.jpg")
 
 
     gantry = gantry.Gantry()
@@ -135,7 +138,7 @@ def main():
         # print(seg[0])
         pen_down()
         for point in seg[1:]:
-            while time.time() - t0 < 1/60:
+            while time.time() - t0 < 1/freq:
                 pass
             t0 = time.time()
             move(point)

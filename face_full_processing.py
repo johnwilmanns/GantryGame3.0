@@ -5,12 +5,13 @@ import time
 import math
 import sys
 import pickle
+# from test import *
+
+from full_path_planning import calc_path, plot_path_full
 
 def process_face(filename, blur_radius = 19, lower_thresh = 0, 
         upper_thresh = 60, splitDistance = 20, areaCut = 10, 
-        minSegmentLen = 30):
-
-    from full_path_planning import calc_path, plot_path, plot_path_full
+        minSegmentLen = 30, max_accel = 2, max_lr = .02, freq = 60):
 
 
 
@@ -224,21 +225,23 @@ def process_face(filename, blur_radius = 19, lower_thresh = 0,
     display = np.concatenate((input_img, cv2.cvtColor(edges,cv2.COLOR_GRAY2RGB)), axis=1)
     display = np.concatenate((display, img), axis=1)
 
-    new_points = calc_path(segments, 1, .1, 10)
+    new_points = calc_path(segments, max_accel, max_lr, freq)
 
-    return new_points
+    return new_points, freq
+
+    
+
+
+
+if __name__ == "__main__":
+
+    segments,freq = process_face("s1.jpg")
 
     with open("path.pickle", 'wb') as file:
-        pickle.dump(new_points, file)
+        pickle.dump(segments, file)
 
     #
     # cv2.imshow("images", display)
     # cv2.waitKey(0)
 
-    plot_path_full(new_points)
-
-
-
-
-if __name__ == "__main__":
-    process_face("s1.jpg")
+    plot_path_full(segments)

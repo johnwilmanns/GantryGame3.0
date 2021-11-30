@@ -48,11 +48,14 @@ class Gantry:
     def startup(self):
         print("starting up")
 
-        self.x.axis.controller.config.vel_limit = 20
+        self.x.axis.controller.config.vel_limit = 40
         self.x.axis.controller.config.enable_overspeed_error = False
 
-        self.y.axis.controller.config.vel_limit = 20
+        self.y.axis.controller.config.vel_limit = 40
         self.y.axis.controller.config.enable_overspeed_error = False
+
+        self.z.axis.controller.config.vel_limit = 40
+        self.z.axis.controller.config.enable_overspeed_error = False
 
         self.clear_errors()
         # self.x.start_pos_liveplotter()
@@ -73,6 +76,7 @@ class Gantry:
         self.sensorless_home()
         self.print_positions()
         self.dump_errors()
+        
         for axis in self.axes():
             axis.axis.requested_state = 8
             axis.axis.controller.config.control_mode = 3

@@ -1,6 +1,9 @@
 import math
 import numpy as np
 from pieces import Line, Arc, sin, cos
+from test import *
+
+
 
 seg = [(0,0), (1,0), (1,1), (2,1)]
 # seg = [(0,0), (0,1), (1,1), (1,2)]
