@@ -6,15 +6,41 @@ import math
 import sys
 import pickle
 
-from full_path_planning import calc_path, plot_path, plot_path_full
 
 filename = "s1.jpg"
-def getAngle(a, b, c):
-    ang = math.degrees(math.atan2(c[1]-b[1], c[0]-b[0]) - math.atan2(a[1]-b[1], a[0]-b[0]))
-    return ang + 360 if ang < 0 else ang
+
+blur_radius = 19 # must be an odd number
+lower_thresh = 0
+upper_thresh = 60 # after extensive research, I am fairly certian that you only need to change this value...
+
+#TODO: Figure out why this breaks with a smaller number 
+splitDistance = 20 # number of pixels apart when points are broken into seperate segments 
+areaCut = 10
+minSegmentLen = 30 # minimum number of points (processed proir to angle and distance cuts) in a segment in order for it to be preserved
+
+from full_path_planning import calc_path, plot_path, plot_path_full
+
+
 
 def distance(x1, y1, x2, y2):
     return (((x2-x1) ** 2 + (y2 - y1) ** 2) ** .5)
+
+# def getAngle(a, b, c):
+#     ang = math.degrees(math.atan2(c[1]-b[1], c[0]-b[0]) - math.atan2(a[1]-b[1], a[0]-b[0]))
+#     return ang + 360 if ang < 0 else ang
+
+def getArea(a, b, c):
+    l1 = distance(*a, *b)
+    l2 = distance(*b, *c)
+    l3 = distance(*c, *a)
+
+    p = (l1 + l2 + l3)/2
+    area = math.sqrt(abs(p * (p - l1) * (p - l2) * (p - l3)))
+
+    # area *= l3
+
+    return area
+
 
 def middle_out(a, index):
     
@@ -60,8 +86,8 @@ else:
     input_img = cv2.imread(filename)
 
 gray = cv2.cvtColor(input_img,cv2.COLOR_BGR2GRAY)
-gray = cv2.GaussianBlur(gray, (13,13), 0)
-edges = cv2.Canny(gray,0,25)
+gray = cv2.GaussianBlur(gray, (blur_radius, blur_radius), 0)
+edges = cv2.Canny(gray, lower_thresh, upper_thresh)
 # cv2.imwrite('edges.jpg',edges)
 
 
@@ -105,10 +131,7 @@ for i in range(len_points-1):
 print("")
 print(f"took {time.time()-tt0: .2f} seconds to sort all {len(sortedPoints)} points")
 # filtered path = []
-splitDistance = 4 # number of pixels apart when points are broken into seperate segments
-angleCut = 40 # angle, lower == less agressive
-distanceCut = 6 # pixels, higher == more agressive
-minSegmentLen = 20 # minimum number of points (processed proir to angle and distance cuts) in a segment in order for it to be preserved
+
 
 segments = []
 index = 0
@@ -130,23 +153,20 @@ while i < len(segments)-2:
         i-=1
 
 
-for seg in segments:
-    i = 0
-    while i < len(seg)-3:
-        i+=1
-        if 180 - angleCut < getAngle(seg[i], seg[i+1], seg[i+2]) < 180 + angleCut:
-            seg.pop(i+1)
-            i-=1
-        
+while True:
+    print("running iteration")
+    seg_len = sum(len(seg) for seg in segments)
 
+    for seg in segments:
+        i = 0
+        while i < len(seg)-3:
+            i+=1
+            if getArea(*seg[i:i+3]) < areaCut:
+                seg.pop(i+1)
+                i-=1
+    if sum(len(seg) for seg in segments) == seg_len:
+        break
 
-for seg in segments:
-    i = 0
-    while i < len(seg)-2:
-        i+=1
-        if distance(*(seg[i] + seg[i+1])) < distanceCut:
-            seg.pop(i+1)
-            i-=1
 
 
 
@@ -167,6 +187,9 @@ for seg in segments:
         # print(seg[i])
         if distance(seg[i][0], seg[i][1], seg[i+1][0], seg[i+1][1]) < 2000:
             x1,y1,x2,y2 = seg[i][0], seg[i][1], seg[i+1][0], seg[i+1][1]
+            
+            cv2.line(img,(x1,y1), (x1,y1), (0,0,0), 4)
+            cv2.line(img,(x2,y2), (x2,y2), (0,0,0), 4)
             cv2.line(img,(x1,y1),(x2,y2),color,2)
 
 # print(len(points))
@@ -187,8 +210,7 @@ for i, seg in enumerate(segments):
         segments[i][j] = (point[0]/max_size,point[1]/max_size)
 
 
-with open("path.pickle", 'wb') as file:
-    pickle.dump(segments, file)
+
 
 # import os
 # import sys
@@ -206,16 +228,19 @@ cv2.imwrite('houghlines6.jpg', img)
 
 
 
-edges = cv2.Canny(gray,0,40)
+edges = cv2.Canny(gray,lower_thresh,upper_thresh)
 display = np.concatenate((input_img, cv2.cvtColor(edges,cv2.COLOR_GRAY2RGB)), axis=1)
 display = np.concatenate((display, img), axis=1)
 
-cv2.imshow("images", display)
-cv2.waitKey(0)
+new_points = calc_path(segments, 1, .1, 10)
+with open("path.pickle", 'wb') as file:
+    pickle.dump(new_points, file)
 
-new_points = calc_path(segments, 1, 1, 10)
+#
+# cv2.imshow("images", display)
+# cv2.waitKey(0)
+
 plot_path_full(new_points)
-
 
 
 
