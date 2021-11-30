@@ -67,7 +67,32 @@ def main():
 
         # while abs(gantry.x.get_pos() - x) > threshold or abs(gantry.y.get_pos() - y) > threshold:
         #     time.sleep(.001)
-        
+
+    def blocked_move(point):
+
+        x,y = point
+        x *= scale_factor
+        y *= scale_factor
+
+
+        x += offset[0]
+        y += offset[1]
+
+        print(f"moving to: {x}, {y}")
+
+        gantry.set_pos(x,y) #todo will this be defined?
+        # gantry.dump_errors()
+
+        # # time.sleep(.1)
+        # while any(axis.is_moving() for axis in gantry.axes()):
+        #     time.sleep(.1)
+
+        threshold = .1
+
+
+        # while abs(gantry.x.get_pos() - x) > threshold or abs(gantry.y.get_pos() - y) > threshold:
+        #     time.sleep(.001)
+
         
     segments = None
     import os
@@ -93,7 +118,7 @@ def main():
     queue1 = mp.Queue()
     queue2 = mp.Queue()
     visualizer = mp.Process(target=draw_progress, args=(queue1, queue2))
-    visualizer.start()
+    # visualizer.start()
     pen_up()
     t0 = time.time()
     gantry.x.axis.controller.config.input_mode = INPUT_MODE_POS_FILTER
@@ -106,7 +131,7 @@ def main():
     for i, seg in enumerate(segments):
         print(f"Currently on segment {i}/{len(segments)}")
         queue1.put(seg)
-        move(seg[0])
+        blocked_move(seg[0])
         # print(seg[0])
         pen_down()
         for point in seg[1:]:
