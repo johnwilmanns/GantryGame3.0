@@ -245,8 +245,8 @@ def plot_path_full(segments):
 if __name__ == "__main__":
     import pickle
     # print(calc_segment(seg, radius=))
-    with open("path.pickle", 'rb') as file:
-        segments = pickle.load(file)
+    # with open("path.pickle", 'rb') as file:
+    #     segments = pickle.load(file)
     segments = [[(0,0), (.33,0), (.33,1), (.66,1), (.66,0), (1, 0), (1,1)]]
     # for i in range(0,len(segments)):
     parts = calc_path(segments, 2, .02, 30)
