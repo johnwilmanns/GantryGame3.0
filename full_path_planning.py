@@ -18,7 +18,7 @@ def getAngle(a, b, c):
 
 
 
-def calc_segment(seg, max_accel, max_radius, john = "dumb"):
+def calc_segment(seg, max_accel, max_radius, john = "dumb"): #not actually max radius tho
 
     # R = V^2/A
 
@@ -48,14 +48,14 @@ def calc_segment(seg, max_accel, max_radius, john = "dumb"):
         else:
             # l = (max_accel * ab_dist - velocity ** 2) / (3 * max_accel) # math n shit
             if i == 0:
-                lr = min(ab_dist/2, bc_dist/2)
+                lr = min(ab_dist/2, bc_dist/2, max_radius)
             else:
-                lr = min(ab_dist, bc_dist/2) #TODO: decide if max radius should govrn lr or r
+                lr = min(ab_dist, bc_dist/2, max_radius) #TODO: decide if max radius should govrn lr or r
             r = (2 * sin(abc_angle/2) * lr) / abs(2 * sin(90-abc_angle/2))
             
-            if r > max_radius:
-                r = max_radius
-                lr = (r * abs(2 * sin(90 - abc_angle/2)))/ (2 * sin(abc_angle/2))
+            # if r > max_radius:
+            #     r = max_radius
+            #     lr = (r * abs(2 * sin(90 - abc_angle/2)))/ (2 * sin(abc_angle/2))
 
             l = ab_dist - lr
             
@@ -247,9 +247,9 @@ if __name__ == "__main__":
     # print(calc_segment(seg, radius=))
     # with open("path.pickle", 'rb') as file:
     #     segments = pickle.load(file)
-    segments = [[(0,0), (.33,0), (.33,1), (.66,1), (.66,0), (1, 0), (1,1)]]
+    segments = [[(0,0), (.33,0), (.33,1), (.66,1), (.66,0), (1, 0), (1,1), (1.05, 2)]]
     # for i in range(0,len(segments)):
-    parts = calc_path(segments, 2, .02, 30)
+    parts = calc_path(segments, 10, .02, 30)
     plot_path_full(parts)
 
     with open("path.pickle", "wb") as file:
