@@ -96,6 +96,12 @@ def main():
     visualizer.start()
     pen_up()
     t0 = time.time()
+    gantry.x.axis.controller.config.input_mode = INPUT_MODE_POS_FILTER
+    gantry.y.axis.controller.config.input_mode = INPUT_MODE_POS_FILTER
+
+    gantry.x.axis.controller.config.input_filter_bandwidth = 5
+    gantry.y.axis.controller.config.input_filter_bandwidth = 5
+
     for i, seg in enumerate(segments):
         print(f"Currently on segment {i}/{len(segments)}")
         queue1.put(seg)
@@ -103,7 +109,7 @@ def main():
         # print(seg[0])
         pen_down()
         for point in seg[1:]:
-            while time.time - t0 < 1/160
+            while time.time - t0 < 1/10:
                 pass
             move(point)
         pen_up()

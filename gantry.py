@@ -240,13 +240,13 @@ class Gantry:
     def set_pos_noblock(self, x = -1, y = -1, z = -1):
 
         if(x != -1):
-            self.x.set_pos(x)
+            self.x.set_pos(x, False)
 
         if y != -1:
-            self.y.set_pos(y)
+            self.y.set_pos(y, False)
 
         if z != -1:
-            self.z.set_pos(z)
+            self.z.set_pos(z, False)
 
         # self.requested_pos = [x, y]
 
