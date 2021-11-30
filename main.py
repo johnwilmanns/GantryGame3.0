@@ -1,6 +1,7 @@
 import multiprocessing as mp
 import cv2
 import numpy as np
+from odrive.enums import *
 def main():
     import gantry
     import pickle
@@ -109,9 +110,11 @@ def main():
         # print(seg[0])
         pen_down()
         for point in seg[1:]:
-            while time.time - t0 < 1/10:
+            while time.time() - t0 < 1/10:
                 pass
+            t0 = time.time()
             move(point)
+
         pen_up()
 
     print("done")
