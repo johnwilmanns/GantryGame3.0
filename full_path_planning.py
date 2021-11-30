@@ -247,10 +247,15 @@ if __name__ == "__main__":
     # print(calc_segment(seg, radius=))
     with open("path.pickle", 'rb') as file:
         segments = pickle.load(file)
-        # segments = [[(0,0), (1,0), (1,1), (2,1)]]
-        # for i in range(0,len(segments)):
-        parts = calc_path(segments, 3, 1, 10)
-        plot_path_full(parts)
+    segments = [[(0,0), (.33,0), (.33,1), (.66,1), (.66,0), (1, 0), (1,1)]]
+    # for i in range(0,len(segments)):
+    parts = calc_path(segments, 2, .02, 30)
+    plot_path_full(parts)
+
+    with open("path.pickle", "wb") as file:
+        pickle.dump(parts, file)
+
+        
     
 
     # parts = calc_segment(seg, 1, 10)
