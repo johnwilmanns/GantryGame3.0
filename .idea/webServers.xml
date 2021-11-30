@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="dcc766cc-07b4-45ad-8347-8c2e677e315e" name="pi@gantry-game-pi">
+        <fileTransfer accessType="SFTP" host="gantry-game-pi.local" port="22" sshConfigId="bfaf19aa-e811-41e0-8638-ab507725110e" sshConfig="pi@gantry-game-pi.local:22 agent" authAgent="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

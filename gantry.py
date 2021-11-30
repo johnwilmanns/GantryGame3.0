@@ -165,9 +165,9 @@ class Gantry:
             self.z.set_pos(z)
 
         while True:
-            if abs(self.x.get_pos() - x) <= .1 or x == -1:
-                if abs(self.y.get_pos() - y) <= .1 or y == -1:
-                    if abs(self.z.get_pos() - z) <= .1 or z == -1:
+            if abs(self.x.get_pos() - x) <= .25 or x == -1:
+                if abs(self.y.get_pos() - y) <= .25 or y == -1:
+                    if abs(self.z.get_pos() - z) <= .25 or z == -1:
                         self.requested_pos = [x, y]
                         return
 
