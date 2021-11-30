@@ -37,15 +37,11 @@ def main():
 
 
     def pen_up():
-        gantry.set_pos_noblock(z=5)
-        time.sleep(.05)
-        while any(axis.is_moving() for axis in gantry.axes()):
-            time.sleep(.005)
+        gantry.set_pos(z=5)
+
     def pen_down():
-        gantry.set_pos_noblock(z=0)
-        time.sleep(.05)
-        while any(axis.is_moving() for axis in gantry.axes()):
-            time.sleep(.005)
+        gantry.set_pos(z=0)
+
 
     def move(point):
 
@@ -93,19 +89,19 @@ def main():
 
     pen_up()
 
-    # input("press return to start")
+    input("press return to start")
     queue1 = mp.Queue()
     queue2 = mp.Queue()
     visualizer = mp.Process(target=draw_progress, args=(queue1, queue2))
     visualizer.start()
     pen_up()
     t0 = time.time()
-    # gantry.x.axis.controller.config.input_mode = INPUT_MODE_POS_FILTER
-    # gantry.y.axis.controller.config.input_mode = INPUT_MODE_POS_FILTER
-    gantry.x.axis.controller.config.input_mode = 1
-    gantry.y.axis.controller.config.input_mode = 1
-    gantry.x.axis.controller.config.input_filter_bandwidth = 5
-    gantry.y.axis.controller.config.input_filter_bandwidth = 5
+    gantry.x.axis.controller.config.input_mode = INPUT_MODE_POS_FILTER
+    gantry.y.axis.controller.config.input_mode = INPUT_MODE_POS_FILTER
+    # gantry.x.axis.controller.config.input_mode = 1
+    # gantry.y.axis.controller.config.input_mode = 1
+    gantry.x.axis.controller.config.input_filter_bandwidth = 30
+    gantry.y.axis.controller.config.input_filter_bandwidth = 30
 
     for i, seg in enumerate(segments):
         print(f"Currently on segment {i}/{len(segments)}")
@@ -114,7 +110,7 @@ def main():
         # print(seg[0])
         pen_down()
         for point in seg[1:]:
-            while time.time() - t0 < 1/30:
+            while time.time() - t0 < 1/60:
                 pass
             t0 = time.time()
             move(point)
