@@ -46,7 +46,7 @@ def main():
         while any(axis.is_moving() for axis in gantry.axes()):
             time.sleep(.005)
 
-    def move(point, cords=None):
+    def move(point):
 
         x,y = point
         x *= scale_factor
@@ -56,7 +56,7 @@ def main():
         x += offset[0]
         y += offset[1]
 
-        gantry.trap_move(x,y, cords, visualizer=queue2) #todo will this be defined?
+        gantry.set_pos_noblock(x,y) #todo will this be defined?
 
         # # time.sleep(.1)
         # while any(axis.is_moving() for axis in gantry.axes()):
@@ -95,15 +95,17 @@ def main():
     visualizer = mp.Process(target=draw_progress, args=(queue1, queue2))
     visualizer.start()
     pen_up()
+    t0 = time.time()
     for i, seg in enumerate(segments):
         print(f"Currently on segment {i}/{len(segments)}")
         queue1.put(seg)
         move(seg[0])
         # print(seg[0])
         pen_down()
-        cords = None
         for point in seg[1:]:
-            cords = move(point, cords)
+            while time.time - t0 < 1/160
+                pass
+            move(point)
         pen_up()
 
     print("done")
