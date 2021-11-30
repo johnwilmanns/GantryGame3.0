@@ -57,7 +57,10 @@ def main():
         x += offset[0]
         y += offset[1]
 
+        print(f"moving to: {x}, {y}")
+
         gantry.set_pos_noblock(x,y) #todo will this be defined?
+        # gantry.dump_errors()
 
         # # time.sleep(.1)
         # while any(axis.is_moving() for axis in gantry.axes()):
@@ -90,16 +93,17 @@ def main():
 
     pen_up()
 
-    input("press return to start")
+    # input("press return to start")
     queue1 = mp.Queue()
     queue2 = mp.Queue()
     visualizer = mp.Process(target=draw_progress, args=(queue1, queue2))
     visualizer.start()
     pen_up()
     t0 = time.time()
-    gantry.x.axis.controller.config.input_mode = INPUT_MODE_POS_FILTER
-    gantry.y.axis.controller.config.input_mode = INPUT_MODE_POS_FILTER
-
+    # gantry.x.axis.controller.config.input_mode = INPUT_MODE_POS_FILTER
+    # gantry.y.axis.controller.config.input_mode = INPUT_MODE_POS_FILTER
+    gantry.x.axis.controller.config.input_mode = 1
+    gantry.y.axis.controller.config.input_mode = 1
     gantry.x.axis.controller.config.input_filter_bandwidth = 5
     gantry.y.axis.controller.config.input_filter_bandwidth = 5
 
@@ -110,7 +114,7 @@ def main():
         # print(seg[0])
         pen_down()
         for point in seg[1:]:
-            while time.time() - t0 < 1/10:
+            while time.time() - t0 < 1/30:
                 pass
             t0 = time.time()
             move(point)

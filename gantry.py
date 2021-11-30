@@ -73,6 +73,10 @@ class Gantry:
         self.sensorless_home()
         self.print_positions()
         self.dump_errors()
+        for axis in self.axes():
+            axis.axis.requested_state = 8
+            axis.axis.controller.config.control_mode = 3
+            axis.axis.controller.config.input_mode = 1
 
 
     def __del__(self):
