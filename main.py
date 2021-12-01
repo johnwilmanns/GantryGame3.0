@@ -104,7 +104,7 @@ def main():
     #     segments = pickle.load(file)
     #     # print(segments)
 
-    segments, freq = process_face("s1.jpg")
+    segments, freq = process_face("ricardo.jpg")
 
 
     gantry = gantry.Gantry()
@@ -128,8 +128,8 @@ def main():
     gantry.y.axis.controller.config.input_mode = INPUT_MODE_POS_FILTER
     # gantry.x.axis.controller.config.input_mode = 1
     # gantry.y.axis.controller.config.input_mode = 1
-    gantry.x.axis.controller.config.input_filter_bandwidth = 30
-    gantry.y.axis.controller.config.input_filter_bandwidth = 30
+    gantry.x.axis.controller.config.input_filter_bandwidth = freq/2
+    gantry.y.axis.controller.config.input_filter_bandwidth = freq/2
 
     for i, seg in enumerate(segments):
         print(f"Currently on segment {i}/{len(segments)}")
