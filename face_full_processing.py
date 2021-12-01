@@ -11,7 +11,8 @@ from full_path_planning import calc_path, plot_path_full
 
 def process_face(filename, blur_radius = 17, lower_thresh = 0,
         upper_thresh = 40, splitDistance = 20, areaCut = 10,
-        minSegmentLen = 15, max_accel = 2, max_lr = .02, freq = 60, plot_steps = False):
+        minSegmentLen = 15, max_accel = 2, max_lr = .02, turn_vel_multiplier = 1, 
+        freq = 60, plot_steps = False):
 
 
 
@@ -225,7 +226,7 @@ def process_face(filename, blur_radius = 17, lower_thresh = 0,
     display = np.concatenate((input_img, cv2.cvtColor(edges,cv2.COLOR_GRAY2RGB)), axis=1)
     display = np.concatenate((display, img), axis=1)
 
-    new_points = calc_path(segments, max_accel, max_lr, freq)
+    new_points = calc_path(segments, max_accel, max_lr, turn_vel_multiplier, freq)
 
     if plot_steps:
         cv2.imshow("images", display)
