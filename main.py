@@ -104,7 +104,7 @@ def main():
     #     segments = pickle.load(file)
     #     # print(segments)
 
-    segments, freq = process_face("ricardo.jpg")
+    segments, freq = process_face("ricardo.jpg", max_accel=40, max_lr= 1, freq= 60)
 
 
     gantry = gantry.Gantry()

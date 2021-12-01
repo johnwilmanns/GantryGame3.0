@@ -64,7 +64,7 @@ def calc_segment(seg, max_accel, max_radius, john = "dumb"): #not actually max r
             
             
 
-            print(f"{r = }, {l = }")
+            # print(f"{r = }, {l = }")
 
             ratio = l/ab_dist
             end_pos = (a[0] * (1-ratio) + b[0] * ratio, a[1] * (1-ratio) + b[1] * ratio)
@@ -239,7 +239,7 @@ def plot_path_full(segments):
         for point in seg:
             points.append(point)
 
-    plt.scatter(*zip(*points))
+    plt.scatter(*zip(*points), s=2)
     plt.show()
     
 

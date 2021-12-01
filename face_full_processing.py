@@ -9,9 +9,9 @@ import pickle
 
 from full_path_planning import calc_path, plot_path_full
 
-def process_face(filename, blur_radius = 19, lower_thresh = 0, 
-        upper_thresh = 60, splitDistance = 20, areaCut = 10, 
-        minSegmentLen = 30, max_accel = 2, max_lr = .02, freq = 60):
+def process_face(filename, blur_radius = 17, lower_thresh = 0,
+        upper_thresh = 40, splitDistance = 20, areaCut = 10,
+        minSegmentLen = 15, max_accel = 2, max_lr = .02, freq = 60, plot_steps = False):
 
 
 
@@ -227,6 +227,10 @@ def process_face(filename, blur_radius = 19, lower_thresh = 0,
 
     new_points = calc_path(segments, max_accel, max_lr, freq)
 
+    if plot_steps:
+        cv2.imshow("images", display)
+        cv2.waitKey(0)
+
     return new_points, freq
 
     
@@ -235,7 +239,7 @@ def process_face(filename, blur_radius = 19, lower_thresh = 0,
 
 if __name__ == "__main__":
 
-    segments,freq = process_face("s1.jpg")
+    segments,freq = process_face("ricardo.jpg", max_accel=40, max_lr= 1, freq= 60)
 
     with open("path.pickle", 'wb') as file:
         pickle.dump(segments, file)
