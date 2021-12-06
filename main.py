@@ -104,7 +104,10 @@ def main():
     #     segments = pickle.load(file)
     #     # print(segments)
 
-    segments, freq = process_face("ricardo.jpg", max_accel=40, max_lr= 1, freq= 60)
+    segments, freq = segments, freq = process_face("ricardo.jpg", blur_radius = 17, lower_thresh = 0,
+    upper_thresh = 40, splitDistance = 10, areaCut = 3,
+    minSegmentLen = 15, max_accel = 2, max_lr = 1, turn_vel_multiplier = 1,
+    freq = 60)
 
 
     gantry = gantry.Gantry()
@@ -121,7 +124,7 @@ def main():
     queue1 = mp.Queue()
     queue2 = mp.Queue()
     visualizer = mp.Process(target=draw_progress, args=(queue1, queue2))
-    # visualizer.start()
+    visualizer.start()
     pen_up()
     t0 = time.time()
     gantry.x.axis.controller.config.input_mode = INPUT_MODE_POS_FILTER
