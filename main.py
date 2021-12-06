@@ -20,15 +20,8 @@ def main():
         old_y = 0
         while True:
             if queue1.empty() is False:
-                seg = queue1.get()
-                color = (255,0,0)
-                i = 0
-                for i in range(len(seg)-1):
-
-                    # print(seg[i])
-                    x1,y1,x2,y2 = seg[i][0], seg[i][1], seg[i+1][0], seg[i+1][1]
-                    cv2.line(img,(int(x1 * 8 * 100),int(y1 * 8 * 100)),(int(x2 * 8 * 100),int(y2 * 8 *100)),color,2)
-                    cv2.circle(img,(int(x1 * 8 * 100),int(y1 * 8 * 100)), radius = 2, color = (255, 255, 255), thickness=-1)
+                x1, y1 = queue1.get()
+                cv2.circle(img,(int(x1 * 8 * 100),int(y1 * 8 * 100)), radius = 2, color = (255, 255, 255), thickness=-1)
             if queue2.empty() is False:
                 x, y = queue2.get()
                 cv2.line(img,(int(old_x * 100),int(old_y * 100)),(int(x * 100),int(y * 100)),(100,100,100),2)
@@ -137,12 +130,14 @@ def main():
 
     for i, seg in enumerate(segments):
         print(f"Currently on segment {i}/{len(segments)}")
-        queue1.put(seg)
+
         blocked_move(seg[0])
         # print(seg[0])
         pen_down()
         for point in seg[1:]:
+            queue1.put(point)
             while time.time() - t0 < 1/freq:
+                queue2.put([gantry.x.get_pos(), gantry.y.get_pos()])
                 pass
             t0 = time.time()
             move(point)
