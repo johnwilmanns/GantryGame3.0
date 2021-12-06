@@ -98,10 +98,12 @@ def main():
     #     segments = pickle.load(file)
     #     # print(segments)
 
+
+
     segments, freq = segments, freq = process_face("ricardo.jpg", blur_radius = 17, lower_thresh = 0,
-    upper_thresh = 40, splitDistance = 10, areaCut = 3,
-    minSegmentLen = 15, max_accel = 2, max_lr = 1, turn_vel_multiplier = 1,
-    freq = 60)
+    upper_thresh = 40, splitDistance = 10, areaCut = 4,
+    minSegmentLen = 15, max_accel = 40, max_lr = 1, turn_vel_multiplier = 1,
+    freq = 120)
 
 
     gantry = gantry.Gantry()
@@ -114,7 +116,7 @@ def main():
 
     pen_up()
 
-    # input("press return to start")
+    input("press return to start")
     queue1 = mp.Queue()
     queue2 = mp.Queue()
     visualizer = mp.Process(target=draw_progress, args=(queue1, queue2))
@@ -129,6 +131,7 @@ def main():
     gantry.y.axis.controller.config.input_filter_bandwidth = freq/2
 
     for i, seg in enumerate(segments):
+        t1 = time.perf_counter()
         print(f"Currently on segment {i}/{len(segments)}")
 
         blocked_move(seg[0])
@@ -137,10 +140,11 @@ def main():
         for point in seg[1:]:
             queue1.put(point)
             while time.time() - t0 < 1/freq:
-                queue2.put([gantry.x.get_pos(), gantry.y.get_pos()])
+                # queue2.put([gantry.x.get_pos(), gantry.y.get_pos()])
                 pass
             t0 = time.time()
             move(point)
+        print(f"segment written at {1/(time.perf_counter()-t1) * len(seg)} hz")
 
         pen_up()
 
