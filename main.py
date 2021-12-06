@@ -28,6 +28,7 @@ def main():
                     # print(seg[i])
                     x1,y1,x2,y2 = seg[i][0], seg[i][1], seg[i+1][0], seg[i+1][1]
                     cv2.line(img,(int(x1 * 8 * 100),int(y1 * 8 * 100)),(int(x2 * 8 * 100),int(y2 * 8 *100)),color,2)
+                    cv2.circle(img,(int(x1 * 8 * 100),int(y1 * 8 * 100)), radius = 2, color = (255, 255, 255), thickness=-1)
             if queue2.empty() is False:
                 x, y = queue2.get()
                 cv2.line(img,(int(old_x * 100),int(old_y * 100)),(int(x * 100),int(y * 100)),(100,100,100),2)
@@ -120,7 +121,7 @@ def main():
 
     pen_up()
 
-    input("press return to start")
+    # input("press return to start")
     queue1 = mp.Queue()
     queue2 = mp.Queue()
     visualizer = mp.Process(target=draw_progress, args=(queue1, queue2))
@@ -150,7 +151,8 @@ def main():
 
     print("done")
     try:
-        visualizer.close()
+        visualizer.terminate()
+        queue1.put("e")
     except ValueError:
         print("sucsessfully terminated visualizer")
     pen_up()
