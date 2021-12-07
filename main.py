@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 from odrive.enums import *
 from face_full_processing import process_face
+from timing import timeit
 
 def main():
     import gantry
@@ -42,6 +43,7 @@ def main():
         gantry.set_pos(z=0)
 
 
+    # @timeit
     def move(point):
 
         x,y = point
