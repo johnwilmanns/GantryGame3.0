@@ -49,7 +49,7 @@ def main():
         x += offset[0]
         y += offset[1]
 
-        print(f"moving to: {x}, {y}")
+
 
         gantry.set_pos_noblock(x,y) #todo will this be defined?
         # gantry.dump_errors()
@@ -74,7 +74,7 @@ def main():
         x += offset[0]
         y += offset[1]
 
-        print(f"moving to: {x}, {y}")
+
 
         gantry.set_pos(x,y) #todo will this be defined?
         # gantry.dump_errors()
@@ -140,7 +140,9 @@ def main():
         for point in seg[1:]:
             queue1.put(point)
             while time.time() - t0 < 1/freq:
-                # queue2.put([gantry.x.get_pos(), gantry.y.get_pos()])
+                t2 = time.perf_counter
+                queue2.put([gantry.x.get_pos(), gantry.y.get_pos()])
+                print(f"serial took {time.perf_counter() - t2} seconds")
                 pass
             t0 = time.time()
             move(point)
