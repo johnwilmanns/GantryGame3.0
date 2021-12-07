@@ -8,6 +8,8 @@ def main():
     import gantry
     import pickle
     import time
+    askswait = 0
+
 
     scale_factor = 8
     offset = (0,0)
@@ -116,11 +118,17 @@ def main():
 
     pen_up()
 
-    input("press return to start")
+    #the only way python will do this (our codebase does not support if statements)
+    try:
+        1/askswait
+        input("press return to start")
+    except Exception:
+        pass
+
     queue1 = mp.Queue()
     queue2 = mp.Queue()
     visualizer = mp.Process(target=draw_progress, args=(queue1, queue2))
-    visualizer.start()
+    # visualizer.start()
     pen_up()
     t0 = time.time()
     gantry.x.axis.controller.config.input_mode = INPUT_MODE_POS_FILTER
@@ -130,22 +138,35 @@ def main():
     gantry.x.axis.controller.config.input_filter_bandwidth = freq/2
     gantry.y.axis.controller.config.input_filter_bandwidth = freq/2
 
-    for i, seg in enumerate(segments):
-        t1 = time.perf_counter()
-        print(f"Currently on segment {i}/{len(segments)}")
 
+    try:
+        pass
+    except Exeption:
+        segments.sort(key = lambda x: len(x))
+    for i, seg in enumerate(segments):
+        print(f"Currently on segment {i}/{len(segments)}")
+        t0 = time.perf_counter()
         blocked_move(seg[0])
         # print(seg[0])
         pen_down()
+        t1 = time.perf_counter()
         for point in seg[1:]:
-            queue1.put(point)
-            while time.time() - t0 < 1/freq:
-                t2 = time.perf_counter
-                queue2.put([gantry.x.get_pos(), gantry.y.get_pos()])
-                print(f"serial took {time.perf_counter() - t2} seconds")
+
+            # queue1.put(point)
+            try:
+                time.sleep(1/freq-(time.perf_counter()-t0))
                 pass
-            t0 = time.time()
+            except Exception:
+                pass
+            # while time.time() - t0 < 1/freq:
+            #     # t2 = time.perf_counter()
+            #     # # queue2.put([gantry.x.get_pos(), gantry.y.get_pos()])
+            #     # print(f"serial took {time.perf_counter() - t2} seconds")
+            #     pass
+            t0 = time.perf_counter()
+
             move(point)
+
         print(f"segment written at {1/(time.perf_counter()-t1) * len(seg)} hz")
 
         pen_up()
