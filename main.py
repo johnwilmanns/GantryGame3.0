@@ -5,7 +5,7 @@ from odrive.enums import *
 from face_full_processing import process_face
 from timing import timeit
 
-def main():
+def main(max_accel=40, max_lr= 1, freq = 60, offset = (.1, .1)):
     import gantry
     import pickle
     import time
@@ -14,7 +14,7 @@ def main():
 
 
     scale_factor = 8
-    offset = (0,0)
+
 
     def draw_progress(queue1, queue2):
 
@@ -103,12 +103,7 @@ def main():
     #     segments = pickle.load(file)
     #     # print(segments)
 
-
-
-    segments, freq = segments, freq = process_face("img.png", blur_radius = 17, lower_thresh = 0,
-    upper_thresh = 40, splitDistance = 10, areaCut = 4,
-    minSegmentLen = 15, max_accel = 40, max_lr = 1, turn_vel_multiplier = 1,
-    freq = 120)
+    segments, freq = process_face("rectangle.jpg", max_accel = max_accel, max_lr = max_lr, freq = freq, blur_radius=1)
 
 
     gantry = gantry.Gantry()
