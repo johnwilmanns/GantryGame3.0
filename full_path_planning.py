@@ -242,8 +242,8 @@ def plot_path_full(segments):
             points.append(point)
 
     plt.scatter(*zip(*points), s=2)
-    plt.xlim(0,50)
-    plt.ylim(-25,25)
+    # plt.xlim(0,50)
+    # plt.ylim(-25,25)
     plt.show()
     
 
