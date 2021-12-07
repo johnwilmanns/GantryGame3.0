@@ -9,6 +9,7 @@ def main():
     import pickle
     import time
     askswait = 0
+    behind = 0
 
 
     scale_factor = 8
@@ -102,7 +103,7 @@ def main():
 
 
 
-    segments, freq = segments, freq = process_face("ricardo.jpg", blur_radius = 17, lower_thresh = 0,
+    segments, freq = segments, freq = process_face("img.png", blur_radius = 17, lower_thresh = 0,
     upper_thresh = 40, splitDistance = 10, areaCut = 4,
     minSegmentLen = 15, max_accel = 40, max_lr = 1, turn_vel_multiplier = 1,
     freq = 120)
@@ -155,9 +156,10 @@ def main():
             # queue1.put(point)
             try:
                 time.sleep(1/freq-(time.perf_counter()-t0))
+                behind += 1
                 pass
             except Exception:
-                pass
+                behind -= 1
             # while time.time() - t0 < 1/freq:
             #     # t2 = time.perf_counter()
             #     # # queue2.put([gantry.x.get_pos(), gantry.y.get_pos()])
@@ -172,6 +174,7 @@ def main():
         pen_up()
 
     print("done")
+    print(behind)
     try:
         visualizer.terminate()
         queue1.put("e")
