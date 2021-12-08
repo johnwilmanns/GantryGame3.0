@@ -68,15 +68,8 @@ def process_face(filename, blur_radius = 17, lower_thresh = 0,
 
         return None
 
-    if filename.find(".jpg") == -1:
-        # Load .png image
-        image = cv2.imread(filename)
-
-        # Save .jpg image
-        cv2.imwrite('image.jpg', image, [int(cv2.IMWRITE_JPEG_QUALITY), 100])
-        input_img = cv2.imread("image.jpg")
-    else:
-        input_img = cv2.imread(filename)
+    
+    input_img = cv2.imread(filename)
 
     gray = cv2.cvtColor(input_img,cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (blur_radius, blur_radius), 0)
