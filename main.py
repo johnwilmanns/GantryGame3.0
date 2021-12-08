@@ -172,11 +172,11 @@ def main(max_accel=40, max_lr= 1, freq = 60, offset = (.1, .1)):
 
     print("done")
     print(behind)
-    try:
-        visualizer.terminate()
-        queue1.put("e")
-    except ValueError:
-        print("sucsessfully terminated visualizer")
+    # try:
+    #     visualizer.terminate()
+    #     queue1.put("e")
+    # except ValueError:
+    #     print("sucsessfully terminated visualizer")
     pen_up()
 
 
