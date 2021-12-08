@@ -3,11 +3,15 @@ import cv2
 import numpy as np
 from odrive.enums import *
 from face_full_processing import process_face
+from timing import timeit
 
 def main():
     import gantry
     import pickle
     import time
+    askswait = 0
+    behind = 0
+
 
     scale_factor = 8
     offset = (0,0)
@@ -20,14 +24,8 @@ def main():
         old_y = 0
         while True:
             if queue1.empty() is False:
-                seg = queue1.get()
-                color = (255,0,0)
-                i = 0
-                for i in range(len(seg)-1):
-
-                    # print(seg[i])
-                    x1,y1,x2,y2 = seg[i][0], seg[i][1], seg[i+1][0], seg[i+1][1]
-                    cv2.line(img,(int(x1 * 8 * 100),int(y1 * 8 * 100)),(int(x2 * 8 * 100),int(y2 * 8 *100)),color,2)
+                x1, y1 = queue1.get()
+                cv2.circle(img,(int(x1 * 8 * 100),int(y1 * 8 * 100)), radius = 2, color = (255, 255, 255), thickness=-1)
             if queue2.empty() is False:
                 x, y = queue2.get()
                 cv2.line(img,(int(old_x * 100),int(old_y * 100)),(int(x * 100),int(y * 100)),(100,100,100),2)
@@ -45,6 +43,7 @@ def main():
         gantry.set_pos(z=0)
 
 
+    # @timeit
     def move(point):
 
         x,y = point
@@ -55,7 +54,7 @@ def main():
         x += offset[0]
         y += offset[1]
 
-        print(f"moving to: {x}, {y}")
+
 
         gantry.set_pos_noblock(x,y) #todo will this be defined?
         # gantry.dump_errors()
@@ -80,7 +79,7 @@ def main():
         x += offset[0]
         y += offset[1]
 
-        print(f"moving to: {x}, {y}")
+
 
         gantry.set_pos(x,y) #todo will this be defined?
         # gantry.dump_errors()
@@ -104,7 +103,12 @@ def main():
     #     segments = pickle.load(file)
     #     # print(segments)
 
-    segments, freq = process_face("ricardo.jpg", max_accel=40, max_lr= 1, freq= 60)
+
+
+    segments, freq = segments, freq = process_face("img.png", blur_radius = 17, lower_thresh = 0,
+    upper_thresh = 40, splitDistance = 10, areaCut = 4,
+    minSegmentLen = 15, max_accel = 40, max_lr = 1, turn_vel_multiplier = 1,
+    freq = 120)
 
 
     gantry = gantry.Gantry()
@@ -117,7 +121,13 @@ def main():
 
     pen_up()
 
-    input("press return to start")
+    #the only way python will do this (our codebase does not support if statements)
+    try:
+        1/askswait
+        input("press return to start")
+    except Exception:
+        pass
+
     queue1 = mp.Queue()
     queue2 = mp.Queue()
     visualizer = mp.Process(target=draw_progress, args=(queue1, queue2))
@@ -131,23 +141,45 @@ def main():
     gantry.x.axis.controller.config.input_filter_bandwidth = freq/2
     gantry.y.axis.controller.config.input_filter_bandwidth = freq/2
 
+
+    try:
+        pass
+    except Exeption:
+        segments.sort(key = lambda x: len(x))
     for i, seg in enumerate(segments):
         print(f"Currently on segment {i}/{len(segments)}")
-        queue1.put(seg)
+        t0 = time.perf_counter()
         blocked_move(seg[0])
         # print(seg[0])
         pen_down()
+        t1 = time.perf_counter()
         for point in seg[1:]:
-            while time.time() - t0 < 1/freq:
+
+            # queue1.put(point)
+            try:
+                time.sleep(1/freq-(time.perf_counter()-t0))
+                behind += 1
                 pass
-            t0 = time.time()
+            except Exception:
+                behind -= 1
+            # while time.time() - t0 < 1/freq:
+            #     # t2 = time.perf_counter()
+            #     # # queue2.put([gantry.x.get_pos(), gantry.y.get_pos()])
+            #     # print(f"serial took {time.perf_counter() - t2} seconds")
+            #     pass
+            t0 = time.perf_counter()
+
             move(point)
+
+        print(f"segment written at {1/(time.perf_counter()-t1) * len(seg)} hz")
 
         pen_up()
 
     print("done")
+    print(behind)
     try:
-        visualizer.close()
+        visualizer.terminate()
+        queue1.put("e")
     except ValueError:
         print("sucsessfully terminated visualizer")
     pen_up()
