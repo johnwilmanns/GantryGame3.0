@@ -18,20 +18,45 @@ white: unprocessed edge
 
 
 def denoise_edges(input_img):
-    input_img = input_img.deepcopy() #todo not using .copy might be impacting performance
-    img = input_img.deepcopy()
-    mask = cv2.inRange(img, (0,0,0), (255,255,255))
-    img[mask>0] = (255,255,255)
+    input_img = input_img.copy() #todo not using .copy might be impacting performance
+    img = input_img.copy()
+    img.fill(0)
+    print(img)
 
     for x in range(len(img)):
         for y in range(len(img[0])):
             if input_img[x][y] == 255:
-                fun_zone = input_img.deepcopy()
+                fun_zone = input_img.copy() #declares and initializes fun zone
                 fun_zone[x][y] = 10
-                potential_points = check_close(x,y)
-                if len(potential_points) >= 2:
-                    for point in potential_points:
-                        print(point)
+                potential_points = []
+
+                for i in range(-1,2):
+                    for j in range (-1,2):
+                        if(i == 0) and (j == 0):
+                            continue
+                        if fun_zone[x+i][y+j] == 255:
+                            fun_zone[x+i][y+j] == 20
+                            potential_points.append([x+i, y+j])
+
+                if len(potential_points) < 2:
+                    continue
+                pointctr = 0
+                lastk = 0
+                for k, point in enumerate(potential_points):
+                    print(point)
+                    px,py = point
+                    if k == lastk:
+                        continue
+                    for i in range(-1, 2):
+                        for j in range(-1, 2):
+                            if (i == 0) and (j == 0):
+                                continue
+                            if fun_zone[px + i][py + j] == 255:
+                                fun_zone[px + i][py + j] == 20
+                                pointctr += 1
+                                lastk = k
+
+
 
 
 
@@ -45,20 +70,3 @@ def spiral_out(x,y, spiral_radius):
         for i in range(y-j+1, y+j):
             yield (x+j,i)
             yield (x-j,i)
-
-def check_close(xP,yP):
-
-    # for y in range(yP-20,yP+20):
-    #     for x in range(xP-20, xP+20):
-    #         if (x,y) == (xP, yP):
-    #             continue
-    #         if 0 <= x < edges.shape[1] and 0 <= y < edges.shape[0]:
-    #             if edges[y][x] == 255:
-    #                 return(x,y)
-
-    for x,y in spiral_out(xP,yP, 50):
-        if 0 <= x < edges.shape[1] and 0 <= y < edges.shape[0]:
-            if edges[y][x] == 255:
-                    return(x,y)
-
-

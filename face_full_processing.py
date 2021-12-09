@@ -65,7 +65,7 @@ def process_face(filename, blur_radius = 17, lower_thresh = 0,
 
         for x,y in spiral_out(xP,yP, 50):
             if 0 <= x < edges.shape[1] and 0 <= y < edges.shape[0]:
-                if edges[y][x] == 255:
+                if edges[y][x] == 255: #todo, is this right samir?
                         return(x,y)
 
         return None
