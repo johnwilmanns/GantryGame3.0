@@ -65,7 +65,9 @@ def denoise_edges(input_img):
                                 pass
                 if pointctr >= 2:
                     print(f"point good at {x}, {y}")
-                    img[x][y] == 255
+                    img[x][y] = 255
+                    cv2.imshow("dingaling",img)
+                    cv2.waitKey(1)
     return img
 
 
