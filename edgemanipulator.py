@@ -1,7 +1,32 @@
 from cv2 import cv2
 import numpy as np
 
-def denoise_edges(image):
+
+"""
+How it works:
+spirals out, finds all the pixels one away
+if there are not two it deletes the original pixel
+then it takes the ajacent pixels, and makes sure that there are more pixels outside that are not the other pixels it found
+checks to see if the ones one away have another one one away
+"""
+'''
+Key:
+white: unprocessed edge
+2: one away
+4: 
+'''
+
+
+def denoise_edges(input_img):
+    input_img = input_img.copy()
+    img = input_img.copy()
+    mask = cv2.inRange(img, (0,0,0), (255,255,255))
+    img[mask>0] = (255,255,255)
+
+    for x in range(len(img)):
+        for y in range(len(img[0])):
+
+
 
 
 def spiral_out(x,y, spiral_radius):
@@ -27,3 +52,5 @@ def check_close(xP,yP):
         if 0 <= x < edges.shape[1] and 0 <= y < edges.shape[0]:
             if edges[y][x] == 255:
                     return(x,y)
+
+
