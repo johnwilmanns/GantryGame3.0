@@ -84,7 +84,12 @@ def process_face(filename, blur_radius = 17, lower_thresh = 0,
     edges = cv2.Canny(gray, lower_thresh, upper_thresh)
     # cv2.imwrite('edges.jpg',edges)
 
+    cv2.imshow("bing shiling", edges)
 
+    cv2.waitKey(0)
+    cv2.imwrite('edges.jpg', edges)
+
+    except("don't really think samir is gonna want to let me merge multiple files later so we just throwin an exception for now")
     points = []
     for y in range(len(edges)):
         for x in range(len(edges[y])):
