@@ -83,12 +83,13 @@ def process_face(filename, blur_radius = 17, lower_thresh = 0,
     gray = cv2.cvtColor(input_img,cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (blur_radius, blur_radius), 0)
     edges = cv2.Canny(gray, lower_thresh, upper_thresh)
-    edges = denoise_edges(edges)
-    # cv2.imwrite('edges.jpg',edges)
-
     cv2.imshow("bing aling", edges)
+    cv2.waitKey(1)
+    edges = denoise_edges(edges)
     cv2.imwrite('edges.jpg', edges)
     cv2.waitKey(0)
+    # cv2.imwrite('edges.jpg',edges)
+
     points = []
     for y in range(len(edges)):
         for x in range(len(edges[y])):
