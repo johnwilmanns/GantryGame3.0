@@ -34,9 +34,12 @@ def denoise_edges(input_img):
                     for j in range (-1,2):
                         if(i == 0) and (j == 0):
                             continue
-                        if fun_zone[x+i][y+j] == 255:
-                            fun_zone[x+i][y+j] == 20
-                            potential_points.append([x+i, y+j])
+                        try:
+                            if fun_zone[x+i][y+j] == 255:
+                                fun_zone[x+i][y+j] == 20
+                                potential_points.append([x+i, y+j])
+                        except IndexError:
+                            pass
 
                 if len(potential_points) < 2:
                     continue
@@ -47,15 +50,23 @@ def denoise_edges(input_img):
                     px,py = point
                     if k == lastk:
                         continue
+                    if pointctr >=2:
+                        break
                     for i in range(-1, 2):
                         for j in range(-1, 2):
                             if (i == 0) and (j == 0):
                                 continue
-                            if fun_zone[px + i][py + j] == 255:
-                                fun_zone[px + i][py + j] == 20
-                                pointctr += 1
-                                lastk = k
-
+                            try:
+                                if fun_zone[px + i][py + j] == 255:
+                                    fun_zone[px + i][py + j] == 20
+                                    pointctr += 1
+                                    lastk = k
+                            except IndexError:
+                                pass
+                if pointctr >= 2:
+                    print(f"point good at {x}, {y}")
+                    img[x][y] == 255
+    return img
 
 
 

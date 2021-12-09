@@ -83,13 +83,12 @@ def process_face(filename, blur_radius = 17, lower_thresh = 0,
     gray = cv2.cvtColor(input_img,cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (blur_radius, blur_radius), 0)
     edges = cv2.Canny(gray, lower_thresh, upper_thresh)
+    edges = denoise_edges(edges)
     # cv2.imwrite('edges.jpg',edges)
 
-    cv2.imshow("bing shiling", edges)
-
-    cv2.waitKey(0)
+    cv2.imshow("bing aling", edges)
     cv2.imwrite('edges.jpg', edges)
-
+    cv2.waitKey(0)
     points = []
     for y in range(len(edges)):
         for x in range(len(edges[y])):
@@ -230,7 +229,7 @@ def process_face(filename, blur_radius = 17, lower_thresh = 0,
     edges = cv2.Canny(gray,lower_thresh,upper_thresh)
     display = np.concatenate((input_img, cv2.cvtColor(edges,cv2.COLOR_GRAY2RGB)), axis=1)
     display = np.concatenate((display, img), axis=1)
-    edges = denoise_edges(edges)
+
     new_points = calc_path(segments, max_accel, max_lr, turn_vel_multiplier, freq)
 
     if plot_steps:
