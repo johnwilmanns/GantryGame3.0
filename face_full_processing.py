@@ -5,11 +5,13 @@ import time
 import math
 import sys
 import pickle
+from auto_edge import auto_canny
+
 # from test import *
 
 from full_path_planning import calc_path, plot_path_full
 
-def process_face(filename, blur_radius = 17, lower_thresh = 0,
+def process_face(filename, sigma = None, blur_radius = 17, lower_thresh = 0,
         upper_thresh = 40, splitDistance = 20, areaCut = 10,
         minSegmentLen = 15, max_accel = 2, max_lr = .02, turn_vel_multiplier = 1, 
         freq = 60, plot_steps = False):
@@ -69,19 +71,16 @@ def process_face(filename, blur_radius = 17, lower_thresh = 0,
 
         return None
 
-    if filename.find(".jpg") == -1:
-        # Load .png image
-        image = cv2.imread(filename)
-
-        # Save .jpg image
-        cv2.imwrite('image.jpg', image, [int(cv2.IMWRITE_JPEG_QUALITY), 100])
-        input_img = cv2.imread("image.jpg")
-    else:
-        input_img = cv2.imread(filename)
-
+    input_img = cv2.imread(filename)
+    
     gray = cv2.cvtColor(input_img,cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (blur_radius, blur_radius), 0)
-    edges = cv2.Canny(gray, lower_thresh, upper_thresh)
+    
+    if sigma is None:
+        edges = cv2.Canny(gray, lower_thresh, upper_thresh)
+        
+    else:
+        edges = auto_canny(gray, sigma)
     # cv2.imwrite('edges.jpg',edges)
 
 
@@ -191,7 +190,7 @@ def process_face(filename, blur_radius = 17, lower_thresh = 0,
 
     i = 0
     while i < len(segments):
-        if len(segments[i]) <= 2:
+        if len(segments[i]) <= 1:
             segments.pop(i)
             i-=1
         i+=1
@@ -225,12 +224,12 @@ def process_face(filename, blur_radius = 17, lower_thresh = 0,
     edges = cv2.Canny(gray,lower_thresh,upper_thresh)
     display = np.concatenate((input_img, cv2.cvtColor(edges,cv2.COLOR_GRAY2RGB)), axis=1)
     display = np.concatenate((display, img), axis=1)
-
-    new_points = calc_path(segments, max_accel, max_lr, turn_vel_multiplier, freq)
-
+    
     if plot_steps:
         cv2.imshow("images", display)
         cv2.waitKey(0)
+
+    new_points = calc_path(segments, max_accel, max_lr, turn_vel_multiplier, freq)
 
     return new_points, freq
 
