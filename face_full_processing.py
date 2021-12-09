@@ -6,7 +6,8 @@ import math
 import sys
 import pickle
 # from test import *
-
+import edgemanipulator
+from edgemanipulator import denoise_edges
 from full_path_planning import calc_path, plot_path_full
 
 def process_face(filename, blur_radius = 17, lower_thresh = 0,
@@ -236,7 +237,7 @@ def process_face(filename, blur_radius = 17, lower_thresh = 0,
     edges = cv2.Canny(gray,lower_thresh,upper_thresh)
     display = np.concatenate((input_img, cv2.cvtColor(edges,cv2.COLOR_GRAY2RGB)), axis=1)
     display = np.concatenate((display, img), axis=1)
-
+    edges = denoise_edges(edges)
     new_points = calc_path(segments, max_accel, max_lr, turn_vel_multiplier, freq)
 
     if plot_steps:

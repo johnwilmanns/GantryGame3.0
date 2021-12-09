@@ -18,13 +18,21 @@ white: unprocessed edge
 
 
 def denoise_edges(input_img):
-    input_img = input_img.copy()
-    img = input_img.copy()
+    input_img = input_img.deepcopy() #todo not using .copy might be impacting performance
+    img = input_img.deepcopy()
     mask = cv2.inRange(img, (0,0,0), (255,255,255))
     img[mask>0] = (255,255,255)
 
     for x in range(len(img)):
         for y in range(len(img[0])):
+            if input_img[x][y] == 255:
+                fun_zone = input_img.deepcopy()
+                fun_zone[x][y] = 10
+                potential_points = check_close(x,y)
+                if len(potential_points) >= 2:
+                    for point in potential_points:
+                        print(point)
+
 
 
 
