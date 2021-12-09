@@ -206,7 +206,7 @@ def chunks_to_points(parts, freq):
 def calc_path(in_segments, max_accel, max_radius, turn_vel_multiplier, freq):
     segments = []
     for seg in in_segments:
-        parts = calc_segment(seg, max_accel, turn_vel_multiplier, max_radius)
+        parts = calc_segment(seg, max_accel, max_radius, turn_vel_multiplier)
         points = chunks_to_points(parts, freq)
         segments.append(points)
 
