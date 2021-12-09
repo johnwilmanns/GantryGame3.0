@@ -103,7 +103,7 @@ def main(max_accel=40, max_lr= 1, freq = 60, offset = (.1, .1)):
     #     segments = pickle.load(file)
     #     # print(segments)
 
-    segments, freq = process_face("rectangle.jpg", max_accel = max_accel, max_lr = max_lr, freq = freq, blur_radius=1)
+    segments, freq = process_face("ricardo.jpg", max_accel = max_accel, max_lr = max_lr, freq = freq, blur_radius=1)
 
 
     gantry = gantry.Gantry()

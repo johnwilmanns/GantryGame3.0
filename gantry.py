@@ -56,7 +56,7 @@ class Gantry:
 
         self.z.axis.controller.config.vel_limit = 40
         self.z.axis.controller.config.enable_overspeed_error = False
-
+        self.dump_errors()
         self.clear_errors()
         # self.x.start_pos_liveplotter()
         # start_liveplotter(lambda: [self.x.axis.encoder.pos_estimate, self.x.axis.encoder.vel_estimate,
@@ -84,11 +84,12 @@ class Gantry:
 
 
     def __del__(self):
+        self.dump_errors()
         print("setting all states to idle")
         self.x.idle()
         self.y.idle()
         self.z.idle()
-        self.dump_errors()
+        print("set all states to idle")
 
     def axes(self):
         yield self.x
