@@ -57,7 +57,6 @@ def denoise_edges(input_img):
     input_img = input_img.copy()
     img = input_img.copy()
     img.fill(0)
-    print(img)
 
     for x in range(len(img)):
         for y in range(len(img[0])):
@@ -66,18 +65,14 @@ def denoise_edges(input_img):
                 fun_zone[x][y] = 10
                 potential_points = []
 
-                for i in range(-1,2):
-                    for j in range (-1,2):
-                        if(i == 0) and (j == 0):
-                            continue
-                        try:
-                            if fun_zone[x+i][y+j] == 255:
-                                fun_zone[x+i][y+j] == 20
-                                potential_points.append([x+i, y+j])
-                        except IndexError:
-                            pass
+                for xP, yP in spiral_out(x, y, 50):
+                    if 0 <= xP < fun_zone.shape[1] and 0 <= yP < fun_zone.shape[0]:
+                        if fun_zone[yP][xP] == 255:  # todo, is this right samir?
+                            potential_points.append([yP, xP])
+                            fun_zone[yP][xP]=20
 
                 if len(potential_points) < 2:
+                    print("found no potential points")
                     continue
                 pointctr = 0
                 lastk = 0
@@ -102,8 +97,9 @@ def denoise_edges(input_img):
                 if pointctr >= 2:
                     print(f"point good at {x}, {y}")
                     img[x][y] = 255
-                    cv2.imshow("dingaling",img)
-                    cv2.waitKey(1)
+
+        cv2.imshow("dingaling", img)
+        cv2.waitKey(1)
     return img
 
 
