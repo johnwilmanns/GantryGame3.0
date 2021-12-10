@@ -47,7 +47,7 @@ def fill_gaps(input_img):
                         input_img[x][y] = 255
             except IndexError:
                 pass
-            print(f"just chekced {x}, {y}")
+            # print(f"just chekced {x}, {y}")
             # cv2.imshow("dingaling", input_img)
             # cv2.waitKey(1)
     return input_img
@@ -60,7 +60,9 @@ def denoise_edges(input_img):
 
     for x in range(len(img)):
         for y in range(len(img[0])):
+            img[x][y] = 30
             if input_img[x][y] == 255:
+                img[x][y] = 100
                 fun_zone = input_img.copy() #declares and initializes fun zone
                 fun_zone[x][y] = 10
                 potential_points = []
@@ -76,20 +78,19 @@ def denoise_edges(input_img):
                 # cv2.waitKey(0)
 
                 if len(potential_points) < 1:
-                    print("found no potential points")
-                    print(potential_points)
+                    # print("found no potential points")
+                    # print(potential_points)
+                    img[x][y] = 70
 
                     continue
-                else:
-                    print(f"point good at {x}, {y}")
-                    print(potential_points)
-                    img[x][y] = 255
-                    continue
+
                 net_length = 0
                 for point in potential_points:
                     x = point[0]
                     y = point[1]
-                    net_length += (x, y, fun_zone)
+                    net_length += get_length(x, y, fun_zone)
+
+
 
                 # for k, point in enumerate(potential_points):
                 #     print(point)
@@ -109,9 +110,12 @@ def denoise_edges(input_img):
                 #                     lastk = k
                 #             except IndexError:
                 #                 pass
-                if net_length >= 100:
-                    print(f"point good at {x}, {y}")
+                print(net_length)
+                if net_length >= 10:
+                    # print(f"point good at {x}, {y}")
                     img[x][y] = 255
+                else:
+                    img[x][y] = 150
 
         cv2.imshow("dingaling", img)
         cv2.waitKey(1)
