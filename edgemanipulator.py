@@ -86,9 +86,9 @@ def denoise_edges(input_img):
 
                 net_length = 0
                 for point in potential_points:
-                    x = point[0]
-                    y = point[1]
-                    net_length += get_length(x, y, fun_zone)
+                    xZ = point[0]
+                    yZ = point[1]
+                    net_length += get_length(xZ, yZ, fun_zone)
 
 
 
