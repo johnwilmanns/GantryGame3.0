@@ -16,9 +16,45 @@ white: unprocessed edge
 4: 
 '''
 
+def fill_gaps(input_img):
+    for x in range(len(input_img)):
+        for y in range(len(input_img[0])):
+
+            try:
+                if input_img[x][y-1] == 255:
+                    if input_img[x][y+1]==255:
+                        input_img[x][y] = 255
+            except IndexError:
+                pass
+
+            try:
+                if input_img[x-1][y] == 255:
+                    if input_img[x+1][y]==255:
+                        input_img[x][y] = 255
+            except IndexError:
+                pass
+
+            try:
+                if input_img[x-1][y-1] == 255:
+                    if input_img[x+1][y+1]==255:
+                        input_img[x][y] = 255
+            except IndexError:
+                pass
+
+            try:
+                if input_img[x-1][y+1] == 255:
+                    if input_img[x+1][y-1]==255:
+                        input_img[x][y] = 255
+            except IndexError:
+                pass
+            print(f"just chekced {x}, {y}")
+            # cv2.imshow("dingaling", input_img)
+            # cv2.waitKey(1)
+    return input_img
+
 
 def denoise_edges(input_img):
-    input_img = input_img.copy() #todo not using .copy might be impacting performance
+    input_img = input_img.copy()
     img = input_img.copy()
     img.fill(0)
     print(img)
