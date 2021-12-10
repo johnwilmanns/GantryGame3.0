@@ -85,8 +85,12 @@ def denoise_edges(input_img):
                     print(potential_points)
                     img[x][y] = 255
                     continue
-                pointctr = 0
-                lastk = 0
+                net_length = 0
+                for point in potential_points:
+                    x = point[0]
+                    y = point[1]
+                    net_length += (x, y, fun_zone)
+
                 # for k, point in enumerate(potential_points):
                 #     print(point)
                 #     px,py = point
@@ -105,9 +109,9 @@ def denoise_edges(input_img):
                 #                     lastk = k
                 #             except IndexError:
                 #                 pass
-                # if pointctr >= 2:
-                #     print(f"point good at {x}, {y}")
-                #     img[x][y] = 255
+                if net_length >= 100:
+                    print(f"point good at {x}, {y}")
+                    img[x][y] = 255
 
         cv2.imshow("dingaling", img)
         cv2.waitKey(1)
