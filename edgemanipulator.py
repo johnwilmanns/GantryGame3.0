@@ -75,7 +75,7 @@ def denoise_edges(input_img):
                 # cv2.imshow("funzone", fun_zone)
                 # cv2.waitKey(0)
 
-                if len(potential_points) < 2:
+                if len(potential_points) < 1:
                     print("found no potential points")
                     print(potential_points)
 
@@ -87,27 +87,27 @@ def denoise_edges(input_img):
                     continue
                 pointctr = 0
                 lastk = 0
-                for k, point in enumerate(potential_points):
-                    print(point)
-                    px,py = point
-                    if k == lastk:
-                        continue
-                    if pointctr >=2:
-                        break
-                    for i in range(-1, 2):
-                        for j in range(-1, 2):
-                            if (i == 0) and (j == 0):
-                                continue
-                            try:
-                                if fun_zone[px + i][py + j] == 255:
-                                    fun_zone[px + i][py + j] == 20
-                                    pointctr += 1
-                                    lastk = k
-                            except IndexError:
-                                pass
-                if pointctr >= 2:
-                    print(f"point good at {x}, {y}")
-                    img[x][y] = 255
+                # for k, point in enumerate(potential_points):
+                #     print(point)
+                #     px,py = point
+                #     if k == lastk:
+                #         continue
+                #     if pointctr >=2:
+                #         break
+                #     for i in range(-1, 2):
+                #         for j in range(-1, 2):
+                #             if (i == 0) and (j == 0):
+                #                 continue
+                #             try:
+                #                 if fun_zone[px + i][py + j] == 255:
+                #                     fun_zone[px + i][py + j] == 20
+                #                     pointctr += 1
+                #                     lastk = k
+                #             except IndexError:
+                #                 pass
+                # if pointctr >= 2:
+                #     print(f"point good at {x}, {y}")
+                #     img[x][y] = 255
 
         cv2.imshow("dingaling", img)
         cv2.waitKey(1)
@@ -126,3 +126,16 @@ def spiral_out(x,y, spiral_radius):
         for i in range(y-j+1, y+j):
             yield (x+j,i)
             yield (x-j,i)
+
+def get_length(x, y, fun_zone):
+    next_point = [0,0]
+    for xP, yP in spiral_out(x, y, 1):
+        try:
+            if fun_zone[xP][yP] == 255:  # todo, is this right samir?
+                next_point = [xP,yP]
+                fun_zone[xP][yP] = 100
+                return get_length(xP,yP, fun_zone) + 1
+            fun_zone[xP][yP] = 100
+        except IndexError:
+            pass
+    return 1

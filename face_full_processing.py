@@ -87,7 +87,7 @@ def process_face(filename, blur_radius = 17, lower_thresh = 0,
     cv2.imshow("bing aling", edges)
     cv2.waitKey(1)
     # edges = edgemanipulator.fill_gaps(edges)
-    edges = edgemanipulator.fill_gaps(edges)
+    # edges = edgemanipulator.fill_gaps(edges)
     cv2.imshow("ding aling", edges)
     cv2.waitKey(1)
     edges = denoise_edges(edges)
