@@ -20,9 +20,9 @@ def get_posterized_edges(im, gaps = [3, 9, 18, 24], n = 3):
 
     palette = quantiz[color_levels]  # Creating the palette
 
-    im2 = palette[im]  # Applying palette on image
+    poster = palette[im]  # Applying palette on image
 
-    im2 = cv2.convertScaleAbs(im2)  # Converting image back to uint8
+    poster = cv2.convertScaleAbs(poster)  # Converting image back to uint8
 
     edges = im.copy()
     edges.fill(0)
@@ -63,18 +63,27 @@ def get_posterized_edges(im, gaps = [3, 9, 18, 24], n = 3):
                 pass
             y+= value
             cv2.imshow("line", im)
-            cv2.waitKey(0)
+            cv2.waitKey(1)
 
 
 
         lines.append(im)
 
+    for value in values:
+        if value == 255:
+            continue
+        line = lines.pop(0)
+        for x in range(len(poster)):
+            for y in range(len(poster[1])):
+                if poster[x][y] == value:
+                    edges[x][y] = line[x][y]
 
 
 
 
 
-    cv2.imshow("posterized", im2)
+
+    cv2.imshow("posterized", edges)
     cv2.waitKey(0)
 
 
