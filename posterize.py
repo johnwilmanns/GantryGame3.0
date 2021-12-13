@@ -4,20 +4,45 @@ try:
 except:
     import cv2
 
-def get_posterized_edges(im, bounds):
+def get_posterized_edges(im, n):
+
+
+    n = 4  # Number of levels of quantization
+
+    indices = np.arange(0, 256)  # List of all colors
+
+    divider = np.linspace(0, 255, n + 1)[1]  # we get a divider
+
+    quantiz = np.int0(np.linspace(0, 255, n))  # we get quantization colors
+
+    color_levels = np.clip(np.int0(indices / divider), 0, n - 1)  # color levels 0,1,2..
+
+    palette = quantiz[color_levels]  # Creating the palette
+
+    im2 = palette[im]  # Applying palette on image
+
+    im2 = cv2.convertScaleAbs(im2)  # Converting image back to uint8
+
+    edges = im.copy()
+    edges.fill(0)
+
+
+    cv2.imshow("posterized", im2)
+    cv2.waitKey(0)
 
 
 
 
-def posterize(im, bounds):
 
 
 
 
 if __name__ == "__main__":
 
-    input_img = cv2.imread(filename)
+    input_img = cv2.imread("obama.png")
 
     gray = cv2.cvtColor(input_img,cv2.COLOR_BGR2GRAY)
-    gray = cv2.GaussianBlur(gray, (blur_radius, blur_radius), 0)
-    edges = get_posterized_edges()
+    gray = cv2.GaussianBlur(gray, (3, 3), 0)
+    edges = get_posterized_edges(gray , 4)
+
+    cv2.destroyAllWindows()
