@@ -83,8 +83,7 @@ def get_posterized_edges(im, gaps = [3, 9, 18, 24], n = 3):
 
 
 
-    cv2.imshow("posterized", edges)
-    cv2.waitKey(0)
+    return edges
 
 
 
@@ -100,5 +99,14 @@ if __name__ == "__main__":
     gray = cv2.cvtColor(input_img,cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (3, 3), 0)
     edges = get_posterized_edges(gray)
-
+    inverted = utilities.copy_blank(edges)
+    for x in range(len(edges)):
+        for y in range(len(edges[1])):
+            if edges[x][y] == 255:
+                inverted[x][y] = 0
+            else:
+                inverted[x][y] = 255
+    cv2.imshow("final", inverted)
+    cv2.imshow("the actual lines", edges)
+    cv2.waitKey(0)
     cv2.destroyAllWindows()
