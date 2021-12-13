@@ -5,7 +5,7 @@ try:
 except:
     import cv2
 
-def get_posterized_edges(im, gaps = [3, 9, 18, 24], n = 3):
+def get_posterized_edges(im, gaps = [2, 5, 12], n = 3):
 
 
     n = 4  # Number of levels of quantization
@@ -23,11 +23,12 @@ def get_posterized_edges(im, gaps = [3, 9, 18, 24], n = 3):
     poster = palette[im]  # Applying palette on image
 
     poster = cv2.convertScaleAbs(poster)  # Converting image back to uint8
-
+    cv2.imshow("poster", poster)
     edges = im.copy()
     edges.fill(0)
 
     values = [255, 170, 85, 0]
+    values.reverse()
     lines = []
     for i, value in enumerate(gaps):
         im = utilities.copy_blank(im)
