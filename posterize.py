@@ -5,7 +5,7 @@ try:
 except:
     import cv2
 
-def get_posterized_edges(im, gaps = [3, 9, 18, 24] n = 3):
+def get_posterized_edges(im, gaps = [3, 9, 18, 24], n = 3):
 
 
     n = 4  # Number of levels of quantization
@@ -28,10 +28,47 @@ def get_posterized_edges(im, gaps = [3, 9, 18, 24] n = 3):
     edges.fill(0)
 
     values = [255, 170, 85, 0]
-
-    for value in values:
+    lines = []
+    for i, value in enumerate(gaps):
         im = utilities.copy_blank(im)
-        for i in range(len(im)):
+        y = 0
+
+        while y < len(im[0]):
+            # for y in range(len(im[1])):
+            #      if (x % value == 0) & (y % value == 0):
+            #          im[x, y] = 255
+            print(y)
+            try:
+                j = 0
+                while True:
+                    print(f"setting {y}, {y+j}")
+                    im[j,y + j] = 255
+
+                    j+=1
+
+
+            except IndexError:
+                print("pass")
+                pass
+
+            try:
+                j = 0
+                print(j)
+                while True:
+                    # print(f"setting {y}, {y+j}")
+                    im[j,y + j] = 255
+
+                    j-=1
+            except IndexError:
+                pass
+            y+= value
+            cv2.imshow("line", im)
+            cv2.waitKey(0)
+
+
+
+        lines.append(im)
+
 
 
 
