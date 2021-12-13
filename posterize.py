@@ -1,10 +1,11 @@
 import numpy as np
+import utilities
 try:
     from cv2 import cv2
 except:
     import cv2
 
-def get_posterized_edges(im, n):
+def get_posterized_edges(im, gaps = [3, 9, 18, 24] n = 3):
 
 
     n = 4  # Number of levels of quantization
@@ -26,6 +27,15 @@ def get_posterized_edges(im, n):
     edges = im.copy()
     edges.fill(0)
 
+    values = [255, 170, 85, 0]
+
+    for value in values:
+        im = utilities.copy_blank(im)
+        for i in range(len(im)):
+
+
+
+
 
     cv2.imshow("posterized", im2)
     cv2.waitKey(0)
@@ -43,6 +53,6 @@ if __name__ == "__main__":
 
     gray = cv2.cvtColor(input_img,cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (3, 3), 0)
-    edges = get_posterized_edges(gray , 4)
+    edges = get_posterized_edges(gray)
 
     cv2.destroyAllWindows()
