@@ -74,7 +74,7 @@ def process_face(filename, blur_radius = 17, lower_thresh = 0,
 
     gray = cv2.cvtColor(input_img,cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (blur_radius, blur_radius), 0)
-    edges = get_posterized_edges(gray)
+    edges = get_posterized_edges(gray, [10,20,30])
     try:
         cv2.imshow("edges", edges)
         cv2.waitKey(0)

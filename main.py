@@ -105,7 +105,7 @@ def main():
 
 
 
-    segments,freq = process_face("obama.png", max_accel=40, max_lr= 1, freq= 60)
+    segments,freq = process_face("obama.png", max_accel=40, max_lr= .0001, freq= 60, splitDistance=2, areaCut= 2)
 
 
 
