@@ -6,7 +6,7 @@ import math
 import sys
 import pickle
 # from test import *
-
+from posterize import get_posterized_edges
 from full_path_planning import calc_path, plot_path_full
 
 def process_face(filename, blur_radius = 17, lower_thresh = 0,
@@ -74,7 +74,7 @@ def process_face(filename, blur_radius = 17, lower_thresh = 0,
 
     gray = cv2.cvtColor(input_img,cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (blur_radius, blur_radius), 0)
-    edges = cv2.Canny(gray, lower_thresh, upper_thresh)
+    edges = get_posterized_edges(gray)
     # cv2.imwrite('edges.jpg',edges)
 
 
