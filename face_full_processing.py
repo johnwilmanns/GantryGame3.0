@@ -189,7 +189,8 @@ def process_face(filename, blur_radius = 17, lower_thresh = 0,
     while i < len(segments)-2:
         i+=1
         if distance(*segments[i-1][-1], *segments[i][0]) < segmentSplitDistance:
-            segments[i-1:i+1] = [segm]
+            segments[i-1:i+1] = [segments[i-1] + segments[i]]
+            i-=1
 
 
     while True:
@@ -217,8 +218,8 @@ def process_face(filename, blur_radius = 17, lower_thresh = 0,
 
     for seg in segments:
 
-        color = tuple(rd.randrange(0,255) for i in range(3))
-        # color = (0,0,0)
+        # color = tuple(rd.randrange(0,255) for i in range(3))
+        color = (0,0,0)
 
         i = 0
         for i in range(len(seg)-1):

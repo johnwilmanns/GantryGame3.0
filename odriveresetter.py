@@ -54,7 +54,7 @@ odrv1.axis1.config.startup_encoder_offset_calibration = True
 odrv1.axis0.config.startup_closed_loop_control = True
 odrv1.axis1.config.startup_closed_loop_control = True
 
-time.sleep(30)
+time.sleep(5)
 
 try:
     odrv0.save_configuration()
