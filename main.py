@@ -105,10 +105,8 @@ def main():
 
 
 
-    segments, freq = segments, freq = process_face("img.png", blur_radius = 17, lower_thresh = 0,
-    upper_thresh = 40, splitDistance = 10, areaCut = 4,
-    minSegmentLen = 15, max_accel = 40, max_lr = 1, turn_vel_multiplier = 1,
-    freq = 120)
+    segments,freq = process_face("obama.png", max_accel=40, max_lr= 1, freq= 60)
+
 
 
     gantry = gantry.Gantry()
@@ -178,7 +176,7 @@ def main():
     print("done")
     print(behind)
     try:
-        visualizer.terminate()
+        # visualizer.terminate()
         queue1.put("e")
     except ValueError:
         print("sucsessfully terminated visualizer")

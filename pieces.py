@@ -120,8 +120,11 @@ class Arc():
         return vel ** 2 / self.radius
     
     def get_total_time(self):
-        return self.radius * math.radians(abs(self.end_angle-self.start_angle)) / self.vel
-
+        try:
+            return self.radius * math.radians(abs(self.end_angle-self.start_angle)) / self.vel
+        except:
+            print("samirs code tried to devide by zero")
+            return 1
     def get_pos_at_time(self, t):
 
         if self.end_angle - self.start_angle < -180:
