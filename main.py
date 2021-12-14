@@ -105,10 +105,10 @@ def main():
 
 
 
-    segments, freq = segments, freq = process_face("img.png", blur_radius = 17, lower_thresh = 0,
-    upper_thresh = 40, splitDistance = 10, areaCut = 4,
-    minSegmentLen = 15, max_accel = 40, max_lr = 1, turn_vel_multiplier = 1,
-    freq = 120)
+    segments, freq = segments, freq = process_faceprocess_face(filename, blur_radius = 17, lower_thresh = 0,
+        upper_thresh = 40, splitDistance = 20, areaCut = 10,
+        minSegmentLen = 15, max_accel = 2, max_lr = .02, turn_vel_multiplier = 1,
+        freq = 60, plot_steps = False)
 
 
     gantry = gantry.Gantry()
