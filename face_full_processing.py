@@ -74,7 +74,7 @@ def process_face(filename, blur_radius = 17, lower_thresh = 0,
 
     gray = cv2.cvtColor(input_img,cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (blur_radius, blur_radius), 0)
-    edges = get_posterized_edges(gray, [10,20,30])
+    edges = get_posterized_edges(gray, [4,10,15])
     # try:
     #     cv2.imshow("edges", edges)
     #     cv2.waitKey(0)
@@ -238,7 +238,7 @@ def process_face(filename, blur_radius = 17, lower_thresh = 0,
 
 if __name__ == "__main__":
 
-    segments,freq = process_face("obama.png", max_accel=40, max_lr= 1, freq= 60)
+    segments,freq = process_face("obama.png", max_accel=40, max_lr= 1, freq= 120)
 
     with open("path.pickle", 'wb') as file:
         pickle.dump(segments, file)
