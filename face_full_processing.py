@@ -12,15 +12,9 @@ from auto_edge import auto_canny
 
 from full_path_planning import calc_path, plot_path_full
 
-<<<<<<< HEAD
 def process_face(filename, blur_radius = 17, lower_thresh = 0,
         upper_thresh = 40, segmentSplitDistance = 20, areaCut = 10,
         minNumPixels = 15, max_accel = 2, max_lr = .02, turn_vel_multiplier = 1, 
-=======
-def process_face(filename, sigma = None, blur_radius = 17, lower_thresh = 0,
-        upper_thresh = 40, splitDistance = 20, areaCut = 10,
-        minSegmentLen = 15, max_accel = 2, max_lr = .02, turn_vel_multiplier = 1, 
->>>>>>> 5d68c686cfb74b3332d6c39beb133a01a6602dc9
         freq = 60, plot_steps = False):
 
     splitDistance = 1.5
@@ -78,7 +72,6 @@ def process_face(filename, sigma = None, blur_radius = 17, lower_thresh = 0,
 
         return None
 
-<<<<<<< HEAD
     def check_closes(xP,yP, radius):
 
         # for y in range(yP-20,yP+20):
@@ -124,18 +117,6 @@ def process_face(filename, sigma = None, blur_radius = 17, lower_thresh = 0,
 
     saved_edges = copy.deepcopy(edges)
 
-=======
-    input_img = cv2.imread(filename)
-    
-    gray = cv2.cvtColor(input_img,cv2.COLOR_BGR2GRAY)
-    gray = cv2.GaussianBlur(gray, (blur_radius, blur_radius), 0)
-    
-    if sigma is None:
-        edges = cv2.Canny(gray, lower_thresh, upper_thresh)
-        
-    else:
-        edges = auto_canny(gray, sigma)
->>>>>>> 5d68c686cfb74b3332d6c39beb133a01a6602dc9
     # cv2.imwrite('edges.jpg',edges)
 
     # combined = np.concatenate((edges, edges2), axis=1)
