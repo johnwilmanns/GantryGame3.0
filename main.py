@@ -178,7 +178,7 @@ def main():
     print("done")
     print(behind)
     try:
-        visualizer.terminate()
+        # visualizer.terminate()
         queue1.put("e")
     except ValueError:
         print("sucsessfully terminated visualizer")

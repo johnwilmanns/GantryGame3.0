@@ -5,7 +5,7 @@ try:
 except:
     import cv2
 
-def get_posterized_edges(im, gaps = [4, 8, 18], n = 3):
+def get_posterized_edges(im, gaps = [6, 10, 16], n = 3):
 
 
     n = 4  # Number of levels of quantization
