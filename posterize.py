@@ -64,7 +64,7 @@ def get_posterized_edges(im, gaps = [6, 10, 16], n = 3):
                 pass
             y+= value
             # cv2.imshow("line", im)
-            cv2.waitKey(1)
+            # cv2.waitKey(1)
 
 
 

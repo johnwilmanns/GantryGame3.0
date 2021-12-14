@@ -10,8 +10,8 @@ from posterize import get_posterized_edges
 from full_path_planning import calc_path, plot_path_full
 
 def process_face(filename, blur_radius = 17, lower_thresh = 0,
-        upper_thresh = 40, splitDistance = 20, areaCut = 10,
-        minSegmentLen = 15, max_accel = 2, max_lr = .02, turn_vel_multiplier = 1, 
+        upper_thresh = 40, splitDistance = 2, areaCut = 10,
+        minSegmentLen = 2, max_accel = 2, max_lr = .02, turn_vel_multiplier = 1, 
         freq = 60, plot_steps = False):
 
 
@@ -75,11 +75,11 @@ def process_face(filename, blur_radius = 17, lower_thresh = 0,
     gray = cv2.cvtColor(input_img,cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (blur_radius, blur_radius), 0)
     edges = get_posterized_edges(gray, [10,20,30])
-    try:
-        cv2.imshow("edges", edges)
-        cv2.waitKey(0)
-    except:
-        pass
+    # try:
+    #     cv2.imshow("edges", edges)
+    #     cv2.waitKey(0)
+    # except:
+    #     pass
     # cv2.imwrite('edges.jpg',edges)
 
 
