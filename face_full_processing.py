@@ -1,6 +1,7 @@
 from cv2 import cv2
 import numpy as np
 import random as rd
+import copy
 import time
 import math
 import sys
@@ -10,11 +11,11 @@ import pickle
 from full_path_planning import calc_path, plot_path_full
 
 def process_face(filename, blur_radius = 17, lower_thresh = 0,
-        upper_thresh = 40, splitDistance = 20, areaCut = 10,
-        minSegmentLen = 15, max_accel = 2, max_lr = .02, turn_vel_multiplier = 1, 
+        upper_thresh = 40, segmentSplitDistance = 20, areaCut = 10,
+        minNumPixels = 15, max_accel = 2, max_lr = .02, turn_vel_multiplier = 1, 
         freq = 60, plot_steps = False):
 
-
+    splitDistance = 1.5
 
     def distance(x1, y1, x2, y2):
         return (((x2-x1) ** 2 + (y2 - y1) ** 2) ** .5)
@@ -69,6 +70,24 @@ def process_face(filename, blur_radius = 17, lower_thresh = 0,
 
         return None
 
+    def check_closes(xP,yP, radius):
+
+        # for y in range(yP-20,yP+20):
+        #     for x in range(xP-20, xP+20):
+        #         if (x,y) == (xP, yP):
+        #             continue
+        #         if 0 <= x < edges.shape[1] and 0 <= y < edges.shape[0]:
+        #             if edges[y][x] == 255:
+        #                 return(x,y)
+
+        count = 0
+        for x,y in spiral_out(xP,yP, radius):
+            if 0 <= x < edges.shape[1] and 0 <= y < edges.shape[0]:
+                if edges[y][x] == 255:
+                        count+=1
+
+        return count
+
     if filename.find(".jpg") == -1:
         # Load .png image
         image = cv2.imread(filename)
@@ -81,8 +100,26 @@ def process_face(filename, blur_radius = 17, lower_thresh = 0,
 
     gray = cv2.cvtColor(input_img,cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (blur_radius, blur_radius), 0)
+
     edges = cv2.Canny(gray, lower_thresh, upper_thresh)
+    edges2 = copy.deepcopy(edges)
+
+    for y in range(len(edges)):
+        for x in range(len(edges[y])):
+            if edges[y][x] == 255:
+                # print(check_closes(x,y,1))
+                if check_closes(x,y,1) < 2:
+                    edges2[y][x] = 0
+
+    edges = edges2
+
+    saved_edges = copy.deepcopy(edges)
+
     # cv2.imwrite('edges.jpg',edges)
+
+    # combined = np.concatenate((edges, edges2), axis=1)
+    # cv2.imshow("images", combined)
+    # cv2.waitKey(0)
 
 
     points = []
@@ -142,9 +179,15 @@ def process_face(filename, blur_radius = 17, lower_thresh = 0,
     i = 0
     while i < len(segments)-2:
         i+=1
-        if len(segments[i]) < minSegmentLen:
+        if len(segments[i]) < minNumPixels:
             segments.pop(i)
             i-=1
+
+    i = 0
+    while i < len(segments)-2:
+        i+=1
+        if distance(*segments[i-1][-1], *segments[i][0]) < segmentSplitDistance:
+            segments[i-1:i+1] = [segm]
 
 
     while True:
@@ -222,8 +265,8 @@ def process_face(filename, blur_radius = 17, lower_thresh = 0,
 
 
 
-    edges = cv2.Canny(gray,lower_thresh,upper_thresh)
-    display = np.concatenate((input_img, cv2.cvtColor(edges,cv2.COLOR_GRAY2RGB)), axis=1)
+    
+    display = np.concatenate((input_img, cv2.cvtColor(saved_edges,cv2.COLOR_GRAY2RGB)), axis=1)
     display = np.concatenate((display, img), axis=1)
 
     new_points = calc_path(segments, max_accel, max_lr, turn_vel_multiplier, freq)
