@@ -102,7 +102,7 @@ def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb")
     #Add a thing that collapses lines
 
 
-    print(parts[0])
+    # print(parts[0])
     def get_recent_vel(index):
         if index == 0:
             return 0
@@ -147,7 +147,7 @@ def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb")
             max_speed = part.max_speed(max_accel) * turn_vel_multiplier
             if max_speed < get_recent_vel(i): #This is obsolete?
                 # print(f"part {i} is goin way too fast at {get_recent_vel(i)} bucko, should be {max_speed}")
-                print(f"capping vel at index {i}, to vel {max_speed}")
+                # print(f"capping vel at index {i}, to vel {max_speed}")
                 decelerate_to_from(max_speed, i-1)
         else:
             1/0
@@ -187,7 +187,7 @@ def chunks_to_points(parts, freq):
     period = 1/freq
     points = []
     total_time = sum(part.get_total_time() for part in parts)
-    print(f"takes: {total_time}")
+    # print(f"takes: {total_time}")
 
     # print(f"part 1 takes {parts[3].get_total_time()}")
     for t in np.arange(0,total_time, period):
@@ -201,15 +201,18 @@ def chunks_to_points(parts, freq):
                 points.append(part.get_pos_at_time(t2))
                 break
 
-    return points
+    return points, total_time
 
 def calc_path(in_segments, max_accel, max_radius, turn_vel_multiplier, freq):
     segments = []
+    total_time = 0
     for seg in in_segments:
         parts = calc_segment(seg, max_accel, max_radius, turn_vel_multiplier)
-        points = chunks_to_points(parts, freq)
+        points, seg_time = chunks_to_points(parts, freq)
+        total_time += seg_time
         segments.append(points)
 
+    print(total_time)
     return segments
 
 
