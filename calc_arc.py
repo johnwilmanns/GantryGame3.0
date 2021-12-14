@@ -1,5 +1,7 @@
 import math
+from timer import timeit
 
+@timeit
 def calc_arc(a, vi, r, dt, start_angle, end_angle):
     velocities = [vi]
     positions = [0]
