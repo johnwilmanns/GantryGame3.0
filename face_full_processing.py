@@ -227,7 +227,7 @@ def process_face(filename, blur_radius = 17, lower_thresh = 0,
     new_points = calc_path(segments, max_accel, max_lr, turn_vel_multiplier, freq)
 
     if plot_steps:
-        cv2.imshow("images", display)
+        cv2.imshow("images",  display)
         cv2.waitKey(0)
 
     return new_points, freq
