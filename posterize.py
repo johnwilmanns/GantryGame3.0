@@ -38,23 +38,23 @@ def get_posterized_edges(im, gaps = [6, 10, 16], n = 3):
             # for y in range(len(im[1])):
             #      if (x % value == 0) & (y % value == 0):
             #          im[x, y] = 255
-            print(y)
+            # print(y)
             try:
                 j = 0
                 while True:
-                    print(f"setting {y}, {y+j}")
+                    # print(f"setting {y}, {y+j}")
                     im[j,y + j] = 255
 
                     j+=1
 
 
             except IndexError:
-                print("pass")
+                # print("pass")
                 pass
 
             try:
                 j = 0
-                print(j)
+                # print(j)
                 while True:
                     # print(f"setting {y}, {y+j}")
                     im[j,y + j] = 255
@@ -100,6 +100,11 @@ if __name__ == "__main__":
     gray = cv2.cvtColor(input_img,cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (3, 3), 0)
     edges = get_posterized_edges(gray)
+    dst = edges
+
+    # Copy edges to the images that will display the results in BGR
+    cdst = cv2.cvtColor(dst, cv2.COLOR_GRAY2BGR)
+    cdstP = np.copy(cdst)
     inverted = utilities.copy_blank(edges)
     for x in range(len(edges)):
         for y in range(len(edges[1])):
@@ -109,5 +114,17 @@ if __name__ == "__main__":
                 inverted[x][y] = 255
     cv2.imshow("final", inverted)
     cv2.imshow("the actual lines", edges)
+
+    linesP = cv2.HoughLinesP(dst, 1, np.pi / 180, 5, None, 5, 5)
+
+    if linesP is not None:
+        for i in range(0, len(linesP)):
+            l = linesP[i][0]
+            cv2.line(cdstP, (l[0], l[1]), (l[2], l[3]), (0, 0, 255), 3, cv2.LINE_AA)
+
+    cv2.imshow("Detected Lines (in red) - Probabilistic Line Transform", cdstP)
+
+    cv2.waitKey()
+
     cv2.waitKey(0)
     cv2.destroyAllWindows()
