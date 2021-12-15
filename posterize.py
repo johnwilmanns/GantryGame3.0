@@ -86,11 +86,12 @@ def get_posterized_edges(im, gaps = [6, 10, 16], n = 3):
 
     return edges
 
-
-
-
-
-
+def get_segments(input_img):
+    gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
+    gray = cv2.GaussianBlur(gray, (3, 3), 0)
+    edges = get_posterized_edges(gray)
+    dst = edges
+    return cv2.HoughLinesP(dst, 1, np.pi / 180, 1, None, 0, 0)
 
 
 if __name__ == "__main__":
