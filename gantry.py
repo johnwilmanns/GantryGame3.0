@@ -235,6 +235,7 @@ class Gantry:
             while abs(x_pos - new_x) > threshold or abs(y_pos - new_y) > threshold:
                 x_pos = self.x.get_pos()
                 y_pos = self.y.get_pos()
+
         else:
             while abs(x_pos - new_x) > threshold or abs(y_pos - new_y) > threshold:
                 x_pos = self.x.get_pos()

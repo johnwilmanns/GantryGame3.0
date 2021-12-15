@@ -139,8 +139,8 @@ def main():
         t1 = time.perf_counter()
 
         move([seg[2], seg[3]])
-
-        print(f"segment written at {1 / (time.perf_counter() - t1) * len(seg)} hz")
+        time.sleep(.5)
+        print(f"segment written at { (time.perf_counter() - t1) } sec")
 
         pen_up()
 
