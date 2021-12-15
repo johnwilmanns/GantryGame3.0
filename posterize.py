@@ -91,21 +91,26 @@ def get_segments(input_img):
     gray = cv2.GaussianBlur(gray, (3, 3), 0)
     edges = get_posterized_edges(gray)
     dst = edges
-    lines = cv2.HoughLinesP(dst, 1, np.pi / 180, 1, None, 2, 1)
-    newlines = []
+    lines = []
     arraymax = max(len(gray),len(gray[1]))
-    for line in lines:
-        print(line)
-        for seg in line:
-            segment = []
-            for point in seg:
-                print(f"appending {point / arraymax}")
-                segment.append(point / arraymax)
-        if max(segment) >=1:
-            raise ValueError("more than one")
-        print(segment)
-        newlines.append(segment)
-    return newlines
+    for x in range(len(edges)):
+        for y in range(len(edges[0])):
+            if edges[x][y] == 255:
+                initpoint = [x,y]
+                i = x
+                k = y
+                try:
+                    while edges[i,k] == 255:
+                        i +=1
+                        k +=1
+                        # print(f"trying {i}, {k}")
+                except IndexError:
+                    pass
+                # print(f"added {i}, {k}")
+                lines.append([[initpoint[0]/arraymax, initpoint[1]/arraymax],[(i-1)/arraymax,(k-1)/arraymax]])
+
+
+    return lines
 
 if __name__ == "__main__":
 
