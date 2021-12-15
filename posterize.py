@@ -115,12 +115,12 @@ if __name__ == "__main__":
     cv2.imshow("final", inverted)
     cv2.imshow("the actual lines", edges)
 
-    linesP = cv2.HoughLinesP(dst, 1, np.pi / 180, 5, None, 5, 5)
+    linesP = cv2.HoughLinesP(dst, 1, np.pi / 180, 1, None, 0, 0)
 
     if linesP is not None:
         for i in range(0, len(linesP)):
             l = linesP[i][0]
-            cv2.line(cdstP, (l[0], l[1]), (l[2], l[3]), (0, 0, 255), 3, cv2.LINE_AA)
+            cv2.line(cdstP, (l[0], l[1]), (l[2], l[3]), (0, 0, 255), 2, cv2.LINE_AA)
 
     cv2.imshow("Detected Lines (in red) - Probabilistic Line Transform", cdstP)
 
