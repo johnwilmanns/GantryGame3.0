@@ -5,7 +5,7 @@ try:
 except:
     import cv2
 
-def get_posterized_edges(im, gaps = [6, 10, 16], n = 3):
+def get_posterized_edges(im, gaps = [8, 12, 18], n = 3):
 
 
     n = 4  # Number of levels of quantization
@@ -91,16 +91,19 @@ def get_segments(input_img):
     gray = cv2.GaussianBlur(gray, (3, 3), 0)
     edges = get_posterized_edges(gray)
     dst = edges
-    lines = cv2.HoughLinesP(dst, 1, np.pi / 180, 1, None, 0, 0)
+    lines = cv2.HoughLinesP(dst, 1, np.pi / 180, 1, None, 2, 1)
     newlines = []
     arraymax = max(len(gray),len(gray[1]))
     for line in lines:
+        print(line)
         for seg in line:
             segment = []
             for point in seg:
+                print(f"appending {point / arraymax}")
                 segment.append(point / arraymax)
         if max(segment) >=1:
             raise ValueError("more than one")
+        print(segment)
         newlines.append(segment)
     return newlines
 
