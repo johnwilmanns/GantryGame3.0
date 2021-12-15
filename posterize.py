@@ -99,6 +99,8 @@ def get_segments(input_img):
             segment = []
             for point in seg:
                 segment.append(point / arraymax)
+        if max(segment) >=1:
+            raise("more than one")
         newlines.append(segment)
     return newlines
 

@@ -40,6 +40,9 @@ def main():
     def pen_down():
         gantry.set_pos(z=0)
 
+    def distance(arr):
+        return (((arr[2] - arr[1]) ** 2 + (arr[3] - arr[2]) ** 2) ** .5)
+
     # @timeit
     def move(point):
 
@@ -126,8 +129,7 @@ def main():
         1/0
         pass
     except:
-        pass
-        # segments.sort(key=lambda x: len(x))
+        segments.sort(key=lambda seg: distance(seg), reverse=True)
     for i, seg in enumerate(segments):
         print(f"Currently on segment {i}/{len(segments)}")
         t0 = time.perf_counter()
