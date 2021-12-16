@@ -5,33 +5,36 @@ import time
 from time import sleep
 image = cv2.imread("obama.png")
 segments = posterize.get_segments(image)
-print(segments)
-
+# print(segments)
+print(len(segments))
 def pen_down():
-    print("pen down")
+    # print("pen down")
+    pass
 
 def pen_up():
-    print("pen up")
+    # print("pen up")
+    pass
 
 def move(x, y):
-    print(f"moved to {x}, {y}")
+    # print(f"moved to {x}, {y}")
+    pass
 
 def blocked_move(x, y):
-    print(f"blocked da move to {x}, {y}")
+    # print(f"blocked da move to {x}, {y}")
+    pass
 
 img = utilities.get_blank_image(800,800)
-
 for i, seg in enumerate(segments):
-    print(f"Currently on segment {i}/{len(segments)}")
+    # print(f"Currently on segment {i}/{len(segments)}")
     t0 = time.perf_counter()
     blocked_move(seg[0][0], seg[0][1])
-    # print(seg[0])
+    # # print(seg[0])
     pen_down()
     t1 = time.perf_counter()
 
     move(seg[1][0], seg[0][1])
     # time.sleep(.5)
-    print(f"segment written at {(time.perf_counter() - t1)} sec")
+    # # print(f"segment written at {(time.perf_counter() - t1)} sec")
 
     pen_up()
 

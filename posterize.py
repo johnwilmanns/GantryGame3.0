@@ -1,11 +1,12 @@
 import numpy as np
 import utilities
+
 try:
     from cv2 import cv2
 except:
     import cv2
 
-def get_posterized_edges(im, gaps = [8, 12, 18], n = 3):
+def get_posterized_edges(im, gaps = [20, 40, 50], n = 3):
 
 
     n = 4  # Number of levels of quantization
@@ -107,7 +108,8 @@ def get_segments(input_img):
                 except IndexError:
                     pass
                 # print(f"added {i}, {k}")
-                lines.append([[initpoint[0]/arraymax, initpoint[1]/arraymax],[(i-1)/arraymax,(k-1)/arraymax]])
+                if (abs(initpoint[0] - i) ** 2  + abs(initpoint[1] - k) ** 2) ** .5 >= 10:
+                    lines.append([[initpoint[0]/arraymax, initpoint[1]/arraymax],[(i-1)/arraymax,(k-1)/arraymax]])
 
 
     return lines
