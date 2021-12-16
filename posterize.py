@@ -117,7 +117,7 @@ def get_segments(input_img):
 
 if __name__ == "__main__":
 
-    input_img = cv2.imread("obama.png")
+    input_img = cv2.imread("img.png")
 
     gray = cv2.cvtColor(input_img,cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (3, 3), 0)

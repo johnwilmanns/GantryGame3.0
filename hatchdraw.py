@@ -94,7 +94,7 @@ def main():
     #     segments = pickle.load(file)
     #     # print(segments)
 
-    segments = get_segments(cv2.imread("obama.png"))
+    segments = get_segments(cv2.imread("img.png"))
 
     gantry = gantry.Gantry()
     gantry.startup()
@@ -126,7 +126,8 @@ def main():
     # gantry.y.axis.controller.config.input_filter_bandwidth = freq / 2
 
     try:
-        1/0
+        1/1
+
         pass
     except:
         segments.sort(key=lambda seg: distance(seg), reverse=True)
