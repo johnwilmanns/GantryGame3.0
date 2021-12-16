@@ -20,12 +20,12 @@ class Gantry:
         self.x = ODrive_Ease_Lib.Axis(self.odrv1.axis1) # X
         self.y = ODrive_Ease_Lib.Axis(self.odrv1.axis0) # Y
         self.z = ODrive_Ease_Lib.Axis(self.odrv0.axis1) # Z
-        self.x_max_accel = 50
-        self.y_max_accel = 50
-        self.x_max_decel = 100
-        self.y_max_decel = 100
-        self.x_max_vel = 20
-        self.y_max_vel = 20
+        self.x_max_accel = 100
+        self.y_max_accel = 100
+        self.x_max_decel = 200
+        self.y_max_decel = 200
+        self.x_max_vel = 40
+        self.y_max_vel = 40
         self.has_goal = False #for trajectory management
         self.y_goal = 0
         self.x_goal = 0
@@ -73,7 +73,8 @@ class Gantry:
         self.x.check_status() #if these throw an assertion error, make sure the gantry is not up against the axis
         self.y.check_status()
 
-        self.sensorless_home()
+        self.sensorless_home(home_axes=[True,True,True])
+        self.stupid_manual_home_becaues_gibson_still_dont_have_a_collet()
         self.print_positions()
         self.dump_errors()
         
@@ -140,6 +141,23 @@ class Gantry:
                 axis.extremely_scuffed_home()
         self.requested_pos = [0, 0]
 
+
+    def stupid_manual_home_becaues_gibson_still_dont_have_a_collet(self):
+        '''
+        pp2
+        '''
+        self.z.idle()
+        pos = input("put a number if you know your offset, put anything eles if you don't")
+        try:
+            self.z.set_pos(int(pos))
+        except:
+            self.z.idle()
+            input("press any key once ur done")
+            print("your position is: " + str(self.z.get_pos()))
+            time.sleep(5)
+        self.z.set_home()
+
+
     def dump_errors(self):
         print(dump_errors(self.odrv0))
         print(dump_errors(self.odrv1))
@@ -154,6 +172,10 @@ class Gantry:
         print(f"Z = {self.z}")
 
     def set_pos(self, x = -1, y = -1, z = -1):
+        '''
+        The missile knows where it is at all times. It knows this because it knows where it isn't. By subtracting where it is from where it isn't, or where it isn't from where it is (whichever is greater), it obtains a difference, or deviation. The guidance subsystem uses deviations to generate corrective commands to drive the missile from a position where it is to a position where it isn't, and arriving at a position where it wasn't, it now is. Consequently, the position where it is, is now the position that it wasn't, and it follows that the position that it was, is now the position that it isn't.
+In the event that the position that it is in is not the position that it wasn't, the system has acquired a variation, the variation being the difference between where the missile is, and where it wasn't. If variation is considered to be a significant factor, it too may be corrected by the GEA. However, the missile must also know where it was.
+        '''
         
         if(x != -1):
             self.x.set_pos(x)

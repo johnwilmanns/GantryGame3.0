@@ -179,7 +179,7 @@ def main():
         # visualizer.terminate()
         queue1.put("e")
     except ValueError:
-        print("sucsessfully terminated visualizer")
+        print("successfully terminated visualizer")
     pen_up()
 
 

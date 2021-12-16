@@ -41,7 +41,7 @@ def main():
         gantry.set_pos(z=0)
 
     def distance(arr):
-        return (((arr[2] - arr[1]) ** 2 + (arr[3] - arr[2]) ** 2) ** .5)
+        return (((arr[0][0] - arr[1][0]) ** 2 + ((arr[0][1] - arr[1][1]) ** 2) ** .5))
 
     # @timeit
     def move(point):
@@ -133,12 +133,12 @@ def main():
     for i, seg in enumerate(segments):
         print(f"Currently on segment {i}/{len(segments)}")
         t0 = time.perf_counter()
-        blocked_move([seg[0], seg[1]])
+        blocked_move(seg[0])
         # print(seg[0])
         pen_down()
         t1 = time.perf_counter()
 
-        move([seg[2], seg[3]])
+        move(seg[1])
         time.sleep(.5)
         print(f"segment written at { (time.perf_counter() - t1) } sec")
 

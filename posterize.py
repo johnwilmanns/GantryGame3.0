@@ -6,7 +6,7 @@ try:
 except:
     import cv2
 
-def get_posterized_edges(im, gaps = [20, 40, 50], n = 3):
+def get_posterized_edges(im, gaps = [5, 10, 15], n = 3):
 
 
     n = 4  # Number of levels of quantization
@@ -102,6 +102,7 @@ def get_segments(input_img):
                 k = y
                 try:
                     while edges[i,k] == 255:
+                        edges[i,k] = 10
                         i +=1
                         k +=1
                         # print(f"trying {i}, {k}")
