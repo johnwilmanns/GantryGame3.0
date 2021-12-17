@@ -5,7 +5,7 @@ from odrive.enums import *
 # from face_full_processing import process_face
 from timing import timeit
 from posterize import get_segments
-
+import utilities
 def main():
     import gantry
     import pickle
@@ -35,7 +35,7 @@ def main():
             cv2.waitKey(1)  # probably NOT how this works
 
     def pen_up():
-        gantry.set_pos(z=5)
+        gantry.set_pos(z=3)
 
     def pen_down():
         gantry.set_pos(z=0)
@@ -94,7 +94,7 @@ def main():
     #     segments = pickle.load(file)
     #     # print(segments)
 
-    segments = get_segments(cv2.imread("img.png"))
+    segments = get_segments(utilities.resize(cv2.imread("img.png")))
 
     gantry = gantry.Gantry()
     gantry.startup()
