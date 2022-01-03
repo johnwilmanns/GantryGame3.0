@@ -1,15 +1,17 @@
 import numpy as np
-import utilities
 
+import full_path_planning
+import utilities
+import face_full_processing
 try:
     from cv2 import cv2 #'ery nice
 except:
     import cv2
 
-def get_posterized_edges(im, gaps = [5, 10, 15], n = 3):
+def get_posterized_edges(im, gaps = [5, 10, 15]):
 
 
-    n = 4  # Number of levels of quantization
+    n = len(gaps) + 1 # Number of levels of quantization
 
     indices = np.arange(0, 256)  # List of all colors
 
@@ -114,6 +116,11 @@ def get_segments(input_img):
 
 
     return lines
+
+def get_calcd_path(input_img, gaps = [5, 10, 15], max_accel, max_radius, turn_vel_multiplier, john = "dumb"):
+    return full_path_planning.calc_path(get_segments(input_img, gaps = [5, 10, 15]), max_accel, max_lr, turn_vel_multiplier, freq)
+
+
 
 if __name__ == "__main__":
 

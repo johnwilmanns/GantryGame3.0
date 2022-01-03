@@ -181,7 +181,7 @@ def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb")
 
 
     # lines = optimize_line(parts[0])
-    return(parts)
+    return parts
 
 def chunks_to_points(parts, freq):
     period = 1/freq
