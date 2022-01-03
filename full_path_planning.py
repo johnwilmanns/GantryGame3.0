@@ -42,7 +42,7 @@ def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb")
 
         abc_angle = getAngle(a,b,c)
 
-        if abc_angle == 180 or abc_angle == 360 or abc_angle == 0:
+        if abs(abc_angle - 180) < .5 or abs(abc_angle - 360) < .5 or abs(abc_angle) < .5: #Todo: fix this
             l = ab_dist
             r = 0
             lr = 0
@@ -260,11 +260,12 @@ if __name__ == "__main__":
     #     segments = pickle.load(file)
     # rd.seed(42)
 
+    rd.seed(42)
     seg = [(i, rd.random()/10) for i in range(0,50)]
 
     segments = [seg]
     # for i in range(0,len(segments)):
-    parts = calc_path(segments, 10, 1, 1, 20)
+    parts = calc_path(segments, 10, 1, 1, 200)
     plot_path_full(parts)
 
     with open("path.pickle", "wb") as file:
