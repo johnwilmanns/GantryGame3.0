@@ -89,7 +89,7 @@ def get_posterized_edges(im, gaps = [5, 10, 15]):
 
     return edges
 
-def get_segments(input_img):
+def get_segments(input_img, gaps = [5, 10, 15]):
     gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (3, 3), 0)
     edges = get_posterized_edges(gray)
@@ -117,8 +117,8 @@ def get_segments(input_img):
 
     return lines
 
-def get_calcd_path(input_img, gaps = [5, 10, 15], max_accel, max_radius, turn_vel_multiplier, john = "dumb"):
-    return full_path_planning.calc_path(get_segments(input_img, gaps = [5, 10, 15]), max_accel, max_lr, turn_vel_multiplier, freq)
+def get_calcd_path(input_img, gaps = [5, 10, 15], max_accel = 10, max_lr = .01, turn_vel_multiplier = 1, freq = 60, john = "dumb"):
+    return full_path_planning.calc_path(get_segments(input_img, gaps), max_accel, max_lr, turn_vel_multiplier, freq)
 
 
 
@@ -126,34 +126,38 @@ if __name__ == "__main__":
 
     input_img = utilities.resize(cv2.imread("img.png"))
 
-    gray = cv2.cvtColor(input_img,cv2.COLOR_BGR2GRAY)
-    gray = cv2.GaussianBlur(gray, (3, 3), 0)
-    edges = get_posterized_edges(gray)
-    dst = edges
+    parts = get_calcd_path(input_img, gaps=[5,10,15])
+    print('calc\'d path')
+    print(parts)
+    face_full_processing.plot_path_full(parts)
 
-    # Copy edges to the images that will display the results in BGR
-    cdst = cv2.cvtColor(dst, cv2.COLOR_GRAY2BGR)
-    cdstP = np.copy(cdst)
-    inverted = utilities.copy_blank(edges)
-    for x in range(len(edges)):
-        for y in range(len(edges[1])):
-            if edges[x][y] == 255:
-                inverted[x][y] = 0
-            else:
-                inverted[x][y] = 255
-    cv2.imshow("final", inverted)
-    cv2.imshow("the actual lines", edges)
 
-    linesP = cv2.HoughLinesP(dst, 1, np.pi / 180, 1, None, 0, 0)
 
-    if linesP is not None:
-        for i in range(0, len(linesP)):
-            l = linesP[i][0]
-            cv2.line(cdstP, (l[0], l[1]), (l[2], l[3]), (0, 0, 255), 2, cv2.LINE_AA)
+    # dst = edges
+    #
+    # # Copy edges to the images that will display the results in BGR
+    # cdst = cv2.cvtColor(dst, cv2.COLOR_GRAY2BGR)
+    # cdstP = np.copy(cdst)
+    # inverted = utilities.copy_blank(edges)
+    # for x in range(len(edges)):
+    #     for y in range(len(edges[1])):
+    #         if edges[x][y] == 255:
+    #             inverted[x][y] = 0
+    #         else:
+    #             inverted[x][y] = 255
+    # cv2.imshow("final", inverted)
+    # cv2.imshow("the actual lines", edges)
 
-    cv2.imshow("Detected Lines (in red) - Probabilistic Line Transform", cdstP)
-
-    cv2.waitKey()
+    # linesP = cv2.HoughLinesP(dst, 1, np.pi / 180, 1, None, 0, 0)
+    #
+    # if linesP is not None:
+    #     for i in range(0, len(linesP)):
+    #         l = linesP[i][0]
+    #         cv2.line(cdstP, (l[0], l[1]), (l[2], l[3]), (0, 0, 255), 2, cv2.LINE_AA)
+    #
+    # cv2.imshow("Detected Lines (in red) - Probabilistic Line Transform", cdstP)
+    #
+    # cv2.waitKey()
 
     cv2.waitKey(0)
     cv2.destroyAllWindows()
