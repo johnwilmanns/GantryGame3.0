@@ -67,7 +67,7 @@ class Line():
     
     def set_end_vel(self, vel, max_accel):
         # if just modified accel, return None
-        # if modified accel and start_vel, return start_vel
+        # if modified accel and c nct. d.nnr  start_vel, return start_vel
 
         # self.end_vel = vel
         min_start_vel = self.find_start_vel(max_accel, vel) # THIS BROKE
