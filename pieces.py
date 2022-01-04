@@ -100,7 +100,7 @@ class Line():
                 points.append((x,y))
         else:
             for x,y in zip(np.arange(self.start_pos[0], self.end_pos[0], (self.end_pos[0]-self.start_pos[0])/num_points),
-             np.arange(self.start_pos[1], self.end_pos[1], (self.end_pos[1]-self.start_pos[1])/num_points)):
+                            np.arange(self.start_pos[1], self.end_pos[1], (self.end_pos[1]-self.start_pos[1])/num_points)):
                 points.append((x,y))
 
         return points
@@ -111,13 +111,18 @@ class Arc():
         self.radius = radius
         self.start_angle = start_angle
         self.end_angle = end_angle
-        self.vel = None
+        self.start_vel = None
+        self.acceleration = None
+        
 
     def __repr__(self):
         return str(f"<Arc centered at {self.center_pos}, from {self.start_angle} to {self.end_angle} with radius {self.radius}>")
 
-    def max_accel(self, vel):
-        return vel ** 2 / self.radius
+    # def max_accel(self, vel):
+    #     return vel ** 2 / self.radius
+
+    def get_acceleration(self):
+        
     
     def get_total_time(self):
         return self.radius * math.radians(abs(self.end_angle-self.start_angle)) / self.vel
