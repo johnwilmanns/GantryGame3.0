@@ -42,11 +42,8 @@ def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb")
 
         abc_angle = getAngle(a,b,c)
 
-<<<<<<< HEAD
-        if abc_angle == 180 or abs(abc_angle - 360) < .5 or abs(abc_angle) < .5:
-=======
         if abs(abc_angle - 180) < .5 or abs(abc_angle - 360) < .5 or abs(abc_angle) < .5: #Todo: fix this
->>>>>>> 526f3ab65f2556e4c16a90f28bed4f6af0482436
+
             l = ab_dist
             r = 0
             lr = 0
