@@ -1,13 +1,15 @@
 import numpy as np
-
+#imports full path planning
 import full_path_planning
 import utilities
 import face_full_processing
+#imports cv2
 try:
     from cv2 import cv2 #'ery nice
 except:
     import cv2
 
+#gets the posturized edges
 def get_posterized_edges(im, gaps = [5, 10, 15]):
 
 
