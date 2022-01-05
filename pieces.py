@@ -134,7 +134,8 @@ class Arc():
 
         return a
 
-    def get_max_deceleration(self, )
+    def get_max_deceleration(self, max_accel, vi):
+        return math.sqrt((max_accel**2) * (self.radius**2) - (vi**4))/self.radius
 
     def get_total_time(self):
         return self.radius * math.radians(abs(self.end_angle - self.start_angle)) / self.vel
