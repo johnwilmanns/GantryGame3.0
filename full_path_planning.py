@@ -108,8 +108,8 @@ def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb")
         if index == 0:
             return 0
         for part in reversed(parts[:index]):
-            if isinstance(part, Line):
-                return part.end_vel
+            # if isinstance(part, Line):
+            return part.end_vel
         return 0
 
     def get_ratio(va, vb, a, l):
@@ -125,8 +125,8 @@ def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb")
         
 
 
-        if isinstance(parts[index], Line):
-            start_val = parts[index].set_end_vel(max_vel, max_accel)
+        # if isinstance(parts[index], Line):
+        start_val = parts[index].set_end_vel(max_vel, max_accel)
 
             # exit()
             if start_val is not None:
@@ -140,8 +140,9 @@ def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb")
 
 
     for i, part in enumerate(parts):
+        part.start_vel = get_recent_vel(i)
+
         if isinstance(part, Line):
-            part.start_vel = get_recent_vel(i)
             part.acceleration = max_accel
         elif isinstance(part, Arc):
 
@@ -150,6 +151,9 @@ def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb")
                 # print(f"part {i} is goin way too fast at {get_recent_vel(i)} bucko, should be {max_speed}")
                 # print(f"capping vel at index {i}, to vel {max_speed}")
                 decelerate_to_from(max_speed, i-1)
+            else:
+                tan_accel = part.get_max_acceleration(max_accel)
+                part.acceleration = tan_accel
         else:
             1/0
     

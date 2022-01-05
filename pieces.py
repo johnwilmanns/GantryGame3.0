@@ -1,3 +1,4 @@
+
 import numpy as np
 import math
 
@@ -125,17 +126,74 @@ class Arc():
     # def max_accel(self, vel):
     #     return vel ** 2 / self.radius
 
-    def get_max_acceleration(self, max_accel, vi):
-        theta = abs(self.end_angle-self.start_angle)
+    @property
+    def theta(self):
+        return math.radians(abs(self.end_angle-self.start_angle))
+    @property
+    def end_vel(self):
+
+        
+
+        if self.start_vel is not None:
+            try:
+                return math.sqrt(self.start_vel ** 2 + 2 * self.acceleration * self.theta * self.radius)
+            except ValueError:
+                return 0  # TODO fix, this is prob shit
+        else:
+            return None
+
+
+
+    def get_max_acceleration(self, max_accel):
+        
 
         a = ((math.sqrt(
-            (max_accel ** 2) * (self.radius ** 4) + 4 * (theta ** 2) * (max_accel ** 2) * (self.radius ** 2) - (self.radius ** 2) * (vi ** 4)) - 2 * theta * (
-            vi ** 2))) / (4 * (theta ** 2) + (self.radius ** 2))
+            (max_accel ** 2) * (self.radius ** 4) + 4 * (self.theta ** 2) * (max_accel ** 2) * (self.radius ** 2) - (self.radius ** 2) * (self.start_vel ** 4)) - 2 * self.theta * (
+            self.start_vel ** 2))) / (4 * (self.theta ** 2) + (self.radius ** 2))
 
         return a
 
     def get_max_deceleration(self, max_accel, vi):
         return math.sqrt((max_accel**2) * (self.radius**2) - (vi**4))/self.radius
+
+    def find_start_vel(self, max_accel, vf):
+
+        vi = math.sqrt(((2 * math.sqrt(-self.theta ** 2  * (vf ** 4 - 4 * self.theta ** 2 * max_accel ** 2 * self.radius ** 2 - max_accel**2 * self.radius**2))) / (4 * self.theta ** 2 + 1)) + (vf ** 2/(4 * self.theta**2 + 1)))
+
+        vi = math.sqrt(math.sqrt(4 * (self.theta**2) * (max_accel**2) * (self.radius**2) - (vf**4) * (self.radius**2)))/(math.sqrt(2)*math.sqrt(self.theta))
+        return vi
+
+    def find_accel(self, vf):
+
+        return (vf ** 2 - self.start_vel ** 2) / (2 * self.theta * self.radius)
+
+    def set_end_vel(self, vel, max_accel):
+        # if just modified accel, return None
+        # if modified accel and c nct. d.nnr  start_vel, return start_vel
+
+        # self.end_vel = vel
+
+        self.acceleration = -self.get_max_deceleration(max_accel, self.start_vel)
+        if self.end_vel > vel:
+            pass
+        else:
+            self.acceleration = self.find_accel(vel)
+            return None
+
+        min_start_vel = self.find_start_vel(max_accel, vel)  # THIS BROKE
+        # accel = self.find_accel2()
+        # print(f"{max_accel=}")
+        # print(f"{vel=}")
+        # print(f"{self.end_vel=}")
+        # print(f"{self.start_vel=}")
+        # print(f"{min_start_vel=}")
+        if min_start_vel > self.start_vel:
+            self.acceleration = self.find_accel(vel)
+            return None
+        else:
+            self.start_vel = min_start_vel
+            self.acceleration = -max_accel
+            return self.start_vel
 
     def get_total_time(self):
         return self.radius * math.radians(abs(self.end_angle - self.start_angle)) / self.vel
@@ -182,6 +240,6 @@ class Arc():
 
 
 if __name__ == "__main__":
-    a = Arc(1, 1, 0, 2)
-    print(a.get_max_acceleration(1, 2, 1))
-    print(a)
+    a = Arc((0,0), 2, 0, 180)
+    # print(a.get_max_acceleration(1, 2, 1))
+    print(a.find_start_vel(1,1))
