@@ -29,9 +29,9 @@ class Line():
         pass
 
     def __repr__(self):
-        return ""
-
-        # return str(f"<Line from {self.start_pos} to {self.end_pos} {self.start_vel=} {self.acceleration=} {self.end_vel=}>")
+        # return ""
+        return str(f"<Line {self.start_vel=} {self.acceleration=} {self.end_vel=}>")
+        return str(f"<Line from {self.start_pos} to {self.end_pos} {self.start_vel=} {self.acceleration=} {self.end_vel=}>")
 
     def get_len(self):
         return distance(*self.start_pos, *self.end_pos)
@@ -120,14 +120,21 @@ class Arc():
         self.start_vel = None
         self.acceleration = None
     def __repr__(self):
+        # return str(self.)
+        return str(f"<Arc with start_vel = {self.start_vel}, end_vel = {self.end_vel}, acceleration = {self.acceleration}")
         return str(
             f"<Arc centered at {self.center_pos}, from {self.start_angle} to {self.end_angle} with radius {self.radius}>")
 
     # def max_accel(self, vel):
     #     return vel ** 2 / self.radius
-
+    
     @property
     def theta(self):
+        # a1 = self.start_angle % 360
+        # a2 = self.end_angle % 360
+        
+        # angle = 180 - abs(abs(a1 - a2) - 180)
+
         return math.radians(abs(self.end_angle-self.start_angle))
     @property
     def end_vel(self):
@@ -154,13 +161,15 @@ class Arc():
         return a
 
     def get_max_deceleration(self, max_accel, vi):
+        if math.isclose(vi, self.max_speed(max_accel)):
+            return 0
         return math.sqrt((max_accel**2) * (self.radius**2) - (vi**4))/self.radius
 
     def find_start_vel(self, max_accel, vf):
 
         vi = math.sqrt(((2 * math.sqrt(-self.theta ** 2  * (vf ** 4 - 4 * self.theta ** 2 * max_accel ** 2 * self.radius ** 2 - max_accel**2 * self.radius**2))) / (4 * self.theta ** 2 + 1)) + (vf ** 2/(4 * self.theta**2 + 1)))
 
-        vi = math.sqrt(math.sqrt(4 * (self.theta**2) * (max_accel**2) * (self.radius**2) - (vf**4) * (self.radius**2)))/(math.sqrt(2)*math.sqrt(self.theta))
+        # vi = math.sqrt(math.sqrt(4 * (self.theta**2) * (max_accel**2) * (self.radius**2) - (vf**4) * (self.radius**2)))/(math.sqrt(2)*math.sqrt(self.theta))
         return vi
 
     def find_accel(self, vf):
@@ -175,7 +184,10 @@ class Arc():
 
         self.acceleration = -self.get_max_deceleration(max_accel, self.start_vel)
         if self.end_vel > vel:
-            pass
+            min_start_vel = self.find_start_vel(max_accel, vel)
+            self.start_vel = min_start_vel
+            self.acceleration = -self.get_max_deceleration(max_accel, self.start_vel)
+            return self.start_vel
         else:
             self.acceleration = self.find_accel(vel)
             return None
@@ -195,8 +207,16 @@ class Arc():
             self.acceleration = -max_accel
             return self.start_vel
 
+    #TODO fix these
+    # def get_total_time(self):
+    #     return self.radius * math.radians(abs(self.end_angle - self.start_angle)) / self.vel
+
     def get_total_time(self):
-        return self.radius * math.radians(abs(self.end_angle - self.start_angle)) / self.vel
+        if self.acceleration == 0:
+            return self.radius * self.theta / self.start_vel
+
+        return -(self.start_vel - math.sqrt(
+            self.start_vel ** 2 + 2 * self.acceleration * self.radius * self.theta)) / self.acceleration
 
     def get_pos_at_time(self, t):
 
@@ -206,8 +226,12 @@ class Arc():
             self.end_angle -= 360
 
         # i dont think this is right
-        angular_vel = math.degrees(self.vel / self.radius)
-        angle_delta = angular_vel * t
+        w0 = self.start_vel/self.radius
+        alpha = self.acceleration / self.radius
+
+        angle_delta = math.degrees(w0 * t + 1/2 * alpha * t ** 2)
+
+        # angle_delta = angular_vel * t
 
         if self.start_angle < self.end_angle:
             dir = 1
@@ -219,22 +243,12 @@ class Arc():
         return (cos(angle) * self.radius + self.center_pos[0], sin(angle) * self.radius + self.center_pos[1])
         # return self.start_vel * t + (self.acceleration * t ** 2)/2
 
+
+
     def max_speed(self, accel):
         return math.sqrt(accel * self.radius)
 
-    def get_points_crude(self, num_points):
 
-        points = []
-
-        if self.end_angle - self.start_angle < -180:
-            self.end_angle += 360
-        elif self.end_angle - self.start_angle > 180:
-            self.end_angle -= 360
-
-        for angle in np.arange(self.start_angle, self.end_angle, (self.end_angle - self.start_angle) / num_points):
-            points.append(
-                (cos(angle) * self.radius + self.center_pos[0], sin(angle) * self.radius + self.center_pos[1]))
-        return points
 
     # def get_max_speed()
 
@@ -242,4 +256,5 @@ class Arc():
 if __name__ == "__main__":
     a = Arc((0,0), 2, 0, 180)
     # print(a.get_max_acceleration(1, 2, 1))
-    print(a.find_start_vel(1,1))
+    
+    print(a.find_start_vel(1,.5))

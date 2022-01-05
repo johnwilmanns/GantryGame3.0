@@ -3,7 +3,7 @@ import numpy as np
 from pieces import Line, Arc, sin, cos
 from test import *
 
-
+#TODO Fix curves that are slow accelerating, or even slow decelerating. look in do eyebrow
 
 seg = [(0,0), (1,0), (1,1), (2,1)]
 # seg = [(0,0), (0,1), (1,1), (1,2)]
@@ -22,7 +22,7 @@ def getAngle(a, b, c):
 
 
 def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb"): #not actually max radius tho
-
+    #TODO implement turn_vel_multiplier
     # R = V^2/A
 
     points = []
@@ -105,6 +105,11 @@ def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb")
 
     # print(parts[0])
     def get_recent_vel(index):
+
+        vel = parts[index-1].end_vel
+        return vel if vel is not None else 0
+
+
         if index == 0:
             return 0
         for part in reversed(parts[:index]):
@@ -129,15 +134,15 @@ def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb")
         start_val = parts[index].set_end_vel(max_vel, max_accel)
 
             # exit()
-            if start_val is not None:
-                decelerate_to_from(start_val, index-1)
-        else:
-            decelerate_to_from(max_vel, index-1)
+        if start_val is not None:
+            decelerate_to_from(start_val, index-1)
+
+
         # current_vel = None
         # for part in reversed(parts[:i]):
         #     if isinstance(part, Line):
         #         part.set_end_vel(max_vel, max_accel)
-
+    #TODO break up arcs by angle
 
     for i, part in enumerate(parts):
         part.start_vel = get_recent_vel(i)
@@ -146,11 +151,13 @@ def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb")
             part.acceleration = max_accel
         elif isinstance(part, Arc):
 
-            max_speed = part.max_speed(max_accel) * turn_vel_multiplier
+            max_speed = part.max_speed(max_accel) 
             if max_speed < get_recent_vel(i): #This is obsolete?
                 # print(f"part {i} is goin way too fast at {get_recent_vel(i)} bucko, should be {max_speed}")
                 # print(f"capping vel at index {i}, to vel {max_speed}")
+                part.start_vel = max_speed
                 decelerate_to_from(max_speed, i-1)
+                part.acceleration = 0
             else:
                 tan_accel = part.get_max_acceleration(max_accel)
                 part.acceleration = tan_accel
@@ -173,16 +180,16 @@ def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb")
         if isinstance(part, Line) and abs(part.acceleration) != max_accel:
             parts[i:i+1] = optimize_line(part)
 
-    for i, part in enumerate(parts): 
-        if isinstance(part, Arc):
-            vel = None
-            for part in reversed(parts[0:i]):
-                if isinstance(part, Line):
-                    vel = part.end_vel
-                    break
+    # for i, part in enumerate(parts): 
+    #     if isinstance(part, Arc):
+    #         vel = None
+    #         for part in reversed(parts[0:i]):
+    #             if isinstance(part, Line):
+    #                 vel = part.end_vel
+    #                 break
 
-            assert vel is not None
-            parts[i].vel = vel
+    #         assert vel is not None
+    #         parts[i].vel = vel
 
 
     # lines = optimize_line(parts[0])
@@ -192,6 +199,10 @@ def chunks_to_points(parts, freq):
     period = 1/freq
     points = []
     total_time = sum(part.get_total_time() for part in parts)
+
+
+    for part in parts:
+        print(part)
     # print(f"takes: {total_time}")
 
     # print(f"part 1 takes {parts[3].get_total_time()}")
