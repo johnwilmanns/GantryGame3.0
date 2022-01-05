@@ -1,4 +1,5 @@
 import math
+from matplotlib.pyplot import step
 import numpy as np
 from pieces import Line, Arc, sin, cos
 from test import *
@@ -16,9 +17,11 @@ def distance(x1, y1, x2, y2):
 
 def getAngle(a, b, c):
     ang = math.degrees(math.atan2(c[1]-b[1], c[0]-b[0]) - math.atan2(a[1]-b[1], a[0]-b[0]))
+    # return ang % 360
+    # return ang
     return ang + 360 if ang < 0 else ang
 
-
+print("hi")
 
 
 def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb"): #not actually max radius tho
@@ -52,7 +55,11 @@ def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb")
             
         else:
             # l = (max_accel * ab_dist - velocity ** 2) / (3 * max_accel) # math n shit
-            lr = min(ab_dist, bc_dist/2, max_radius) #TODO: decide if max radius should govrn lr or r
+            if i == 0:
+                lr = min(ab_dist, bc_dist/2, max_radius)
+            else:
+                lr = min(ab_dist, bc_dist/2, max_radius) #TODO: decide if max radius should govrn lr or r
+            
             r = (2 * sin(abc_angle/2) * lr) / abs(2 * sin(90-abc_angle/2))
             
 
@@ -143,6 +150,27 @@ def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb")
         #     if isinstance(part, Line):
         #         part.set_end_vel(max_vel, max_accel)
     #TODO break up arcs by angle
+
+    for i, part in enumerate(parts):
+        if isinstance(part, Arc):
+            if part.end_angle - part.start_angle < -180:
+                # part.start_angle += 360
+                part.end_angle += 360
+            elif part.end_angle - part.start_angle > 180:
+                # part.start_angle -= 360
+                part.end_angle -= 360
+
+            angle_step = 10
+            n = math.ceil(abs(part.end_angle-part.start_angle)/angle_step)
+            stepsize = (part.end_angle-part.start_angle)/n
+            pairs = [[val, val+stepsize] for val in np.linspace(part.start_angle, part.end_angle-stepsize, n)]
+
+            arcs = []  
+            for pair in pairs:
+                arcs.append(Arc(part.center_pos, part.radius, pair[0], pair[1]))
+
+            parts[i:i+1] = arcs
+            pass
 
     for i, part in enumerate(parts):
         part.start_vel = get_recent_vel(i)

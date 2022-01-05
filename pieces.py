@@ -220,10 +220,10 @@ class Arc():
 
     def get_pos_at_time(self, t):
 
-        if self.end_angle - self.start_angle < -180:
-            self.end_angle += 360
-        elif self.end_angle - self.start_angle > 180:
-            self.end_angle -= 360
+        # if self.end_angle - self.start_angle < -180:
+        #     self.end_angle += 360
+        # elif self.end_angle - self.start_angle > 180:
+        #     self.end_angle -= 360
 
         # i dont think this is right
         w0 = self.start_vel/self.radius

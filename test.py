@@ -1,14 +1,33 @@
-# b = print
+import numpy as np
+from pieces import Arc
+import math
 
-# import random as rd
-# def print(*args, **kwargs):
-#     if len(args) == 1 and type(args[0]) is int or type(args[0]) is float:
-#         print(args[0] + rd.random())
+part = Arc((0,0), 1, 350, 20)
 
-#     elif rd.randrange(0,100) == 0:
-#         print("ooga booga")
-#     elif len(args) > 1:
-#         print(reversed(args))
-#     else:
-#         b("monkey computer says: ", end="")
-#         b(*args, **kwargs)
+
+if part.end_angle - part.start_angle < -180:
+    part.end_angle += 360
+elif part.end_angle - part.start_angle > 180:
+    part.end_angle -= 360
+
+angle_step = 10
+n = math.ceil(abs(part.end_angle-part.start_angle)/angle_step)
+stepsize = (part.end_angle-part.start_angle)/n
+
+if part.start_angle < part.end_angle:
+    dir = 1
+else:
+    dir = -1
+
+print(np.arange(part.start_angle, part.end_angle, stepsize))
+
+pairs = [[val, val+stepsize] for val in np.linspace(part.start_angle, part.end_angle-stepsize, n)]
+
+print(pairs)
+arcs = []
+for pair in pairs:
+    arcs.append(Arc(part.center_pos, part.radius, pair[0], pair[1]))
+
+# print(arcs)
+# print(pairs)
+# print(angle_pairs)
