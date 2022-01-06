@@ -1,8 +1,9 @@
 import math
 from matplotlib.pyplot import step
 import numpy as np
+import copy
 from pieces import Line, Arc, sin, cos
-from test import *
+
 
 #TODO Fix curves that are slow accelerating, or even slow decelerating. look in do eyebrow
 
@@ -13,7 +14,11 @@ def distance(x1, y1, x2, y2):
     return (((x2-x1) ** 2 + (y2 - y1) ** 2) ** .5)
 
 
-
+# def getAngleSigned(a,b,c):
+#     ang = math.degrees(math.atan2(c[1]-b[1], c[0]-b[0]) - math.atan2(a[1]-b[1], a[0]-b[0]))
+#     # return ang % 360
+#     # return ang
+#     return ang if ang < 0 else ang
 
 def getAngle(a, b, c):
     ang = math.degrees(math.atan2(c[1]-b[1], c[0]-b[0]) - math.atan2(a[1]-b[1], a[0]-b[0]))
@@ -21,7 +26,6 @@ def getAngle(a, b, c):
     # return ang
     return ang + 360 if ang < 0 else ang
 
-print("hi")
 
 
 def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb"): #not actually max radius tho
@@ -91,18 +95,23 @@ def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb")
 
 
             shifter = (-(b[1]-a[1])/ab_dist * r, (b[0]-a[0])/ab_dist *r)
-            circle_center = None
+            
             if abc_angle > 180:
                 circle_center = (end_pos[0]+shifter[0], end_pos[1]+shifter[1])
+                
             elif abc_angle < 180:
                 circle_center = (end_pos[0]-shifter[0], end_pos[1]-shifter[1])
-            
 
-            if circle_center:
-                # points += [circle_center] # make sure axe dis shit
-                circle_center_offset = (circle_center[0]+1, circle_center[1])
-                # points += arc_points(circle_center, r, getAngle(circle_center_offset, circle_center, end_pos), getAngle(circle_center_offset, circle_center, new_pos), 100)
-                parts.append(Arc(circle_center, r, getAngle(circle_center_offset, circle_center, end_pos), getAngle(circle_center_offset, circle_center, new_pos)))
+
+            angle = getAngle(end_pos, circle_center , new_pos)
+
+            if angle > 180:
+                angle -= 360
+
+            # points += [circle_center] # make sure axe dis shit
+            circle_center_offset = (circle_center[0]+1, circle_center[1])
+            # points += arc_points(circle_center, r, getAngle(circle_center_offset, circle_center, end_pos), getAngle(circle_center_offset, circle_center, new_pos), 100)
+            parts.append(Arc(circle_center, r, getAngle(circle_center_offset, circle_center, end_pos), angle))
 
 
     parts.append(Line(*seg[-2:]))
@@ -151,23 +160,24 @@ def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb")
         #         part.set_end_vel(max_vel, max_accel)
     #TODO break up arcs by angle
 
-    for i, part in enumerate(parts):
+    parts = parts[44:]
+    buffer_parts = copy.deepcopy(parts)
+
+    for i, part in enumerate(buffer_parts):
         if isinstance(part, Arc):
-            if part.end_angle - part.start_angle < -180:
-                # part.start_angle += 360
-                part.end_angle += 360
-            elif part.end_angle - part.start_angle > 180:
-                # part.start_angle -= 360
-                part.end_angle -= 360
+            
 
-            angle_step = 10
-            n = math.ceil(abs(part.end_angle-part.start_angle)/angle_step)
-            stepsize = (part.end_angle-part.start_angle)/n
-            pairs = [[val, val+stepsize] for val in np.linspace(part.start_angle, part.end_angle-stepsize, n)]
+            angle_step = 2
+            n = math.ceil(abs(part.angle_delta)/angle_step)
+            stepsize = (part.angle_delta)/n
+            vals = np.arange(part.start_angle, part.start_angle+part.angle_delta, stepsize)
 
+            # pairs = [[val % 360, stepsize] for val in np.linspace(part.start_angle, part.start_angle+part.angle_delta-stepsize, n)]
+
+            print("split into :", len(vals))
             arcs = []  
-            for pair in pairs:
-                arcs.append(Arc(part.center_pos, part.radius, pair[0], pair[1]))
+            for val in vals:
+                arcs.append(Arc(part.center_pos, part.radius, val, stepsize))
 
             parts[i:i+1] = arcs
             pass
@@ -203,8 +213,8 @@ def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb")
 
         return l1,l2
         
-
-    for i, part in enumerate(parts):
+    buffer_parts = copy.deepcopy(parts)
+    for i, part in enumerate(buffer_parts):
         if isinstance(part, Line) and abs(part.acceleration) != max_accel:
             parts[i:i+1] = optimize_line(part)
 
@@ -227,10 +237,10 @@ def chunks_to_points(parts, freq):
     period = 1/freq
     points = []
     total_time = sum(part.get_total_time() for part in parts)
+    print("takes: ", total_time)
 
-
-    for part in parts:
-        print(part)
+    # for part in parts:
+    #     print(part)
     # print(f"takes: {total_time}")
 
     # print(f"part 1 takes {parts[3].get_total_time()}")
@@ -261,11 +271,11 @@ def calc_path(in_segments, max_accel, max_radius, turn_vel_multiplier, freq):
 
 
 
-def plot_path(parts):
+def plot_path(points):
     import matplotlib.pyplot as plt
 
 
-    points = []
+    # points = []
     # for chunk in parts:
     #     points += chunk.get_points_crude(100)
 
@@ -274,7 +284,7 @@ def plot_path(parts):
     # print(parts[3].get_total_time())
 
 
-    points = chunks_to_points(parts, 15)
+    # points = chunks_to_points(parts, 15)
 
     plt.scatter(*zip(*points)) 
     

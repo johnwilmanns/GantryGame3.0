@@ -112,18 +112,18 @@ class Line():
 
 
 class Arc():
-    def __init__(self, center_pos, radius, start_angle, end_angle):
+    def __init__(self, center_pos, radius, start_angle, angle_delta):
         self.center_pos = center_pos
         self.radius = radius
         self.start_angle = start_angle
-        self.end_angle = end_angle
+        self.angle_delta = angle_delta
         self.start_vel = None
         self.acceleration = None
     def __repr__(self):
         # return str(self.)
-        return str(f"<Arc with start_vel = {self.start_vel}, end_vel = {self.end_vel}, acceleration = {self.acceleration}")
+        # return str(f"<Arc with start_vel = {self.start_vel}, end_vel = {self.end_vel}, acceleration = {self.acceleration}")
         return str(
-            f"<Arc centered at {self.center_pos}, from {self.start_angle} to {self.end_angle} with radius {self.radius}>")
+            f"<Arc centered at {self.center_pos}, from {self.start_angle} + {self.angle_delta} with radius {self.radius}>")
 
     # def max_accel(self, vel):
     #     return vel ** 2 / self.radius
@@ -135,7 +135,7 @@ class Arc():
         
         # angle = 180 - abs(abs(a1 - a2) - 180)
 
-        return math.radians(abs(self.end_angle-self.start_angle))
+        return math.radians(abs(self.angle_delta))
     @property
     def end_vel(self):
 
@@ -229,16 +229,12 @@ class Arc():
         w0 = self.start_vel/self.radius
         alpha = self.acceleration / self.radius
 
-        angle_delta = math.degrees(w0 * t + 1/2 * alpha * t ** 2)
+        angle_moved = math.degrees(w0 * t + 1/2 * alpha * t ** 2)
 
         # angle_delta = angular_vel * t
 
-        if self.start_angle < self.end_angle:
-            dir = 1
-        else:
-            dir = -1
 
-        angle = self.start_angle + angle_delta * dir
+        angle = self.start_angle + angle_moved * np.sign(self.angle_delta)
 
         return (cos(angle) * self.radius + self.center_pos[0], sin(angle) * self.radius + self.center_pos[1])
         # return self.start_vel * t + (self.acceleration * t ** 2)/2
