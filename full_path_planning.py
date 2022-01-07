@@ -359,10 +359,10 @@ if __name__ == "__main__":
     # for i in range(0,len(segments)):
     
     parts = calc_segment(seg,1,1,1)
-    # plot_chunks(parts)
+    plot_chunks(parts)
     
     points, t = chunks_to_points(parts, 60)
-    plot_path(points)
+    # plot_path(points)
     
     for part in parts:
         print(part)
