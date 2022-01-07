@@ -37,6 +37,9 @@ class Line():
         return distance(*self.start_pos, *self.end_pos)
 
     def get_total_time(self):
+        if self.acceleration == 0:
+            return self.get_len() / self.start_vel
+        
         return -(self.start_vel - math.sqrt(
             self.start_vel ** 2 + 2 * self.acceleration * self.get_len())) / self.acceleration
 
@@ -212,8 +215,10 @@ class Arc():
     #     return self.radius * math.radians(abs(self.end_angle - self.start_angle)) / self.vel
 
     def get_total_time(self):
-        if self.acceleration == 0:
+        if math.isclose(self.acceleration, 0, abs_tol=1e-13):
             return self.radius * self.theta / self.start_vel
+
+        return -(self.start_vel - math.sqrt(self.start_vel ** 2 + 2 * self.acceleration * self.radius * self.theta)) / self.acceleration
 
         return -(self.start_vel - math.sqrt(
             self.start_vel ** 2 + 2 * self.acceleration * self.radius * self.theta)) / self.acceleration

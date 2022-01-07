@@ -1,4 +1,5 @@
 import math
+import matplotlib
 from matplotlib.pyplot import step
 import numpy as np
 import copy
@@ -60,7 +61,7 @@ def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb")
         else:
             # l = (max_accel * ab_dist - velocity ** 2) / (3 * max_accel) # math n shit
             if i == 0:
-                lr = min(ab_dist, bc_dist/2, max_radius)
+                lr = min(ab_dist/2, bc_dist/2, max_radius)
             else:
                 lr = min(ab_dist, bc_dist/2, max_radius) #TODO: decide if max radius should govrn lr or r
             
@@ -160,27 +161,28 @@ def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb")
         #         part.set_end_vel(max_vel, max_accel)
     #TODO break up arcs by angle
 
-    parts = parts[44:]
-    buffer_parts = copy.deepcopy(parts)
 
-    for i, part in enumerate(buffer_parts):
+    
+    buffer_parts = []
+    for i, part in enumerate(parts[:]):
         if isinstance(part, Arc):
-            
-
             angle_step = 2
             n = math.ceil(abs(part.angle_delta)/angle_step)
             stepsize = (part.angle_delta)/n
-            vals = np.arange(part.start_angle, part.start_angle+part.angle_delta, stepsize)
+            vals = np.linspace(part.start_angle, part.start_angle+part.angle_delta, n+1)[:-1]
 
             # pairs = [[val % 360, stepsize] for val in np.linspace(part.start_angle, part.start_angle+part.angle_delta-stepsize, n)]
-
+            
             print("split into :", len(vals))
             arcs = []  
             for val in vals:
                 arcs.append(Arc(part.center_pos, part.radius, val, stepsize))
 
-            parts[i:i+1] = arcs
-            pass
+            buffer_parts.extend(arcs)
+        else:
+            buffer_parts.append(part)
+    parts = buffer_parts        
+    
 
     for i, part in enumerate(parts):
         part.start_vel = get_recent_vel(i)
@@ -213,10 +215,17 @@ def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb")
 
         return l1,l2
         
-    buffer_parts = copy.deepcopy(parts)
-    for i, part in enumerate(buffer_parts):
+    buffer_parts = []
+    
+    for i, part in enumerate(parts):
         if isinstance(part, Line) and abs(part.acceleration) != max_accel:
-            parts[i:i+1] = optimize_line(part)
+            buffer_parts.extend(optimize_line(part))
+            # buffer_parts[i:i+1] = optimize_line(part)
+            # print(len(parts))
+        else: 
+            buffer_parts.append(part)
+            
+    parts = buffer_parts
 
     # for i, part in enumerate(parts): 
     #     if isinstance(part, Arc):
@@ -269,7 +278,35 @@ def calc_path(in_segments, max_accel, max_radius, turn_vel_multiplier, freq):
     print(total_time)
     return segments
 
-
+def plot_chunks(parts):
+    import matplotlib.pyplot as plt
+    from matplotlib import patches
+    
+    fig, ax = plt.subplots()
+    
+    a = []
+    b = []
+    for part in parts:
+        if isinstance(part, Line):
+            a.append(part.start_pos)
+            b.append(part.end_pos)
+        else:
+            if part.angle_delta > 0:
+                e =  patches.Arc(part.center_pos, 2 * part.radius, 2 * part.radius, 0, part.start_angle, part.start_angle+part.angle_delta)
+            else:
+                e =  patches.Arc(part.center_pos, 2 * part.radius, 2 * part.radius, 0, part.start_angle+part.angle_delta, part.start_angle)
+            # e =  patches.Arc(part.center_pos, part.radius, 0)
+            
+            ax.add_patch(e)
+            
+    
+    
+    ab_pairs = np.c_[a, b]
+    plt_args = ab_pairs.reshape(-1, 2, 2).swapaxes(1, 2).reshape(-1, 2)
+    ax.plot(*plt_args)
+    
+    
+    plt.show()
 
 def plot_path(points):
     import matplotlib.pyplot as plt
@@ -315,15 +352,26 @@ if __name__ == "__main__":
     # rd.seed(42)
 
     rd.seed(42)
-    seg = [(i, rd.random()/10) for i in range(0,50)]
+    # seg = [(i, rd.random()/10) for i in range(0,10)]
+    seg = [(.5,0), (1,0), (1,1), (1.5,1)]
 
     segments = [seg]
     # for i in range(0,len(segments)):
-    parts = calc_path(segments, 10, 1, 1, 200)
-    plot_path_full(parts)
+    
+    parts = calc_segment(seg,1,1,1)
+    # plot_chunks(parts)
+    
+    points, t = chunks_to_points(parts, 60)
+    plot_path(points)
+    
+    for part in parts:
+        print(part)
+    
+    # parts = calc_path(segments, 10, 1, 1, 200)
+    # plot_path_full(parts)
 
-    with open("path.pickle", "wb") as file:
-        pickle.dump(parts, file)
+    # with open("path.pickle", "wb") as file:
+    #     pickle.dump(parts, file)
 
         
     
