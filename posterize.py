@@ -3,6 +3,7 @@ import numpy as np
 import full_path_planning
 import utilities
 import face_full_processing
+import math
 #imports cv2
 try:
     from cv2 import cv2 #'ery nice
@@ -90,6 +91,78 @@ def get_posterized_edges(im, gaps = [5, 10, 15]):
 
 
     return edges
+
+#draws lines all the way accross
+def make_linerinos(image,p1,p2, color = 255):
+    x1,y1=p1
+    x2,y2=p2
+    ### finding slope
+    m=slope(p1,p2)
+    ### getting image shape
+    h,w=image.shape[:2]
+
+    if m!='NA':
+        ### here we are essentially extending the line to x=0 and x=width
+        ### and calculating the y associated with it
+        ##starting point
+        px=0
+        py=-(x1-0)*m+y1
+        ##ending point
+        qx=w
+        qy=-(x2-w)*m+y2
+    else:
+    ### if slope is zero, draw a line with x=x1 and y=0 and y=height
+        px,py=x1,0
+        qx,qy=x1,h
+    cv2.line(image, (int(px), int(py)), (int(qx), int(qy)), color, 1)
+    return image
+
+#should have x and y in the correct order, don't @ me tho...
+#this is the least efficient implementation possible, but i'm tired so i'm not gonna do it in a good way...
+'''shit method I really should have programmed while I was awake, but being awake is rather cringe'''
+def get_spinny(im, n, density = 10, theta = None, doin = 'doin your mom doin doin your mom'):
+    doin = doin.split()
+    if theta is None:
+        theta = math.pi * 2 / n
+
+    indices = np.arange(0, 256)  # List of all colors
+
+    divider = np.linspace(0, 255, n + 1)[1]  # we get a divider
+
+    quantiz = np.int0(np.linspace(0, 255, n))  # we get quantization colors
+
+    color_levels = np.clip(np.int0(indices / divider), 0, n - 1)  # color levels 0,1,2..
+
+    palette = quantiz[color_levels]  # Creating the palette
+
+    poster = palette[im]  # Applying palette on image
+
+    poster = cv2.convertScaleAbs(poster)  # Converting image back to uint8
+    # cv2.imshow("poster", poster)
+    edges = im.copy()
+    edges.fill(0)
+
+
+    #makes an array of the line doohickers, pixel value corrisponds to the depth, has go go opposite direction
+    hatches = []
+    for i in range(n):
+        print("\r" + doin[i % len(doin)])
+        hatch = utilities.copy_blank(edges)
+        angle = i * theta
+        yspace = 100
+        xspace = yspace * math.tan(angle)
+
+        for y in range(edges, step=density):
+            hatch = make_linerinos(hatch, [0,y],[xspace, y + yspace])
+
+        hatches.append(hatch)
+
+    for i, dummythiccvariablebecauseimtootiredtocode in enumerate(hatches):
+
+
+
+
+
 
 def get_segments(input_img, gaps = [5, 10, 15]):
     gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
