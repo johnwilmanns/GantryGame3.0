@@ -139,25 +139,33 @@ def get_spinny(im, n, density = 10, theta = None, doin = 'doin your mom doin doi
 
     poster = cv2.convertScaleAbs(poster)  # Converting image back to uint8
     # cv2.imshow("poster", poster)
-    edges = im.copy()
-    edges.fill(0)
+    hatch = im.copy()
+    hatch.fill(0)
 
 
     #makes an array of the line doohickers, pixel value corrisponds to the depth, has go go opposite direction
-    hatches = []
+    lines = []
     for i in range(n):
         print("\r" + doin[i % len(doin)])
-        hatch = utilities.copy_blank(edges)
+        hatch = utilities.copy_blank(hatch)
         angle = i * theta
         yspace = 100
         xspace = yspace * math.tan(angle)
 
-        for y in range(edges, step=density):
+        for y in range(0, hatch, density):
             hatch = make_linerinos(hatch, [0,y],[xspace, y + yspace])
 
-        hatches.append(hatch)
+        lines.append(hatch)
+    quantiz.reverse()
 
-    for i, dummythiccvariablebecauseimtootiredtocode in enumerate(hatches):
+    for quant in quantiz:
+        if quant == 255:
+            continue
+        line = lines.pop(0)
+        for x in range(len(poster)):
+            for y in range(len(poster[1])):
+                if poster[x][y] == quant:
+                    edges[x][y] = line[x][y]
 
 
 
@@ -199,9 +207,9 @@ def get_calcd_path(input_img, gaps = [5, 10, 15], max_accel = 10, max_lr = .01, 
 
 if __name__ == "__main__":
 
-    input_img = utilities.resize(cv2.imread("img.png"))
+    input_img = utilities.resize(cv2.imread("obama.png"))
 
-    parts = get_calcd_path(input_img, gaps=[5,10,15])
+    parts = get_spinny(input_img, 4)
     print('calc\'d path')
     print(parts)
     face_full_processing.plot_path_full(parts)
