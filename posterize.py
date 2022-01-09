@@ -92,6 +92,14 @@ def get_posterized_edges(im, gaps = [5, 10, 15]):
 
     return edges
 
+def slope(p1,p2):
+    x1,y1=p1
+    x2,y2=p2
+    if x2!=x1:
+        return((y2-y1)/(x2-x1))
+    else:
+        return 'NA'
+
 #draws lines all the way accross
 def make_linerinos(image,p1,p2, color = 255):
     x1,y1=p1
@@ -122,6 +130,10 @@ def make_linerinos(image,p1,p2, color = 255):
 '''shit method I really should have programmed while I was awake, but being awake is rather cringe'''
 def get_spinny(im, n, density = 10, theta = None, doin = 'doin your mom doin doin your mom'):
     doin = doin.split()
+    edges = im.copy()
+    edges.fill(0)
+    imx = im.shape[1]
+    imy = im.shape[0]
     if theta is None:
         theta = math.pi * 2 / n
 
@@ -138,7 +150,7 @@ def get_spinny(im, n, density = 10, theta = None, doin = 'doin your mom doin doi
     poster = palette[im]  # Applying palette on image
 
     poster = cv2.convertScaleAbs(poster)  # Converting image back to uint8
-    # cv2.imshow("poster", poster)
+    cv2.imshow("poster", poster)
     hatch = im.copy()
     hatch.fill(0)
 
@@ -150,23 +162,27 @@ def get_spinny(im, n, density = 10, theta = None, doin = 'doin your mom doin doi
         hatch = utilities.copy_blank(hatch)
         angle = i * theta
         yspace = 100
-        xspace = yspace * math.tan(angle)
+        xspace = int(yspace * math.tan(angle))
 
-        for y in range(0, hatch, density):
+        for y in range(0, imy, density):
             hatch = make_linerinos(hatch, [0,y],[xspace, y + yspace])
 
         lines.append(hatch)
-    quantiz.reverse()
+        cv2.imshow("hatch", hatch)
+        cv2.waitKey(0)
+    quantiz = quantiz.tolist()
 
     for quant in quantiz:
+        print(f"checking quant: {quant}")
         if quant == 255:
             continue
         line = lines.pop(0)
-        for x in range(len(poster)):
+        for x in range(imx):
             for y in range(len(poster[1])):
+
                 if poster[x][y] == quant:
                     edges[x][y] = line[x][y]
-
+    return edges
 
 
 
@@ -208,11 +224,13 @@ def get_calcd_path(input_img, gaps = [5, 10, 15], max_accel = 10, max_lr = .01, 
 if __name__ == "__main__":
 
     input_img = utilities.resize(cv2.imread("obama.png"))
-
-    parts = get_spinny(input_img, 4)
+    gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
+    gray = cv2.GaussianBlur(gray, (3, 3), 0)
+    edges = get_spinny(gray, 4)
     print('calc\'d path')
-    print(parts)
-    face_full_processing.plot_path_full(parts)
+    cv2.imshow("pp", edges)
+    # print(parts)
+    # face_full_processing.plot_path_full(parts)
 
 
 
