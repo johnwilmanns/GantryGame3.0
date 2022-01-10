@@ -128,7 +128,7 @@ def make_linerinos(image,p1,p2, color = 255):
 #should have x and y in the correct order, don't @ me tho...
 #this is the least efficient implementation possible, but i'm tired so i'm not gonna do it in a good way...
 '''shit method I really should have programmed while I was awake, but being awake is rather cringe'''
-def get_spinny(im, n, density = 10, theta = None, doin = 'doin your mom doin doin your mom'):
+def get_spinny(im, n, density = 30, theta = None, doin = 'doin your mom doin doin your mom'):
     doin = doin.split()
     edges = im.copy()
     edges.fill(0)
@@ -168,10 +168,10 @@ def get_spinny(im, n, density = 10, theta = None, doin = 'doin your mom doin doi
             hatch = make_linerinos(hatch, [0,y],[xspace, y + yspace])
 
         lines.append(hatch)
-        cv2.imshow("hatch", hatch)
+        # cv2.imshow("hatch", hatch)
         # cv2.waitKey(0)
     quantiz = quantiz.tolist()
-
+    quantiz.reverse()
     for quant in quantiz:
         print(f"checking quant: {quant}")
         if quant == 255:
@@ -180,9 +180,11 @@ def get_spinny(im, n, density = 10, theta = None, doin = 'doin your mom doin doi
         for x in range(imx):
             for y in range(len(poster[1])):
 
-                if poster[x][y] == quant:
-                    if edges[x][y] == 0:
-                        edges[x][y] = line[x][y]
+                if poster[x][y] <= quant:
+                    if line[x][y] == 255:
+                        edges[x][y] = 255
+        cv2.imshow("edges", edges)
+        cv2.waitKey(1)
     return edges
 
 
@@ -227,7 +229,7 @@ if __name__ == "__main__":
     input_img = utilities.resize(cv2.imread("obama.png"))
     gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (3, 3), 0)
-    edges = get_spinny(gray, 5)
+    edges = get_spinny(gray, 7, density=15)
     print('calc\'d path')
     cv2.imshow("pp", edges)
     # print(parts)
