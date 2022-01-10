@@ -185,8 +185,8 @@ def get_spinny(im, n, density = 30, theta = None, doin = 'doin your mom doin doi
                 if poster[x][y] <= quant:
                     if line[x][y] == 255:
                         edges[x][y] = 255
-        cv2.imshow("edges", edges)
-        cv2.waitKey(1)
+        # cv2.imshow("edges", edges)
+        # cv2.waitKey(1)
     return edges
 
 
