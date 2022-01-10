@@ -1,4 +1,9 @@
-from cv2 import cv2
+
+
+try:
+    from cv2 import cv2
+except Exception:
+    import cv2
 import numpy as np
 import random as rd
 import copy

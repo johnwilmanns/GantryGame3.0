@@ -164,12 +164,12 @@ def get_spinny(im, n, density = 10, theta = None, doin = 'doin your mom doin doi
         yspace = 100
         xspace = int(yspace * math.tan(angle))
 
-        for y in range(0, imy, density):
+        for y in range(imy * -1, imy, density):
             hatch = make_linerinos(hatch, [0,y],[xspace, y + yspace])
 
         lines.append(hatch)
         cv2.imshow("hatch", hatch)
-        cv2.waitKey(0)
+        # cv2.waitKey(0)
     quantiz = quantiz.tolist()
 
     for quant in quantiz:
@@ -181,7 +181,8 @@ def get_spinny(im, n, density = 10, theta = None, doin = 'doin your mom doin doi
             for y in range(len(poster[1])):
 
                 if poster[x][y] == quant:
-                    edges[x][y] = line[x][y]
+                    if edges[x][y] == 0:
+                        edges[x][y] = line[x][y]
     return edges
 
 
@@ -226,7 +227,7 @@ if __name__ == "__main__":
     input_img = utilities.resize(cv2.imread("obama.png"))
     gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (3, 3), 0)
-    edges = get_spinny(gray, 4)
+    edges = get_spinny(gray, 5)
     print('calc\'d path')
     cv2.imshow("pp", edges)
     # print(parts)
