@@ -226,8 +226,6 @@ def get_spinny(im, n, density = 30, theta = None, doin = 'doin your mom doin doi
 
 
 
-
-
 def get_segments(input_img, gaps = [5, 10, 15]):
     gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (3, 3), 0)
@@ -266,7 +264,7 @@ if __name__ == "__main__":
     input_img = utilities.resize(cv2.imread("obama.png"))
     gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (3, 3), 0)
-    edges = get_spinny(gray, 3, 5, 2)
+    edges = get_spinny(gray, 20, 5, .1)
     print('calc\'d path')
     cv2.imshow("pp", (255-edges))
     # print(parts)
