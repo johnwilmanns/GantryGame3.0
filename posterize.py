@@ -120,8 +120,8 @@ def make_linerinos(image,p1,p2, color = 255):
         qy=-(x2-w)*m+y2
     else:
     ### if slope is zero, draw a line with x=x1 and y=0 and y=height
-        px,py=x1,0
-        qx,qy=x1,h
+        px,py=0,h
+        qx,qy=w,h
     cv2.line(image, (int(px), int(py)), (int(qx), int(qy)), color, 1)
     return image
 
@@ -160,18 +160,53 @@ def get_spinny(im, n, density = 30, theta = None, doin = 'doin your mom doin doi
     for i in range(n):
         print("\r" + doin[i % len(doin)])
         hatch = utilities.copy_blank(hatch)
-        angle = i * theta+1
-        yspace = 100
-        xspace = int(yspace * math.tan(angle))
+        θ = i * theta 
+        θ = math.pi+ 2
+        # yspace = 100
+        # xspace = int(yspace * math.tan(θ))
+        θ2 = θ + math.pi/2
 
-        for y in range(imy * -1, imy, density):
-            hatch = make_linerinos(hatch, [0,y],[xspace, y + yspace])
+        image_center = tuple(i/2 for i in hatch.shape)
+        length = int(max(image_center) * 2)
+
+        for direction in (-1,1):
+            for i in range(0, direction * length, direction * density):
+                x,y = image_center[0] + i * math.cos(θ2), image_center[1] + i * math.sin(θ2)
+
+                x1 = math.floor(x - length * math.cos(θ))
+                y1 = math.floor(y - length * math.sin(θ))
+
+                x2 = math.floor(x + length * math.cos(θ))
+                y2 = math.floor(y + length * math.sin(θ))
+
+                hatch = cv2.line(hatch, (x1, y1), (x2, y2), 255, 1)
+
+
+
+
+        # for j in range(imy * -1, imy, density):
+        #     # hatch = make_linerinos(hatch, [0,y],[xspace, y + yspace])
+
+        #     x1 = j * math.cos(θ2)
+        #     y1 = j * math.sin(θ2)
+        #     length = 10000
+
+
+        #     x2 = int(x1 + length * math.cos(θ))
+        #     y2 = int(y1 + length * math.sin(θ))
+
+        #     x1 = int(x1)
+        #     y1 = int(y1)
+
+            
+
+        #     hatch = cv2.line(hatch, (x1,y1), (x2, y2), 255, 1)
 
         lines.append(hatch)
         
 
-        # cv2.imshow("hatch", hatch)
-        # cv2.waitKey(0)
+        cv2.imshow("hatch", hatch)
+        cv2.waitKey(0)
     quantiz = quantiz.tolist()
     quantiz.reverse()
     for quant in quantiz:
