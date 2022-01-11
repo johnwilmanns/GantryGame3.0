@@ -284,6 +284,7 @@ def process_face(filename, blur_radius = 17, lower_thresh = 0,
 
 
 
+
 if __name__ == "__main__":
 
     segments,freq = process_face("ricardo.jpg", max_accel=40, max_lr= 1, freq= 60)
