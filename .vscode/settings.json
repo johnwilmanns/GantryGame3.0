@@ -1,3 +1,5 @@
 {
-    "debug.inlineValues": true
+    "python.formatting.provider": "autopep8"
+
+    code-runner
 }

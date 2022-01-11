@@ -9,7 +9,7 @@ def main():
     import gantry
     import pickle
     import time
-    askswait = 0
+    askswait = 1
     behind = 0
 
 
@@ -102,11 +102,10 @@ def main():
     # with open("path.pickle", "rb") as file:
     #     segments = pickle.load(file)
     #     # print(segments)
-
-
-
-    segments,freq = process_face("obama.png", max_accel=40, max_lr= .0001, freq= 60, splitDistance=2, areaCut= 2)
-
+    segments, freq = process_face("small_obama.jpg", blur_radius=11, lower_thresh=10,
+                                  upper_thresh=50, segmentSplitDistance=15, areaCut=3,
+                                  minNumPixels=15, max_accel=10, max_lr=.01, turn_vel_multiplier=1, freq=60,
+                                  plot_steps=False)
 
 
     gantry = gantry.Gantry()
@@ -118,6 +117,8 @@ def main():
     #     gantry.set_pos_noblock(z=float(input()))
 
     pen_up()
+
+    gantry.dump_errors()
 
     #the only way python will do this (our codebase does not support if statements)
     try:
@@ -176,10 +177,10 @@ def main():
     print("done")
     print(behind)
     try:
-        # visualizer.terminate()
+        visualizer.terminate()
         queue1.put("e")
     except ValueError:
-        print("successfully terminated visualizer")
+        print("sucsessfully terminated visualizer")
     pen_up()
 
 
