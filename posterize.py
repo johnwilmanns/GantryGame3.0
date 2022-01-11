@@ -220,8 +220,8 @@ def get_spinny(im, n, density = 30, theta = None, doin = 'doin your mom doin doi
                 if poster[x][y] <= quant:
                     if line[x][y] == 255:
                         edges[x][y] = 255
-        cv2.imshow("edges", edges)
-        cv2.waitKey(1)
+        # cv2.imshow("edges", edges)
+        # cv2.waitKey(1)
     return edges
 
 
@@ -266,7 +266,7 @@ if __name__ == "__main__":
     input_img = utilities.resize(cv2.imread("obama.png"))
     gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (3, 3), 0)
-    edges = get_spinny(gray, 2, density=15)
+    edges = get_spinny(gray, 5, density=15)
     print('calc\'d path')
     cv2.imshow("pp", edges)
     # print(parts)
