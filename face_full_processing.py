@@ -262,6 +262,7 @@ def process_face(filename, blur_radius=17, lower_thresh=0,
     return new_points, freq
 
 
+
 if __name__ == "__main__":
     segments, freq = process_face("obama.png", max_accel=40, max_lr=.0001, freq=60)
 
