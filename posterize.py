@@ -130,8 +130,8 @@ def make_linerinos(image,p1,p2, color = 255):
 '''shit method I really should have programmed while I was awake, but being awake is rather cringe'''
 def get_spinny(im, n, density = 30, theta = None, doin = 'doin your mom doin doin your mom'):
     doin = doin.split()
-    edges = im.copy()
-    edges.fill(0)
+    blank = im.copy()
+    blank.fill(0)
     imx = im.shape[1]
     imy = im.shape[0]
     if theta is None:
@@ -209,7 +209,9 @@ def get_spinny(im, n, density = 30, theta = None, doin = 'doin your mom doin doi
         # cv2.waitKey(0)
     quantiz = quantiz.tolist()
     quantiz.reverse()
+    edges = []
     for quant in quantiz:
+        edge = blank.copy()
         print(f"checking quant: {quant}")
         if quant == 255:
             continue
@@ -219,9 +221,10 @@ def get_spinny(im, n, density = 30, theta = None, doin = 'doin your mom doin doi
 
                 if poster[x][y] <= quant:
                     if line[x][y] == 255:
-                        edges[x][y] = 255
-        # cv2.imshow("edges", edges)
-        # cv2.waitKey(1)
+                        edge[x][y] = 255
+        cv2.imshow("edges", edge)
+        cv2.waitKey(1)
+        edges.append(edge)
     return edges
 
 
@@ -264,9 +267,9 @@ if __name__ == "__main__":
     input_img = utilities.resize(cv2.imread("obama.png"))
     gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (3, 3), 0)
-    edges = get_spinny(gray, 20, 5, .1)
+    edges = get_spinny(gray, 8, 5, 2)
     print('calc\'d path')
-    cv2.imshow("pp", (255-edges))
+    # cv2.imshow("pp", (255-edges))
     # print(parts)
     # face_full_processing.plot_path_full(parts)
 
