@@ -161,7 +161,7 @@ def get_spinny(im, n, density = 30, theta = None, doin = 'doin your mom doin doi
         print("\r" + doin[i % len(doin)])
         hatch = utilities.copy_blank(hatch)
         θ = i * theta 
-        θ = math.pi+ 2
+        # θ = math.pi+ 2
         # yspace = 100
         # xspace = int(yspace * math.tan(θ))
         θ2 = θ + math.pi/2
@@ -205,8 +205,8 @@ def get_spinny(im, n, density = 30, theta = None, doin = 'doin your mom doin doi
         lines.append(hatch)
         
 
-        cv2.imshow("hatch", hatch)
-        cv2.waitKey(0)
+        # cv2.imshow("hatch", hatch)
+        # cv2.waitKey(0)
     quantiz = quantiz.tolist()
     quantiz.reverse()
     for quant in quantiz:
@@ -266,9 +266,9 @@ if __name__ == "__main__":
     input_img = utilities.resize(cv2.imread("obama.png"))
     gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (3, 3), 0)
-    edges = get_spinny(gray, 5, density=15)
+    edges = get_spinny(gray, 3, 5, 2)
     print('calc\'d path')
-    cv2.imshow("pp", edges)
+    cv2.imshow("pp", (255-edges))
     # print(parts)
     # face_full_processing.plot_path_full(parts)
 
