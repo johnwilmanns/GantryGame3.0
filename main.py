@@ -94,7 +94,8 @@ def main():
         # while abs(gantry.x.get_pos() - x) > threshold or abs(gantry.y.get_pos() - y) > threshold:
         #     time.sleep(.001)
 
-        
+
+
     segments = None
     import os
     import sys
