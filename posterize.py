@@ -221,9 +221,9 @@ def get_spinny(im, n, density = 30, theta = None, doin = 'doin your mom doin doi
         for x in range(imx):
             for y in range(len(poster[1])):
 
-                if poster[x][y] <= quant:
-                    if line[x][y] == 255:
-                        edge[x][y] = 255
+                if poster[y][x] <= quant:
+                    if line[y][x] == 255:
+                        edge[y][x] = 255
         # cv2.imshow("edges", edge)
         # cv2.waitKey(1)
         edges.append(edge)

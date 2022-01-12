@@ -1,3 +1,4 @@
+from os import unlink
 from cv2 import cv2
 import numpy as np
 import random as rd
@@ -9,29 +10,38 @@ import pickle
 from auto_edge import auto_canny
 import posterize
 import utilities
-from full
+
 
 # from test import *
 
-from full_path_planning import calc_path, plot_path, plot_path_full
+from full_path_planning import calc_path, plot_path, plot_path_full, distance
 
-def plot_segments(segments):
+def plot_segments(segments, shape = (512, 512)):
+    
+    # img = in_img.copy()
+    # mask = cv2.inRange(img, (0,0,0), (255,255,255))
+    # img[mask>0] = (255,255,255)
+    
+    img = 255 * np.ones(shape=[*shape, 3], dtype=np.uint8)
 
-        for seg in segments:
+    for seg in segments:
 
-            # color = tuple(rd.randrange(0,255) for i in range(3))
-            color = (0,0,0)
+        color = tuple(rd.randrange(0,255) for i in range(3))
+        # color = (0,0,0)
 
-            i = 0
-            for i in range(len(seg)-1):
+        i = 0
+        for i in range(len(seg)-1):
 
-                # print(seg[i])
-                if distance(seg[i][0], seg[i][1], seg[i+1][0], seg[i+1][1]) < 2000:
-                    x1,y1,x2,y2 = seg[i][0], seg[i][1], seg[i+1][0], seg[i+1][1]
-                    
-                    # cv2.line(img,(x1,y1), (x1,y1), (0,0,0), 4)
-                    # cv2.line(img,(x2,y2), (x2,y2), (0,0,0), 4)
-                    cv2.line(img,(x1,y1),(x2,y2),color,2)
+            # print(seg[i])
+            x1,y1,x2,y2 = int(seg[i][0]*shape[0]), int(seg[i][1]*shape[0]), int(seg[i+1][0]*shape[1]), int(seg[i+1][1]*shape[1])
+            
+            # cv2.line(img,(x1,y1), (x1,y1), (0,0,0), 4)
+            # cv2.line(img,(x2,y2), (x2,y2), (0,0,0), 4)
+            cv2.line(img,(x1,y1),(x2,y2),color,2)
+                
+    cv2.imwrite("test.jpg", img)
+    cv2.imshow("images", img)
+    cv2.waitKey(0)
 
 def process_edges_raw(filename, blur_radius = 17, lower_thresh = 0,
         upper_thresh = 40, segmentSplitDistance = 20, areaCut = 10,
@@ -308,7 +318,8 @@ def process_shading_raw(filename, blur_radius = 3, n = 5, density = 20, theta = 
 
     splitDistance = 1.5
     
-    input_img = utilities.resize(cv2.imread("filename"))
+    # input_img = utilities.resize(cv2.imread(filename))
+    input_img = cv2.imread(filename)
     # input_img = cv2.imread("obama.png")
     
     gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
@@ -578,17 +589,17 @@ def process_shading_raw(filename, blur_radius = 3, n = 5, density = 20, theta = 
 def process_combo_raw(filename):
     
     segments = process_edges_raw(filename)
+    segments.extend(process_shading_raw(filename))
+    
+    return segments
 
 
 if __name__ == "__main__":
 
-    segments,freq = process_face("C:/Users/Samir/OneDrive/Documents/Drawing Bot/GantryGame3.0/GantryGame3.0/small_obama.jpg")
+    filename = "C:/Users/Samir/OneDrive/Documents/Drawing Bot/GantryGame3.0/GantryGame3.0/small_obama.jpg"
 
-    with open("path.pickle", 'wb') as file:
-        pickle.dump(segments, file)
+    segments= process_combo_raw(filename)
+    # segments = process_shading_raw(filename)
 
-    #
-    # cv2.imshow("images", display)
-    # cv2.waitKey(0)
 
-    plot_path_full(segments)
+    plot_segments(segments)
