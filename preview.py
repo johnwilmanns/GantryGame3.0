@@ -1,4 +1,4 @@
-from face_full_processing import process_face, plot_path_full
+from full_face_processing import process_face, plot_path_full
 
 
 segments, freq = process_face("C:/Users/Samir/OneDrive/Documents/Drawing Bot/GantryGame3.0/GantryGame3.0/small_obama.jpg", blur_radius = 11, lower_thresh = 10,
