@@ -1,5 +1,8 @@
 from os import unlink
-from cv2 import cv2
+try:
+    from cv2 import cv2
+except:
+    import cv2
 import numpy as np
 import random as rd
 import copy
@@ -596,7 +599,7 @@ def process_combo_raw(filename):
 
 if __name__ == "__main__":
 
-    filename = "C:/Users/Samir/OneDrive/Documents/Drawing Bot/GantryGame3.0/GantryGame3.0/small_obama.jpg"
+    filename = "small_obama.jpg"
 
     segments= process_combo_raw(filename)
     # segments = process_shading_raw(filename)
