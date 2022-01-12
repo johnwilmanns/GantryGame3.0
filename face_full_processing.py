@@ -7,13 +7,14 @@ import math
 import sys
 import pickle
 from auto_edge import auto_canny
+import posterize
 import utilities
 
 # from test import *
 
 from full_path_planning import calc_path, plot_path, plot_path_full
 
-def process_face(filename, blur_radius = 17, lower_thresh = 0,
+def process_edges_raw(filename, blur_radius = 17, lower_thresh = 0,
         upper_thresh = 40, segmentSplitDistance = 20, areaCut = 10,
         minNumPixels = 15, max_accel = 2, max_lr = .02, turn_vel_multiplier = 1, 
         freq = 60, plot_steps = False):
@@ -277,15 +278,24 @@ def process_face(filename, blur_radius = 17, lower_thresh = 0,
         cv2.imshow("images", display)
         cv2.waitKey(0)
 
-    new_points = calc_path(segments, max_accel, max_lr, turn_vel_multiplier, freq)
+    # new_points = calc_path(segments, max_accel, max_lr, turn_vel_multiplier, freq)
+    new_points = segments
+    
+    return new_points
 
-    return new_points, freq
-
-def process_shading(shades, segmentSplitDistance = 20, areaCut = 10,
+def process_shading_raw(filename, blur_radius = 3, n = 5, density = 20, theta = None, segmentSplitDistance = 20, areaCut = 10,
         minNumPixels = 15, max_accel = 2, max_lr = .02, turn_vel_multiplier = 1, 
         freq = 60, plot_steps = False):
 
     splitDistance = 1.5
+    
+    input_img = utilities.resize(cv2.imread("filename"))
+    # input_img = cv2.imread("obama.png")
+    
+    gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
+    gray = cv2.GaussianBlur(gray, (blur_radius, blur_radius), 0)
+    shades = posterize.get_spinny(gray, n, density, theta)
+    
 
     def distance(x1, y1, x2, y2):
         return (((x2-x1) ** 2 + (y2 - y1) ** 2) ** .5)
@@ -514,8 +524,8 @@ def process_shading(shades, segmentSplitDistance = 20, areaCut = 10,
 
             for seg in segments:
 
-                color = tuple(rd.randrange(0,255) for i in range(3))
-                # color = (0,0,0)
+                # color = tuple(rd.randrange(0,255) for i in range(3))
+                color = (0,0,0)
 
                 i = 0
                 for i in range(len(seg)-1):
@@ -524,8 +534,8 @@ def process_shading(shades, segmentSplitDistance = 20, areaCut = 10,
                     if distance(seg[i][0], seg[i][1], seg[i+1][0], seg[i+1][1]) < 2000:
                         x1,y1,x2,y2 = seg[i][0], seg[i][1], seg[i+1][0], seg[i+1][1]
                         
-                        cv2.line(img,(x1,y1), (x1,y1), (0,0,0), 4)
-                        cv2.line(img,(x2,y2), (x2,y2), (0,0,0), 4)
+                        # cv2.line(img,(x1,y1), (x1,y1), (0,0,0), 4)
+                        # cv2.line(img,(x2,y2), (x2,y2), (0,0,0), 4)
                         cv2.line(img,(x1,y1),(x2,y2),color,2)
 
         for i, seg in enumerate(segments):
@@ -534,7 +544,8 @@ def process_shading(shades, segmentSplitDistance = 20, areaCut = 10,
 
 
         # new_points = calc_path(segments, max_accel, max_lr, turn_vel_multiplier, freq)
-        new_points.extend(calc_path(segments, max_accel, max_lr, turn_vel_multiplier, freq))
+        # new_points.extend(calc_path(segments, max_accel, max_lr, turn_vel_multiplier, freq))
+        new_points.extend(segments)
 
     
 
@@ -543,14 +554,16 @@ def process_shading(shades, segmentSplitDistance = 20, areaCut = 10,
         cv2.imshow("images", img)
         cv2.waitKey(0)
 
-    return new_points, freq
+    return new_points
 
-
+def process_combo_raw(filename):
+    
+    segments = process_edges_raw(filename)
 
 
 if __name__ == "__main__":
 
-    segments,freq = process_face("ricardo.jpg", max_accel=40, max_lr= 1, freq= 60)
+    segments,freq = process_face("C:/Users/Samir/OneDrive/Documents/Drawing Bot/GantryGame3.0/GantryGame3.0/small_obama.jpg")
 
     with open("path.pickle", 'wb') as file:
         pickle.dump(segments, file)

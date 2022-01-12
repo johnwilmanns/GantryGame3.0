@@ -137,7 +137,7 @@ def get_spinny(im, n, density = 30, theta = None, doin = 'doin your mom doin doi
     imx = im.shape[1]
     imy = im.shape[0]
     if theta is None:
-        theta = math.pi * 2 / n
+        theta = math.pi *2 / n
 
     indices = np.arange(0, 256)  # List of all colors
 
@@ -272,8 +272,8 @@ if __name__ == "__main__":
     
     gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (3, 3), 0)
-    edges = get_spinny(gray, 3, 20, 2)
-    face_full_processing.process_shading(edges, plot_steps=True)
+    edges = get_spinny(gray, 5, 10)
+    face_full_processing.process_shading(edges, plot_steps=True, segmentSplitDistance=2, minNumPixels=3)
 
     print('calc\'d path')
     # cv2.imshow("pp", (255-edges))
