@@ -183,7 +183,7 @@ def get_spinny(im, n, density = 30, theta = None, doin = 'doin your mom doin doi
 
                 hatch = cv2.line(hatch, (x1, y1), (x2, y2), 255, 1)
 
-
+                cv2.imshow("eeouu", hatch)
 
 
         # for j in range(imy * -1, imy, density):
@@ -227,34 +227,37 @@ def get_spinny(im, n, density = 30, theta = None, doin = 'doin your mom doin doi
         # cv2.imshow("edges", edge)
         # cv2.waitKey(1)
         edges.append(edge)
+        cv2.imshow("eouoeuoeu", edge)
+        cv2.waitKey(0)    
+    
     return edges
 
 
 
-def get_segments(input_img, gaps = [5, 10, 15]):
-    gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
-    gray = cv2.GaussianBlur(gray, (3, 3), 0)
-    edges = get_posterized_edges(gray)
-    dst = edges
-    lines = []
-    arraymax = max(len(gray),len(gray[1]))
-    for x in range(len(edges)):
-        for y in range(len(edges[0])):
-            if edges[x][y] == 255:
-                initpoint = [x,y]
-                i = x
-                k = y
-                try:
-                    while edges[i,k] == 255:
-                        edges[i,k] = 10
-                        i +=1
-                        k +=1
-                        # print(f"trying {i}, {k}")
-                except IndexError:
-                    pass
-                # print(f"added {i}, {k}")
-                if (abs(initpoint[0] - i) ** 2  + abs(initpoint[1] - k) ** 2) ** .5 >= 10:
-                    lines.append([[initpoint[0]/arraymax, initpoint[1]/arraymax],[(i-1)/arraymax,(k-1)/arraymax]])
+# def get_segments(input_img, gaps = [5, 10, 15]):
+#     gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
+#     gray = cv2.GaussianBlur(gray, (3, 3), 0)
+#     edges = get_posterized_edges(gray)
+#     dst = edges
+#     lines = []
+#     arraymax = max(len(gray),len(gray[1]))
+#     for x in range(len(edges)):
+#         for y in range(len(edges[0])):
+#             if edges[x][y] == 255:
+#                 initpoint = [x,y]
+#                 i = x
+#                 k = y
+#                 try:
+#                     while edges[i,k] == 255:
+#                         edges[i,k] = 10
+#                         i +=1
+#                         k +=1
+#                         # print(f"trying {i}, {k}")
+#                 except IndexError:
+#                     pass
+#                 # print(f"added {i}, {k}")
+#                 if (abs(initpoint[0] - i) ** 2  + abs(initpoint[1] - k) ** 2) ** .5 >= 10:
+#                     lines.append([[initpoint[0]/arraymax, initpoint[1]/arraymax],[(i-1)/arraymax,(k-1)/arraymax]])
 
 
     return lines
