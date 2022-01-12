@@ -273,12 +273,12 @@ if __name__ == "__main__":
     gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (3, 3), 0)
     edges = get_spinny(gray, 5, 10)
-    face_full_processing.process_shading(edges, plot_steps=True, segmentSplitDistance=2, minNumPixels=3)
+    full_face_processing.process_shading(edges, plot_steps=True, segmentSplitDistance=2, minNumPixels=3)
 
     print('calc\'d path')
     # cv2.imshow("pp", (255-edges))
     # print(parts)
-    # face_full_processing.plot_path_full(parts)
+    # full_face_processing.plot_path_full(parts)
 
 
 

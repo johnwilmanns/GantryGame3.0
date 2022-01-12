@@ -2,7 +2,7 @@ import multiprocessing as mp
 import cv2
 import numpy as np
 from odrive.enums import *
-# from face_full_processing import process_face
+# from full_face_processing import process_face
 from timing import timeit
 from posterize import get_segments
 import utilities
