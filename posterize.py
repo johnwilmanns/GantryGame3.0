@@ -1,3 +1,4 @@
+from matplotlib.pyplot import plot
 import numpy as np
 #imports full path planning
 import full_path_planning
@@ -267,7 +268,9 @@ if __name__ == "__main__":
     input_img = utilities.resize(cv2.imread("obama.png"))
     gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (3, 3), 0)
-    edges = get_spinny(gray, 8, 5, 2)
+    edges = get_spinny(gray, 3, 20, 2)
+    face_full_processing.process_shading(edges, plot_steps=True)
+
     print('calc\'d path')
     # cv2.imshow("pp", (255-edges))
     # print(parts)
