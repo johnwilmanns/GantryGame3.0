@@ -604,8 +604,8 @@ if __name__ == "__main__":
 
     filename = "small_obama.jpg"
 
+    # segments = process_combo(filename, 30, 1, 1, 120)
+    # plot_path_full(segments)
+
     segments= process_combo_raw(filename)
-    # segments = process_shading_raw(filename)
-
-
     plot_segments(segments)

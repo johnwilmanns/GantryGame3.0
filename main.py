@@ -2,8 +2,8 @@ import multiprocessing as mp
 import cv2
 import numpy as np
 from odrive.enums import *
-from full_face_processing import process_face, process_combo
-from timing import timeit
+from full_face_processing import process_combo
+
 
 def main():
     import gantry
@@ -103,7 +103,8 @@ def main():
     # with open("path.pickle", "rb") as file:
     #     segments = pickle.load(file)
     #     # print(segments)
-    segments, freq = process_combo("small_obama.jpg", 30, .01, 1, 60)
+    freq = 60
+    segments = process_combo("small_obama.jpg", 10, .01, 1, freq)
 
 
     gantry = gantry.Gantry()
@@ -141,7 +142,7 @@ def main():
 
     try:
         pass
-    except Exeption:
+    except Exception:
         segments.sort(key = lambda x: len(x))
     for i, seg in enumerate(segments):
         print(f"Currently on segment {i}/{len(segments)}")
