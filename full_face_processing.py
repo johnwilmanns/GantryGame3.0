@@ -9,10 +9,29 @@ import pickle
 from auto_edge import auto_canny
 import posterize
 import utilities
+from full
 
 # from test import *
 
 from full_path_planning import calc_path, plot_path, plot_path_full
+
+def plot_segments(segments):
+
+        for seg in segments:
+
+            # color = tuple(rd.randrange(0,255) for i in range(3))
+            color = (0,0,0)
+
+            i = 0
+            for i in range(len(seg)-1):
+
+                # print(seg[i])
+                if distance(seg[i][0], seg[i][1], seg[i+1][0], seg[i+1][1]) < 2000:
+                    x1,y1,x2,y2 = seg[i][0], seg[i][1], seg[i+1][0], seg[i+1][1]
+                    
+                    # cv2.line(img,(x1,y1), (x1,y1), (0,0,0), 4)
+                    # cv2.line(img,(x2,y2), (x2,y2), (0,0,0), 4)
+                    cv2.line(img,(x1,y1),(x2,y2),color,2)
 
 def process_edges_raw(filename, blur_radius = 17, lower_thresh = 0,
         upper_thresh = 40, segmentSplitDistance = 20, areaCut = 10,
