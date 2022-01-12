@@ -183,7 +183,7 @@ def get_spinny(im, n, density = 30, theta = None, doin = 'doin your mom doin doi
 
                 hatch = cv2.line(hatch, (x1, y1), (x2, y2), 255, 1)
 
-                cv2.imshow("eeouu", hatch)
+                # cv2.imshow("eeouu", hatch)
 
 
         # for j in range(imy * -1, imy, density):
@@ -219,7 +219,7 @@ def get_spinny(im, n, density = 30, theta = None, doin = 'doin your mom doin doi
             continue
         line = lines.pop(0)
         for x in range(imx):
-            for y in range(len(poster[1])):
+            for y in range(imy):
 
                 if poster[y][x] <= quant:
                     if line[y][x] == 255:
@@ -227,8 +227,8 @@ def get_spinny(im, n, density = 30, theta = None, doin = 'doin your mom doin doi
         # cv2.imshow("edges", edge)
         # cv2.waitKey(1)
         edges.append(edge)
-        cv2.imshow("eouoeuoeu", edge)
-        cv2.waitKey(0)    
+        # cv2.imshow("eouoeuoeu", edge)
+        # cv2.waitKey(0)    
     
     return edges
 
