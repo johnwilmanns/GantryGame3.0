@@ -2,7 +2,7 @@ import multiprocessing as mp
 import cv2
 import numpy as np
 from odrive.enums import *
-from full_face_processing import process_face
+from full_face_processing import process_face, process_combo
 from timing import timeit
 
 def main():
@@ -103,10 +103,7 @@ def main():
     # with open("path.pickle", "rb") as file:
     #     segments = pickle.load(file)
     #     # print(segments)
-    segments, freq = process_face("small_obama.jpg", blur_radius=11, lower_thresh=10,
-                                  upper_thresh=50, segmentSplitDistance=15, areaCut=3,
-                                  minNumPixels=15, max_accel=10, max_lr=.01, turn_vel_multiplier=1, freq=60,
-                                  plot_steps=False)
+    segments, freq = process_combo("small_obama.jpg", 30, .01, 1, 60)
 
 
     gantry = gantry.Gantry()
