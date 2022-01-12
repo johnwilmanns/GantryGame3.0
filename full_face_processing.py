@@ -596,6 +596,9 @@ def process_combo_raw(filename):
     
     return segments
 
+def process_combo(filename, max_accel, max_radius, turn_vel_multiplier, freq):
+    return calc_path(process_combo_raw(filename), max_accel, max_radius, turn_vel_multiplier, freq)
+
 
 if __name__ == "__main__":
 
