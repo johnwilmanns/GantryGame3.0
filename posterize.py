@@ -5,6 +5,7 @@ import utilities
 import face_full_processing
 import math
 #imports cv2
+
 try:
     from cv2 import cv2 #'ery nice
 except:
@@ -264,7 +265,10 @@ def get_calcd_path(input_img, gaps = [5, 10, 15], max_accel = 10, max_lr = .01, 
 
 if __name__ == "__main__":
 
-    input_img = utilities.resize(cv2.imread("obama.png"))
+    
+    input_img = utilities.resize(cv2.imread("C:/Users/Samir/OneDrive/Documents/Drawing Bot/GantryGame3.0/GantryGame3.0/small_obama.jpg"))
+    # input_img = cv2.imread("obama.png")
+    
     gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (3, 3), 0)
     edges = get_spinny(gray, 8, 5, 2)
