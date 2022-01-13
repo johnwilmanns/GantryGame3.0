@@ -30,8 +30,8 @@ def plot_segments(segments, shape = (512, 512)):
 
     for seg in segments:
 
-        # color = tuple(rd.randrange(0,255) for i in range(3))
-        color = (0,0,0)
+        color = tuple(rd.randrange(0,255) for i in range(3))
+        # color = (0,0,0)
 
         i = 0
         for i in range(len(seg)-1):
@@ -42,6 +42,13 @@ def plot_segments(segments, shape = (512, 512)):
             # cv2.line(img,(x1,y1), (x1,y1), (0,0,0), 4)
             # cv2.line(img,(x2,y2), (x2,y2), (0,0,0), 4)
             cv2.line(img,(x1,y1),(x2,y2),color,2)
+            
+            
+    color = (0,0,255)
+    for i in range(len(segments)-1):
+        
+        x1,y1,x2,y2 = int(segments[i][-1][0]*shape[0]), int(segments[i][-1][1]*shape[0]), int(segments[i+1][0][0]*shape[1]), int(segments[i+1][0][1]*shape[1])
+        cv2.line(img,(x1,y1),(x2,y2),color,2)
                 
     cv2.imwrite("test.jpg", img)
     cv2.imshow("images", img)
@@ -191,8 +198,10 @@ def process_edges_raw(filename, blur_radius = 17, lower_thresh = 0,
 
             
 
+            
+
         sortedPoints.append(nearby)
-        points.remove(nearby)
+        points.remove(nearby) #TODO make this better
         edges[nearby[1]][nearby[0]] = 0
         
         
@@ -377,7 +386,7 @@ def process_shading_raw(filename, blur_radius = 3, n = 5, density = 20, theta = 
         #             if edges[y][x] == 255:
         #                 return(x,y)
 
-        for x,y in spiral_out(xP,yP, 50):
+        for x,y in spiral_out(xP,yP, 20):
             if 0 <= x < edges.shape[1] and 0 <= y < edges.shape[0]:
                 if edges[y][x] == 255:
                         return(x,y)
@@ -456,14 +465,14 @@ def process_shading_raw(filename, blur_radius = 3, n = 5, density = 20, theta = 
             nearby = check_close(*targetPoint)
 
             if nearby is None:
-                mindist = max(edges.shape[0:2])
-                for j in points:
-                    dist = distance(targetPoint[0], targetPoint[1], j[0], j[1])
-                    if dist < mindist and j not in sortedPoints:
-                        mindist = dist
-                        nearby = j
-                        break
-
+                # mindist = max(edges.shape[0:2])
+                # for j in points:
+                #     dist = distance(targetPoint[0], targetPoint[1], j[0], j[1])
+                #     if dist < mindist and j not in sortedPoints:
+                #         mindist = dist
+                #         nearby = j
+                #         break
+                nearby = points[0]
                 
 
             sortedPoints.append(nearby)
@@ -593,7 +602,7 @@ def process_shading_raw(filename, blur_radius = 3, n = 5, density = 20, theta = 
 def process_combo_raw(filename):
     
     segments = process_edges_raw(filename)
-    segments.extend(process_shading_raw(filename))
+    segments.extend(process_shading_raw(filename, n=10, theta=.05))
     
     return segments
 
@@ -603,10 +612,11 @@ def process_combo(filename, max_accel, max_radius, turn_vel_multiplier, freq):
 
 if __name__ == "__main__":
 
-    filename = "small_obama.jpg"
+    filename = "C:/Users/Samir/OneDrive/Documents/Drawing Bot/GantryGame3.0/GantryGame3.0/small_obama.jpg"
 
     # segments = process_combo(filename, 30, 1, 1, 120)
     # plot_path_full(segments)
 
-    segments= process_combo_raw(filename)
+    # segments= process_combo_raw(filename)
+    segments = process_shading_raw(filename, n=2)
     plot_segments(segments)
