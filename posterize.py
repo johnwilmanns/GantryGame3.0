@@ -160,7 +160,7 @@ def get_spinny(im, n, density = 30, theta = None, doin = 'doin your mom doin doi
     #makes an array of the line doohickers, pixel value corrisponds to the depth, has go go opposite direction
     lines = []
     for i in range(n):
-        print("\r" + doin[i % len(doin)])
+        # print("\r" + doin[j % len(doin)])
         hatch = utilities.copy_blank(hatch)
         θ = i * theta 
         # θ = math.pi+ 2
@@ -168,12 +168,12 @@ def get_spinny(im, n, density = 30, theta = None, doin = 'doin your mom doin doi
         # xspace = int(yspace * math.tan(θ))
         θ2 = θ + math.pi/2
 
-        image_center = tuple(i/2 for i in hatch.shape)
+        image_center = tuple(p/2 for p in hatch.shape)
         length = int(max(image_center) * 2)
 
         for direction in (-1,1):
-            for i in range(0, direction * length, direction * density):
-                x,y = image_center[0] + i * math.cos(θ2), image_center[1] + i * math.sin(θ2)
+            for j in range(0, direction * length, direction * density-i):
+                x,y = image_center[0] + j * math.cos(θ2), image_center[1] + j * math.sin(θ2)
 
                 x1 = math.floor(x - length * math.cos(θ))
                 y1 = math.floor(y - length * math.sin(θ))
