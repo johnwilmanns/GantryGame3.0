@@ -1,5 +1,8 @@
 from os import unlink
-from cv2 import cv2
+try:
+    from cv2 import cv2
+except:
+    import cv2
 import numpy as np
 import random as rd
 import copy
@@ -593,13 +596,16 @@ def process_combo_raw(filename):
     
     return segments
 
+def process_combo(filename, max_accel, max_radius, turn_vel_multiplier, freq):
+    return calc_path(process_combo_raw(filename), max_accel, max_radius, turn_vel_multiplier, freq)
+
 
 if __name__ == "__main__":
 
-    filename = "C:/Users/Samir/OneDrive/Documents/Drawing Bot/GantryGame3.0/GantryGame3.0/small_obama.jpg"
+    filename = "small_obama.jpg"
+
+    # segments = process_combo(filename, 30, 1, 1, 120)
+    # plot_path_full(segments)
 
     segments= process_combo_raw(filename)
-    # segments = process_shading_raw(filename)
-
-
     plot_segments(segments)

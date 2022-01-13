@@ -2,8 +2,8 @@ import multiprocessing as mp
 import cv2
 import numpy as np
 from odrive.enums import *
-from full_face_processing import process_face
-from timing import timeit
+from full_face_processing import process_combo
+
 
 def main():
     import gantry
@@ -94,7 +94,8 @@ def main():
         # while abs(gantry.x.get_pos() - x) > threshold or abs(gantry.y.get_pos() - y) > threshold:
         #     time.sleep(.001)
 
-        
+
+
     segments = None
     import os
     import sys
@@ -102,10 +103,8 @@ def main():
     # with open("path.pickle", "rb") as file:
     #     segments = pickle.load(file)
     #     # print(segments)
-    segments, freq = process_face("small_obama.jpg", blur_radius=11, lower_thresh=10,
-                                  upper_thresh=50, segmentSplitDistance=15, areaCut=3,
-                                  minNumPixels=15, max_accel=10, max_lr=.01, turn_vel_multiplier=1, freq=60,
-                                  plot_steps=False)
+    freq = 60
+    segments = process_combo("small_obama.jpg", 10, .01, 1, freq)
 
 
     gantry = gantry.Gantry()
@@ -143,7 +142,7 @@ def main():
 
     try:
         pass
-    except Exeption:
+    except Exception:
         segments.sort(key = lambda x: len(x))
     for i, seg in enumerate(segments):
         print(f"Currently on segment {i}/{len(segments)}")

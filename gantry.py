@@ -44,7 +44,6 @@ class Gantry:
         self.x_max_vel = xmax
         self.y_max_vel = ymax
 
-    #todo, add assert statments
     def startup(self):
         print("starting up")
 
