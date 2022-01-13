@@ -19,7 +19,8 @@ import utilities
 
 from full_path_planning import calc_path, plot_path, plot_path_full, distance
 
-def plot_segments(segments, shape = (512 * 2, 512 * 2)):
+def plot_segments(segments, shape = (512, 512)):
+    
     
     # img = in_img.copy()
     # mask = cv2.inRange(img, (0,0,0), (255,255,255))
