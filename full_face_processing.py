@@ -611,8 +611,10 @@ def process_shading_raw(filename, blur_radius = 3, n = 5, density = 20, theta = 
 
 def process_combo_raw(filename):
     
-    segments = process_edges_raw(filename)
-    segments.extend(process_shading_raw(filename))
+    segments = process_edges_raw(filename, blur_radius = 11, lower_thresh = 10,
+        upper_thresh = 50, segmentSplitDistance=15, areaCut = 3,
+        minNumPixels = 15)
+    segments.extend(process_shading_raw(filename, density = 10, areaCut=1))
     
     return segments
 
