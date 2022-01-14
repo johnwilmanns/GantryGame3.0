@@ -385,7 +385,7 @@ def process_shading_raw(filename, blur_radius = 3, n = 5, density = 20, theta = 
         #             if edges[y][x] == 255:
         #                 return(x,y)
 
-        for x,y in spiral_out(xP,yP, 20):
+        for x,y in spiral_out(xP,yP, 2):
             if 0 <= x < edges.shape[1] and 0 <= y < edges.shape[0]:
                 if edges[y][x] == 255:
                         return(x,y)
@@ -617,5 +617,6 @@ if __name__ == "__main__":
     # plot_path_full(segments)
 
     # segments= process_combo_raw(filename)
-    segments = process_shading_raw(filename, n=2)
-    plot_segments(segments)
+    segments = process_shading_raw(filename, n=2, theta=math.pi/4)
+    segments =  calc_path(segments,  10, .001, 1, 60)
+    plot_path_full(segments)

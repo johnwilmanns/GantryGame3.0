@@ -159,7 +159,7 @@ def get_spinny(im, n, density=30, theta=None, doin='doin your mom doin doin your
     for i in range(n):
         # print("\r" + doin[j % len(doin)])
         hatch = utilities.copy_blank(hatch)
-        θ = i * theta
+        θ = (i+1) * theta
         # θ = math.pi+ 2
         # yspace = 100
         # xspace = int(yspace * math.tan(θ))
