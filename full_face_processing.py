@@ -419,7 +419,7 @@ def process_shading_raw(filename, blur_radius = 3, n = 5, density = 20, theta = 
     mask = cv2.inRange(img, (0,0,0), (255,255,255))
     img[mask>0] = (255,255,255)
     
-
+    shades = [shades[3]]
     for edges in shades:
 
         # edges = cv2.Canny(gray, lower_thresh, upper_thresh)
@@ -624,19 +624,13 @@ def process_combo(filename, max_accel, max_radius, turn_vel_multiplier, freq):
 
 if __name__ == "__main__":
 
-    filename = "small_obama.jpg"
+    filename = "C:/Users/Samir/OneDrive/Documents/Drawing Bot/GantryGame3.0/GantryGame3.0/small_obama.jpg"
 
     # segments = process_combo(filename, 30, 1, 1, 120)
     # plot_path_full(segments)
 
-<<<<<<< HEAD
     # segments= process_combo_raw(filename)
-    segments = process_shading_raw(filename, n=2, theta=math.pi/4)
+    segments = process_shading_raw(filename, n=10, theta=math.pi/4)
     segments =  calc_path(segments,  10, .001, 1, 60)
     plot_path_full(segments)
-=======
-    segments= process_combo_raw(filename)
-    # segments = process_shading_raw(filename)
-    # segments = process_edges_raw(filename)
-    plot_segments(segments)
->>>>>>> cb494c51f67b3c88352685aa7a10b27a6c419b80
+
