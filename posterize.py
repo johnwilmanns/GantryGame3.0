@@ -157,9 +157,9 @@ def get_spinny(im, n, density=30, theta=None, doin='doin your mom doin doin your
     # makes an array of the line doohickers, pixel value corrisponds to the depth, has go go opposite direction
     lines = []
     for i in range(n):
-        print("\r" + doin[i % len(doin)])
+        # print("\r" + doin[j % len(doin)])
         hatch = utilities.copy_blank(hatch)
-        θ = i * theta
+        θ = (i+1) * theta
         # θ = math.pi+ 2
         # yspace = 100
         # xspace = int(yspace * math.tan(θ))
@@ -204,6 +204,8 @@ def get_spinny(im, n, density=30, theta=None, doin='doin your mom doin doin your
     quantiz = quantiz.tolist()
     quantiz.reverse()
     quantiz[1] = 255  # kills the first layer of hatches
+    quantiz[2] = 255 # poopoo peee poo
+    quantiz[3] = 255
     edges = []
     for quant in quantiz:
         edge = blank.copy()

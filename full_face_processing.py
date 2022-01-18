@@ -19,7 +19,8 @@ import utilities
 
 from full_path_planning import calc_path, plot_path, plot_path_full, distance
 
-def plot_segments(segments, shape = (512 * 2, 512 * 2)):
+def plot_segments(segments, shape = (512, 512)):
+    
     
     # img = in_img.copy()
     # mask = cv2.inRange(img, (0,0,0), (255,255,255))
@@ -29,8 +30,8 @@ def plot_segments(segments, shape = (512 * 2, 512 * 2)):
 
     for seg in segments:
 
-        # color = tuple(rd.randrange(0,255) for i in range(3))
-        color = (0,0,0)
+        color = tuple(rd.randrange(0,255) for i in range(3))
+        # color = (0,0,0)
 
         i = 0
         for i in range(len(seg)-1):
@@ -41,6 +42,13 @@ def plot_segments(segments, shape = (512 * 2, 512 * 2)):
             # cv2.line(img,(x1,y1), (x1,y1), (0,0,0), 4)
             # cv2.line(img,(x2,y2), (x2,y2), (0,0,0), 4)
             cv2.line(img,(x1,y1),(x2,y2),color,2)
+            
+            
+    color = (0,0,255)
+    # for i in range(len(segments)-1):
+        
+    #     x1,y1,x2,y2 = int(segments[i][-1][0]*shape[0]), int(segments[i][-1][1]*shape[0]), int(segments[i+1][0][0]*shape[1]), int(segments[i+1][0][1]*shape[1])
+    #     cv2.line(img,(x1,y1),(x2,y2),color,2)
                 
     cv2.imwrite("test.jpg", img)
     cv2.imshow("images", img)
@@ -186,12 +194,14 @@ def process_edges_raw(filename, blur_radius = 17, lower_thresh = 0,
                 if dist < mindist and j not in sortedPoints:
                     mindist = dist
                     nearby = j
-                    break
+                    # break
+
+            
 
             
 
         sortedPoints.append(nearby)
-        points.remove(nearby)
+        points.remove(nearby) #TODO make this better
         edges[nearby[1]][nearby[0]] = 0
         
         
@@ -376,7 +386,7 @@ def process_shading_raw(filename, blur_radius = 3, n = 5, density = 20, theta = 
         #             if edges[y][x] == 255:
         #                 return(x,y)
 
-        for x,y in spiral_out(xP,yP, 50):
+        for x,y in spiral_out(xP,yP, 2):
             if 0 <= x < edges.shape[1] and 0 <= y < edges.shape[0]:
                 if edges[y][x] == 255:
                         return(x,y)
@@ -409,48 +419,47 @@ def process_shading_raw(filename, blur_radius = 3, n = 5, density = 20, theta = 
     mask = cv2.inRange(img, (0,0,0), (255,255,255))
     img[mask>0] = (255,255,255)
     
-
+    shades = [shades[3]]
     for edges in shades:
 
         # edges = cv2.Canny(gray, lower_thresh, upper_thresh)
         edges2 = copy.deepcopy(edges)
 
-        for y in range(len(edges)):
-            for x in range(len(edges[y])):
-                if edges[y][x] == 255:
-                    # print(check_closes(x,y,1))
-                    if check_closes(x,y,1) < 2:
-                        edges2[y][x] = 0
-
-        edges = edges2
-
-        saved_edges = copy.deepcopy(edges)
-
-        # cv2.imwrite('edges.jpg',edges)
-
-        # combined = np.concatenate((edges, edges2), axis=1)
-        # cv2.imshow("images", combined)
-        # cv2.waitKey(0)
-
-
         points = []
         for y in range(len(edges)):
             for x in range(len(edges[y])):
                 if edges[y][x] == 255:
-                    points.append((x,y))
+                    # print(check_closes(x,y,1))
+                    if check_closes(x,y,1) == 1:
+                        points.append((x,y))
+                        # edges2[y][x] = 0
+
+        edges = edges2
+
+        # points = []
+        # for y in range(len(edges)):
+        #     for x in range(len(edges[y])):
+        #         if edges[y][x] == 255:
+        #             points.append((x,y))
+                    
         sortedPoints = [points[0]]
 
         len_points = len(points)
 
         tt0 = time.time() 
-        for i in range(len_points-1):
+        i=0
+        while points:
             t0 = time.time()
             targetPoint = sortedPoints[i]
+            
+            # if len_points <= 0:
+            #     break
 
-            if i % (len_points//200) == 0:
 
-                print('\r', end="")
-                print(f"{i/(len(points) + len(sortedPoints)) * 100: .2f}% complete", end = "")
+            # if i % (len_points//200) == 0:
+
+            #     print('\r', end="")
+            #     print(f"{i/(len(points) + len(sortedPoints)) * 100: .2f}% complete", end = "")
             
             nearby = check_close(*targetPoint)
 
@@ -461,14 +470,25 @@ def process_shading_raw(filename, blur_radius = 3, n = 5, density = 20, theta = 
                     if dist < mindist and j not in sortedPoints:
                         mindist = dist
                         nearby = j
-                        break
-
                 
+                    
+            
+                # nearby = points[0]
+            
+            try:
+                edges[nearby[1]][nearby[0]] = 0
+            except TypeError:
+                break
 
             sortedPoints.append(nearby)
-            points.remove(nearby)
-            edges[nearby[1]][nearby[0]] = 0
+            try:
+                points.remove(nearby)
+            except ValueError:
+                pass
             
+            
+            
+            i+=1
             
         print("")
         print(f"took {time.time()-tt0: .2f} seconds to sort all {len(sortedPoints)} points")
@@ -591,8 +611,10 @@ def process_shading_raw(filename, blur_radius = 3, n = 5, density = 20, theta = 
 
 def process_combo_raw(filename):
     
-    segments = process_edges_raw(filename)
-    segments.extend(process_shading_raw(filename))
+    segments = process_edges_raw(filename, blur_radius = 11, lower_thresh = 10,
+        upper_thresh = 50, segmentSplitDistance=15, areaCut = 3,
+        minNumPixels = 15)
+    segments.extend(process_shading_raw(filename, density = 10, areaCut=1))
     
     return segments
 
@@ -602,10 +624,13 @@ def process_combo(filename, max_accel, max_radius, turn_vel_multiplier, freq):
 
 if __name__ == "__main__":
 
-    filename = "small_obama.jpg"
+    filename = "C:/Users/Samir/OneDrive/Documents/Drawing Bot/GantryGame3.0/GantryGame3.0/small_obama.jpg"
 
     # segments = process_combo(filename, 30, 1, 1, 120)
     # plot_path_full(segments)
 
-    segments= process_combo_raw(filename)
-    plot_segments(segments)
+    # segments= process_combo_raw(filename)
+    segments = process_shading_raw(filename, n=10, theta=math.pi/4)
+    segments =  calc_path(segments,  10, .001, 1, 60)
+    plot_path_full(segments)
+

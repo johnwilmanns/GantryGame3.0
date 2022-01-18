@@ -4,12 +4,11 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-    
         {
-            "name": "Python: Preview.py",
+            "name": "Python: test.py",
             "type": "python",
             "request": "launch",
-            "program": "/Users/samirbeall/Documents/GantryGame3.0/preview.py",
+            "program": "${workspaceFolder}/test.py",
             "console": "integratedTerminal"
         }
     ]
