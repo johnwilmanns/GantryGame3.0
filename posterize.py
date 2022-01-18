@@ -128,28 +128,41 @@ def make_linerinos(image, p1, p2, color=255):
 '''shit method I really should have programmed while I was awake, but being awake is rather cringe'''
 
 
-def get_spinny(im, n, density=30, theta=None, doin='doin your mom doin doin your mom'):
-    doin = doin.split()
+def get_spinny(im, line_dist=30, theta=None, thresholds = [30, 50, 80]):
+
+    n = len(thresholds)
     blank = im.copy()
     blank.fill(0)
     imx = im.shape[1]
     imy = im.shape[0]
     if theta is None:
-        theta = math.pi * 2 / n
+        theta = math.pi / n
 
-    indices = np.arange(0, 256)  # List of all colors
+    images = []
 
-    divider = np.linspace(0, 255, n + 1)[1]  # we get a divider
+    for thresh in thresholds:
+        out = cv2.adaptiveThreshold(im, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 501, thresh)
+        images.append(out)
+        # cv2.imshow("test", out)
+        # cv2.waitKey(0)
 
-    quantiz = np.int0(np.linspace(0, 255, n))  # we get quantization colors
 
-    color_levels = np.clip(np.int0(indices / divider), 0, n - 1)  # color levels 0,1,2..
+    # indices = np.arange(0, 256)  # List of all colors
+    #
+    # divider = np.linspace(0, 255, n + 1)[1]  # we get a divider
+    # divider = 255//n
+    #
+    # quantiz = np.int0(np.linspace(0, 255, n))  # we get quantization colors
+    #
+    # color_levels = np.clip(np.int0(indices / divider), 0, n - 1)  # color levels 0,1,2..
+    #
+    # palette = quantiz[color_levels]  # Creating the palette
+    #
+    # poster = palette[im]  # Applying palette on image
+    #
+    # poster = cv2.convertScaleAbs(poster)  # Converting image back to uint8
 
-    palette = quantiz[color_levels]  # Creating the palette
 
-    poster = palette[im]  # Applying palette on image
-
-    poster = cv2.convertScaleAbs(poster)  # Converting image back to uint8
     # cv2.imshow("poster", poster)
     hatch = im.copy()
     hatch.fill(0)
@@ -159,7 +172,7 @@ def get_spinny(im, n, density=30, theta=None, doin='doin your mom doin doin your
     for i in range(n):
         # print("\r" + doin[j % len(doin)])
         hatch = utilities.copy_blank(hatch)
-        θ = i * theta
+        θ = (i+1) * theta
         # θ = math.pi+ 2
         # yspace = 100
         # xspace = int(yspace * math.tan(θ))
@@ -169,7 +182,7 @@ def get_spinny(im, n, density=30, theta=None, doin='doin your mom doin doin your
         length = int(max(image_center) * 2)
 
         for direction in (-1, 1):
-            for i in range(0, direction * length, direction * density):
+            for i in range(0, direction * length, direction * line_dist):
                 x, y = image_center[0] + i * math.cos(θ2), image_center[1] + i * math.sin(θ2)
 
                 x1 = math.floor(x - length * math.cos(θ))
@@ -201,29 +214,43 @@ def get_spinny(im, n, density=30, theta=None, doin='doin your mom doin doin your
 
         # cv2.imshow("hatch", hatch)
         # cv2.waitKey(0)
-    quantiz = quantiz.tolist()
-    quantiz.reverse()
-    quantiz[1] = 255  # kills the first layer of hatches
-    quantiz[2] = 255 # poopoo peee poo
-    quantiz[3] = 255
     edges = []
-    for quant in quantiz:
+    for img, line in zip(images, lines):
         edge = blank.copy()
-        print(f"checking quant: {quant}")
-        if quant == 255:
-            continue
-        line = lines.pop(0)
         for x in range(imx):
             for y in range(imy):
 
-                if poster[y][x] <= quant:
+                if img[y][x] == 0:
                     if line[y][x] == 255:
                         edge[y][x] = 255
         # cv2.imshow("edges", edge)
         # cv2.waitKey(0)
         edges.append(edge)
-        # cv2.imshow("eouoeuoeu", edge)
-        # cv2.waitKey(0)    
+
+
+    # quantiz = quantiz.tolist()
+    # quantiz.reverse()
+    # # quantiz[1] = 255  # kills the first layer of hatches
+    # # quantiz[2] = 255 # poopoo peee poo
+    # # quantiz[3] = 255
+    # edges = []
+    # for quant in quantiz:
+    #     edge = blank.copy()
+    #     print(f"checking quant: {quant}")
+    #     if quant == 255:
+    #         continue
+    #     line = lines.pop(0)
+    #     for x in range(imx):
+    #         for y in range(imy):
+    #
+    #             if poster[y][x] <= quant:
+    #                 if line[y][x] == 255:
+    #                     edge[y][x] = 255
+    #     # cv2.imshow("edges", edge)
+    #     # cv2.waitKey(0)
+    #     edges.append(edge)
+    #     # cv2.imshow("eouoeuoeu", edge)
+    #     # cv2.waitKey(0)
 
     return edges
 
