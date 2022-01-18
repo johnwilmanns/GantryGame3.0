@@ -614,6 +614,11 @@ def process_combo_raw(filename):
     segments = process_edges_raw(filename, blur_radius = 11, lower_thresh = 10,
         upper_thresh = 50, segmentSplitDistance=15, areaCut = 3,
         minNumPixels = 15)
+    segments.extend(process_shading_raw(filename,blur_radius=21, line_dist= 20, areaCut=5))
+    
+    return segments
+
+def process_combo(filename, max_accel, max_radius, turn_vel_multiplier, freq):
     return calc_path(process_combo_raw(filename), max_accel, max_radius, turn_vel_multiplier, freq)
 
 
@@ -621,6 +626,14 @@ if __name__ == "__main__":
 
     filename = "brian.jpg"
 
-    segments = process_combo(filename, 30, .001, 1, 520)
-    plot_path_full(segments)
+    # segments = process_combo(filename, 30, 1, 1, 120)
+    # plot_path_full(segments)
+
+    segments= process_combo_raw(filename)
+    # segments = process_shading_raw(filename)
+    plot_segments(segments)
+
+    # segments = process_shading_raw(filename, n=5, theta=math.pi/4)
+    # segments =  calc_path(segments,  10, .001, 1, 60)
+    # plot_path_full(segments)
 
