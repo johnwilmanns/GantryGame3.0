@@ -19,7 +19,7 @@ import utilities
 
 from full_path_planning import calc_path, plot_path, plot_path_full, distance
 
-def plot_segments(segments, shape = (512, 512)):
+def plot_segments(segments, shape = (512 *2, 512 * 2)):
     
     
     # img = in_img.copy()
@@ -39,8 +39,8 @@ def plot_segments(segments, shape = (512, 512)):
             # print(seg[i])
             x1,y1,x2,y2 = int(seg[i][0]*shape[0]), int(seg[i][1]*shape[0]), int(seg[i+1][0]*shape[1]), int(seg[i+1][1]*shape[1])
             
-            # cv2.line(img,(x1,y1), (x1,y1), (0,0,0), 4)
-            # cv2.line(img,(x2,y2), (x2,y2), (0,0,0), 4)
+            cv2.line(img,(x1,y1), (x1,y1), (0,0,0), 4)
+            cv2.line(img,(x2,y2), (x2,y2), (0,0,0), 4)
             cv2.line(img,(x1,y1),(x2,y2),color,2)
             
             
@@ -238,7 +238,7 @@ def process_edges_raw(filename, blur_radius = 17, lower_thresh = 0,
 
 
     while True:
-        print("running iteration")
+        # print("running iteration")
         seg_len = sum(len(seg) for seg in segments)
 
         for seg in segments:
@@ -307,7 +307,7 @@ def process_edges_raw(filename, blur_radius = 17, lower_thresh = 0,
 
 
 
-    print("{} segments with a total of {} points".format(len(segments), sum(len(seg) for seg in segments)))
+    # print("{} segments with a total of {} points".format(len(segments), sum(len(seg) for seg in segments)))
     cv2.imwrite('houghlines6.jpg', img)
 
 
@@ -325,9 +325,9 @@ def process_edges_raw(filename, blur_radius = 17, lower_thresh = 0,
     
     return new_points
 
-def process_shading_raw(filename, blur_radius = 3, n = 5, density = 20, theta = None, segmentSplitDistance = 20, areaCut = 10,
-        minNumPixels = 15, max_accel = 2, max_lr = .02, turn_vel_multiplier = 1, 
-        freq = 60, plot_steps = False):
+def process_shading_raw(filename, blur_radius = 3, line_dist = 20, theta = None, segmentSplitDistance = 20, areaCut = 10,
+                        minNumPixels = 15, max_accel = 2, max_lr = .02, turn_vel_multiplier = 1,
+                        freq = 60, plot_steps = False):
 
     splitDistance = 1.5
     
@@ -337,7 +337,7 @@ def process_shading_raw(filename, blur_radius = 3, n = 5, density = 20, theta = 
     
     gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (blur_radius, blur_radius), 0)
-    shades = posterize.get_spinny(gray, n, density, theta)
+    shades = posterize.get_spinny(gray, line_dist, theta)
     
 
     def distance(x1, y1, x2, y2):
@@ -419,7 +419,7 @@ def process_shading_raw(filename, blur_radius = 3, n = 5, density = 20, theta = 
     mask = cv2.inRange(img, (0,0,0), (255,255,255))
     img[mask>0] = (255,255,255)
     
-    shades = [shades[3]]
+    # shades = [shades[3]]
     for edges in shades:
 
         # edges = cv2.Canny(gray, lower_thresh, upper_thresh)
@@ -523,7 +523,7 @@ def process_shading_raw(filename, blur_radius = 3, n = 5, density = 20, theta = 
 
 
         while True:
-            print("running iteration")
+            # print("running iteration")
             seg_len = sum(len(seg) for seg in segments)
 
             for seg in segments:
@@ -614,7 +614,7 @@ def process_combo_raw(filename):
     segments = process_edges_raw(filename, blur_radius = 11, lower_thresh = 10,
         upper_thresh = 50, segmentSplitDistance=15, areaCut = 3,
         minNumPixels = 15)
-    segments.extend(process_shading_raw(filename, density = 10, areaCut=1))
+    segments.extend(process_shading_raw(filename,blur_radius=21, line_dist= 20, areaCut=5))
     
     return segments
 
@@ -624,13 +624,16 @@ def process_combo(filename, max_accel, max_radius, turn_vel_multiplier, freq):
 
 if __name__ == "__main__":
 
-    filename = "C:/Users/Samir/OneDrive/Documents/Drawing Bot/GantryGame3.0/GantryGame3.0/small_obama.jpg"
+    filename = "brian.jpg"
 
     # segments = process_combo(filename, 30, 1, 1, 120)
     # plot_path_full(segments)
 
-    # segments= process_combo_raw(filename)
-    segments = process_shading_raw(filename, n=10, theta=math.pi/4)
-    segments =  calc_path(segments,  10, .001, 1, 60)
-    plot_path_full(segments)
+    segments= process_combo_raw(filename)
+    # segments = process_shading_raw(filename)
+    plot_segments(segments)
+
+    # segments = process_shading_raw(filename, n=5, theta=math.pi/4)
+    # segments =  calc_path(segments,  10, .001, 1, 60)
+    # plot_path_full(segments)
 
