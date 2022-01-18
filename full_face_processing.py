@@ -146,6 +146,8 @@ def process_edges_raw(filename, blur_radius = 17, lower_thresh = 0,
     gray = cv2.GaussianBlur(gray, (blur_radius, blur_radius), 0)
 
     edges = cv2.Canny(gray, lower_thresh, upper_thresh)
+    # cv2.imshow("edges", edges)
+    # cv2.waitKey(0)
     edges2 = copy.deepcopy(edges)
 
     for y in range(len(edges)):
@@ -611,9 +613,7 @@ def process_shading_raw(filename, blur_radius = 3, line_dist = 20, theta = None,
 
 def process_combo_raw(filename):
     
-    segments = process_edges_raw(filename, blur_radius = 11, lower_thresh = 10,
-        upper_thresh = 50, segmentSplitDistance=15, areaCut = 3,
-        minNumPixels = 15)
+    segments = process_edges_raw(filename, blur_radius=15, lower_thresh=5, upper_thresh=40, areaCut=10, minNumPixels=5, segmentSplitDistance=20)
     segments.extend(process_shading_raw(filename,blur_radius=21, line_dist= 20, areaCut=5))
     
     return segments
@@ -631,6 +631,7 @@ if __name__ == "__main__":
 
     segments= process_combo_raw(filename)
     # segments = process_shading_raw(filename)
+    # segments = process_edges_raw(filename, blur_radius=15, lower_thresh=5, upper_thresh=40, areaCut=10, minNumPixels=5, segmentSplitDistance=20)
     plot_segments(segments)
 
     # segments = process_shading_raw(filename, n=5, theta=math.pi/4)

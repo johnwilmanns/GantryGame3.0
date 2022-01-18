@@ -128,7 +128,7 @@ def make_linerinos(image, p1, p2, color=255):
 '''shit method I really should have programmed while I was awake, but being awake is rather cringe'''
 
 
-def get_spinny(im, line_dist=30, theta=None, thresholds = [30, 50, 80]):
+def get_spinny(im, line_dist=30, theta=None, thresholds = [30, 50, 80, 85, 90]):
 
     n = len(thresholds)
     blank = im.copy()
@@ -143,8 +143,8 @@ def get_spinny(im, line_dist=30, theta=None, thresholds = [30, 50, 80]):
     for thresh in thresholds:
         out = cv2.adaptiveThreshold(im, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 501, thresh)
         images.append(out)
-        # cv2.imshow("test", out)
-        # cv2.waitKey(0)
+        cv2.imshow("test", out)
+        cv2.waitKey(0)
 
 
     # indices = np.arange(0, 256)  # List of all colors
