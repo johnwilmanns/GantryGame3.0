@@ -104,7 +104,7 @@ def main():
     #     segments = pickle.load(file)
     #     # print(segments)
     freq = 60
-    segments = process_combo("small_obama.jpg", 10, .01, 1, freq)
+    segments = process_combo("brian.jpg", 10, .01, 1, freq)
 
 
     gantry = gantry.Gantry()
@@ -169,8 +169,10 @@ def main():
 
             move(point)
 
-        print(f"segment written at {1/(time.perf_counter()-t1) * len(seg)} hz")
+        time.sleep(1/freq)
 
+
+        print(f"segment written at {1 / (time.perf_counter() - t1) * len(seg)} hz")
         pen_up()
 
     print("done")

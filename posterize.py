@@ -143,8 +143,8 @@ def get_spinny(im, line_dist=30, theta=None, thresholds = [30, 50, 80, 85, 90]):
     for thresh in thresholds:
         out = cv2.adaptiveThreshold(im, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 501, thresh)
         images.append(out)
-        cv2.imshow("test", out)
-        cv2.waitKey(0)
+        # cv2.imshow("test", out)
+        # cv2.waitKey(0)
 
 
     # indices = np.arange(0, 256)  # List of all colors

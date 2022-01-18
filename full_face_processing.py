@@ -182,7 +182,7 @@ def process_edges_raw(filename, blur_radius = 17, lower_thresh = 0,
         t0 = time.time()
         targetPoint = sortedPoints[i]
 
-        if i % (len_points//200) == 0:
+        if i % 50 == 0:
 
             print('\r', end="")
             print(f"{i/(len(points) + len(sortedPoints)) * 100: .2f}% complete", end = "")
@@ -210,7 +210,7 @@ def process_edges_raw(filename, blur_radius = 17, lower_thresh = 0,
     print("")
     print(f"took {time.time()-tt0: .2f} seconds to sort all {len(sortedPoints)} points")
     # filtered path = []
-
+    tt0 = time.time()
 
     segments = []
     index = 0
@@ -324,7 +324,7 @@ def process_edges_raw(filename, blur_radius = 17, lower_thresh = 0,
 
     # new_points = calc_path(segments, max_accel, max_lr, turn_vel_multiplier, freq)
     new_points = segments
-    
+
     return new_points
 
 def process_shading_raw(filename, blur_radius = 3, line_dist = 20, theta = None, segmentSplitDistance = 20, areaCut = 10,
@@ -458,10 +458,10 @@ def process_shading_raw(filename, blur_radius = 3, line_dist = 20, theta = None,
             #     break
 
 
-            # if i % (len_points//200) == 0:
+            if i % 50 == 0:
 
-            #     print('\r', end="")
-            #     print(f"{i/(len(points) + len(sortedPoints)) * 100: .2f}% complete", end = "")
+                print('\r', end="")
+                print(f"{i/(len(points) + len(sortedPoints)) * 100: .2f}% complete", end = "")
             
             nearby = check_close(*targetPoint)
 
@@ -568,7 +568,7 @@ def process_shading_raw(filename, blur_radius = 3, line_dist = 20, theta = None,
 
 
 
-        print("{} segments with a total of {} points".format(len(segments), sum(len(seg) for seg in segments)))
+        # print("{} segments with a total of {} points".format(len(segments), sum(len(seg) for seg in segments)))
 
 
         if plot_steps:
@@ -612,13 +612,16 @@ def process_shading_raw(filename, blur_radius = 3, line_dist = 20, theta = None,
     return new_points
 
 def process_combo_raw(filename):
-    
+
+    print("starting edge processing")
     segments = process_edges_raw(filename, blur_radius=15, lower_thresh=5, upper_thresh=40, areaCut=10, minNumPixels=5, segmentSplitDistance=20)
+    print("starting shading processing")
     segments.extend(process_shading_raw(filename,blur_radius=21, line_dist= 20, areaCut=5))
-    
+    print("finished pre processing")
     return segments
 
 def process_combo(filename, max_accel, max_radius, turn_vel_multiplier, freq):
+
     return calc_path(process_combo_raw(filename), max_accel, max_radius, turn_vel_multiplier, freq)
 
 
