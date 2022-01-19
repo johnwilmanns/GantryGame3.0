@@ -141,7 +141,7 @@ def get_spinny(im, line_dist=30, theta=None, thresholds = [30, 50, 80, 85, 90]):
     images = []
 
     for thresh in thresholds:
-        out = cv2.adaptiveThreshold(im, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 501, thresh)
+        out = cv2.adaptiveThreshold(im, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 501, thresh)
         images.append(out)
         # cv2.imshow("test", out)
         # cv2.waitKey(0)
@@ -217,12 +217,14 @@ def get_spinny(im, line_dist=30, theta=None, thresholds = [30, 50, 80, 85, 90]):
     edges = []
     for img, line in zip(images, lines):
         edge = blank.copy()
-        for x in range(imx):
-            for y in range(imy):
+        
+        edge = img & line
+        # for x in range(imx):
+        #     for y in range(imy):
 
-                if img[y][x] == 0:
-                    if line[y][x] == 255:
-                        edge[y][x] = 255
+        #         if img[y][x] == 0:
+        #             if line[y][x] == 255:
+        #                 edge[y][x] = 255
         # cv2.imshow("edges", edge)
         # cv2.waitKey(0)
         edges.append(edge)
