@@ -2,7 +2,10 @@ import multiprocessing as mp
 import cv2
 import numpy as np
 from odrive.enums import *
-from full_face_processing import process_combo
+
+import utilities
+from full_face_processing import process_combo, process_combo_raw_multi
+from full_path_planning import calc_path
 
 
 def main():
@@ -103,8 +106,19 @@ def main():
     # with open("path.pickle", "rb") as file:
     #     segments = pickle.load(file)
     #     # print(segments)
-    freq = 60
-    segments = process_combo("brian.jpg", 10, .01, 1, freq)
+    freq = 120
+    # segments = process_combo("brian.jpg", 10, .01, 1, freq)
+
+    filename = "brian.jpg"
+    input_img = cv2.imread(filename)
+
+    input_img = utilities.resize(input_img, 800, int(800 * input_img.shape[0] / input_img.shape[1]))
+
+    # segments = process_combo(filename, 30, 1, 1, 120)
+    # plot_path_full(segments)
+
+    segments = process_combo_raw_multi(input_img)
+    segments = calc_path(segments, 10, .001, 1, freq)
 
 
     gantry = gantry.Gantry()
@@ -136,8 +150,8 @@ def main():
     gantry.y.axis.controller.config.input_mode = INPUT_MODE_POS_FILTER
     # gantry.x.axis.controller.config.input_mode = 1
     # gantry.y.axis.controller.config.input_mode = 1
-    gantry.x.axis.controller.config.input_filter_bandwidth = freq/2
-    gantry.y.axis.controller.config.input_filter_bandwidth = freq/2
+    gantry.x.axis.controller.config.input_filter_bandwidth = freq
+    gantry.y.axis.controller.config.input_filter_bandwidth = freq
 
 
     try:

@@ -56,9 +56,8 @@ def plot_segments(segments, shape = (512 *2, 512 * 2)):
     cv2.waitKey(0)
 
 def process_edges_raw(input_img, blur_radius = 15, lower_thresh = 5,
-        upper_thresh = 40, segmentSplitDistance = 20, areaCut = 10,
-        minNumPixels = 5, max_accel = 2, max_lr = .02, turn_vel_multiplier = 1, 
-        freq = 60, plot_steps = False, q = None):
+        upper_thresh = 40, segmentSplitDistance = 20, areaCut = 3,
+        minNumPixels = 1, plot_steps = False, q = None):
 
     splitDistance = 1.5
 
@@ -341,9 +340,8 @@ def process_edges_raw(input_img, blur_radius = 15, lower_thresh = 5,
 
     return new_points
 
-def process_shading_raw(input_img, blur_radius = 21, line_dist = 20, theta = None, segmentSplitDistance = 20, areaCut = 5,
-                        minNumPixels = 15, max_accel = 2, max_lr = .02, turn_vel_multiplier = 1,
-                        freq = 60, plot_steps = False, q = None):
+def process_shading_raw(input_img, blur_radius = 21, line_dist = 10, theta = None, segmentSplitDistance = 20, areaCut = 5,
+                        minNumPixels = 15, plot_steps = False, q = None):
 
     splitDistance = 1.5
     
@@ -662,7 +660,8 @@ def process_combo(input_img, max_accel, max_radius, turn_vel_multiplier, freq):
 if __name__ == "__main__":
 
     filename = "C:/Users/Samir/OneDrive/Documents/Drawing Bot/GantryGame3.0/GantryGame3.0/brian.jpg"
-    
+    filename = "brian.jpg"
+
     if filename.find(".jpg") == -1:
         # Load .png image
         image = cv2.imread(filename)
@@ -672,6 +671,8 @@ if __name__ == "__main__":
         input_img = cv2.imread("image.jpg")
     else:
         input_img = cv2.imread(filename)
+
+    input_img = utilities.resize(input_img, 800, int(800 * input_img.shape[0]/input_img.shape[1]))
 
     # segments = process_combo(filename, 30, 1, 1, 120)
     # plot_path_full(segments)
