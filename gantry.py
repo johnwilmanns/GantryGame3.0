@@ -88,6 +88,7 @@ class Gantry:
         self.x.idle()
         self.y.idle()
         self.z.idle()
+        print("set all states to idle")
         self.dump_errors()
 
     def axes(self):
