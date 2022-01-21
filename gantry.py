@@ -20,7 +20,7 @@ class Gantry:
 
         self.x = ODrive_Ease_Lib.Axis(self.odrv1.axis1) # X
         self.y = ODrive_Ease_Lib.Axis(self.odrv1.axis0) # Y
-        self.z = ODrive_Ease_Lib.Axis(self.odrv0.axis1) # Z
+        # self.z = ODrive_Ease_Lib.Axis(self.odrv0.axis1) # Z
         self.x_max_accel = 50
         self.y_max_accel = 50
         self.x_max_decel = 200
@@ -54,9 +54,6 @@ class Gantry:
         self.y.axis.controller.config.vel_limit = 40
         self.y.axis.controller.config.enable_overspeed_error = False
 
-        self.z.axis.controller.config.vel_limit = 40
-        self.z.axis.controller.config.enable_overspeed_error = False
-
         self.clear_errors()
         # self.x.start_pos_liveplotter()
         # start_liveplotter(lambda: [self.x.axis.encoder.pos_estimate, self.x.axis.encoder.vel_estimate,
@@ -74,7 +71,7 @@ class Gantry:
         self.y.check_status()
 
         self.sensorless_home(home_axes=[True,True,True])
-        self.stupid_manual_home_becaues_gibson_still_dont_have_a_collet()
+        # self.stupid_manual_home_becaues_gibson_still_dont_have_a_collet()
         self.print_positions()
         self.dump_errors()
         
@@ -82,20 +79,24 @@ class Gantry:
             axis.axis.requested_state = 8
             axis.axis.controller.config.control_mode = 3
             axis.axis.controller.config.input_mode = 1
+            
+        for axis in self.axes():
+            axis.idle()
 
 
     def __del__(self):
-        print("setting all states to idle")
-        self.x.idle()
-        self.y.idle()
-        self.z.idle()
-        print("set all states to idle")
-        self.dump_errors()
+        # print("setting all states to idle")
+        # self.x.idle()
+        # self.y.idle()
+        # # self.z.idle()
+        # print("set all states to idle")
+        print("deleted bruh")
+        # self.dump_errors()
 
     def axes(self):
         yield self.x
         yield self.y
-        yield self.z
+
 
 
     def calibrate(self):
@@ -106,7 +107,7 @@ class Gantry:
             motor.hold_until_calibrated()
         print("anus initialized")
 
-    def home(self, axis=[True, True, True]):
+    def home(self, axis=[True, True]):
         print("homing")
         if axis[0]:  # x axis
             self.x.set_vel(-1)
@@ -143,20 +144,6 @@ class Gantry:
         self.requested_pos = [0, 0]
 
 
-    def stupid_manual_home_becaues_gibson_still_dont_have_a_collet(self):
-        '''
-        pp2
-        '''
-        self.z.idle()
-        pos = input("put a number if you know your offset, put anything eles if you don't")
-        try:
-            self.z.set_pos(int(pos))
-        except:
-            self.z.idle()
-            input("press any key once ur done")
-            print("your position is: " + str(self.z.get_pos()))
-            time.sleep(5)
-        self.z.set_home()
 
 
     def dump_errors(self):
@@ -170,9 +157,9 @@ class Gantry:
     def print_positions(self):
         print(f"X = {self.x}")
         print(f"Y = {self.y}")
-        print(f"Z = {self.z}")
 
-    def set_pos(self, x = -1, y = -1, z = -1):
+
+    def set_pos(self, x = -1, y = -1):
         '''
         The missile knows where it is at all times. It knows this because it knows where it isn't. By subtracting where it is from where it isn't, or where it isn't from where it is (whichever is greater), it obtains a difference, or deviation. The guidance subsystem uses deviations to generate corrective commands to drive the missile from a position where it is to a position where it isn't, and arriving at a position where it wasn't, it now is. Consequently, the position where it is, is now the position that it wasn't, and it follows that the position that it was, is now the position that it isn't.
 In the event that the position that it is in is not the position that it wasn't, the system has acquired a variation, the variation being the difference between where the missile is, and where it wasn't. If variation is considered to be a significant factor, it too may be corrected by the GEA. However, the missile must also know where it was.
@@ -184,15 +171,13 @@ In the event that the position that it is in is not the position that it wasn't,
         if y != -1:
             self.y.set_pos(y)
         
-        if z != -1:
-            self.z.set_pos(z)
 
         while True:
             if abs(self.x.get_pos() - x) <= .25 or x == -1:
                 if abs(self.y.get_pos() - y) <= .25 or y == -1:
-                    if abs(self.z.get_pos() - z) <= .25 or z == -1:
-                        self.requested_pos = [x, y]
-                        return
+
+                    self.requested_pos = [x, y]
+                    return
 
     def mirror_move(self, new_x, new_y):
         ratio = new_x - self.x.get_pos() / new_y - self.y.get_pos()
@@ -276,8 +261,7 @@ In the event that the position that it is in is not the position that it wasn't,
         if y != -1:
             self.y.set_pos(y, False)
 
-        if z != -1:
-            self.z.set_pos(z, False)
+
 
         # self.requested_pos = [x, y]
 

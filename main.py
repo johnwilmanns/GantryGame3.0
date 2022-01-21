@@ -40,10 +40,10 @@ def main():
 
 
     def pen_up():
-        gantry.set_pos(z=5)
+        print("pen is moving up")
 
     def pen_down():
-        gantry.set_pos(z=0)
+        print("pen is moving down")
 
 
     # @timeit
