@@ -193,7 +193,7 @@ class Axis(object):
         while True:
             print("pooping early")
             self.set_home()
-            self.set_pos(-10)
+            self.set_pos(-10, True)
             time.sleep(1)
             print("pooping")
 

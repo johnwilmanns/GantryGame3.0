@@ -80,8 +80,8 @@ class Gantry:
             axis.axis.controller.config.control_mode = 3
             axis.axis.controller.config.input_mode = 1
             
-        for axis in self.axes():
-            axis.idle()
+        # for axis in self.axes():
+        #     axis.idle()
 
 
     def __del__(self):
@@ -173,8 +173,11 @@ In the event that the position that it is in is not the position that it wasn't,
         
 
         while True:
-            if abs(self.x.get_pos() - x) <= .25 or x == -1:
-                if abs(self.y.get_pos() - y) <= .25 or y == -1:
+            # print("x", x, self.x.get_pos())
+            # print("y", y, self.y.get_pos())
+            
+            if abs(self.x.get_pos() - x) <= .1 or x == -1:
+                if abs(self.y.get_pos() - y) <= .1 or y == -1:
 
                     self.requested_pos = [x, y]
                     return
@@ -253,7 +256,7 @@ In the event that the position that it is in is not the position that it wasn't,
         return x_pos, y_pos
 
 
-    def set_pos_noblock(self, x = -1, y = -1, z = -1):
+    def set_pos_noblock(self, x = -1, y = -1):
 
         if(x != -1):
             self.x.set_pos(x, False)

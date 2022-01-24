@@ -8,6 +8,9 @@ from full_face_processing import process_combo, process_combo_raw_multi
 from full_path_planning import calc_path
 
 import solenoid
+from solenoid import pen_up, pen_down
+
+
 
 
 def main():
@@ -18,7 +21,7 @@ def main():
     behind = 0
 
 
-    scale_factor = 8
+    scale_factor = 5
     offset = (0,0)
 
     def draw_progress(queue1, queue2):
@@ -41,11 +44,6 @@ def main():
 
 
 
-    def pen_up():
-        print("pen is moving up")
-
-    def pen_down():
-        print("pen is moving down")
 
 
     # @timeit
@@ -120,7 +118,8 @@ def main():
     # plot_path_full(segments)
 
     segments = process_combo_raw_multi(input_img)
-    segments = calc_path(segments, 10, .001, 1, freq)
+    segments = calc_path(segments, 40, .001, 1, freq)
+    
 
 
     gantry = gantry.Gantry()
@@ -204,5 +203,8 @@ def main():
     
 
 if __name__ == "__main__":
-    main()
-
+    
+    try:
+        main()
+    finally:
+        import idle
