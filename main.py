@@ -7,6 +7,8 @@ import utilities
 from full_face_processing import process_combo, process_combo_raw_multi
 from full_path_planning import calc_path
 
+import solenoid
+
 
 def main():
     import gantry
