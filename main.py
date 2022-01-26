@@ -8,7 +8,7 @@ from full_face_processing import process_combo, process_combo_raw_multi
 from full_path_planning import calc_path
 
 import solenoid
-from solenoid import pen_up, pen_down
+from solenoid import pen_up, pen_down, up_damp
 
 
 
@@ -21,7 +21,7 @@ def main():
     behind = 0
 
 
-    scale_factor = 5
+    scale_factor = 8
     offset = (0,0)
 
     def draw_progress(queue1, queue2):
@@ -188,7 +188,7 @@ def main():
 
 
         print(f"segment written at {1 / (time.perf_counter() - t1) * len(seg)} hz")
-        pen_up()
+        up_damp()
 
     print("done")
     print(behind)

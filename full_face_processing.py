@@ -677,12 +677,12 @@ if __name__ == "__main__":
     # segments = process_combo(filename, 30, 1, 1, 120)
     # plot_path_full(segments)
 
-    segments= process_combo_raw_multi(input_img)
-    # segments = process_shading_raw(filename)
-    # segments = process_edges_raw(filename, blur_radius=15, lower_thresh=5, upper_thresh=40, areaCut=10, minNumPixels=5, segmentSplitDistance=20)
-    plot_segments(segments)
+    # segments= process_combo_raw_multi(input_img)
+    # # segments = process_shading_raw(filename)
+    # # segments = process_edges_raw(filename, blur_radius=15, lower_thresh=5, upper_thresh=40, areaCut=10, minNumPixels=5, segmentSplitDistance=20)
+    # plot_segments(segments)
 
-    # segments = process_shading_raw(filename, n=5, theta=math.pi/4)
-    # segments =  calc_path(segments,  10, .001, 1, 60)
-    # plot_path_full(segments)
+    segments = process_combo_raw_multi(input_img)
+    segments =  calc_path(segments, 40, .001, 1, 1020)
+    plot_path_full(segments)
 
