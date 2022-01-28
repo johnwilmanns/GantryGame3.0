@@ -1,3 +1,4 @@
+import multiprocessing
 from os import unlink
 try:
     from cv2 import cv2
@@ -19,7 +20,7 @@ import utilities
 
 from full_path_planning import calc_path, plot_path, plot_path_full, distance
 
-def plot_segments(segments, shape = (512, 512)):
+def plot_segments(segments, shape = (512 *2, 512 * 2)):
     
     
     # img = in_img.copy()
@@ -39,8 +40,8 @@ def plot_segments(segments, shape = (512, 512)):
             # print(seg[i])
             x1,y1,x2,y2 = int(seg[i][0]*shape[0]), int(seg[i][1]*shape[0]), int(seg[i+1][0]*shape[1]), int(seg[i+1][1]*shape[1])
             
-            # cv2.line(img,(x1,y1), (x1,y1), (0,0,0), 4)
-            # cv2.line(img,(x2,y2), (x2,y2), (0,0,0), 4)
+            cv2.line(img,(x1,y1), (x1,y1), (0,0,0), 4)
+            cv2.line(img,(x2,y2), (x2,y2), (0,0,0), 4)
             cv2.line(img,(x1,y1),(x2,y2),color,2)
             
             
@@ -54,10 +55,9 @@ def plot_segments(segments, shape = (512, 512)):
     cv2.imshow("images", img)
     cv2.waitKey(0)
 
-def process_edges_raw(filename, blur_radius = 17, lower_thresh = 0,
-        upper_thresh = 40, segmentSplitDistance = 20, areaCut = 10,
-        minNumPixels = 15, max_accel = 2, max_lr = .02, turn_vel_multiplier = 1, 
-        freq = 60, plot_steps = False):
+def process_edges_raw(input_img, blur_radius = 15, lower_thresh = 5,
+        upper_thresh = 40, segmentSplitDistance = 20, areaCut = 3,
+        minNumPixels = 1, plot_steps = False, q = None):
 
     splitDistance = 1.5
 
@@ -107,7 +107,7 @@ def process_edges_raw(filename, blur_radius = 17, lower_thresh = 0,
         #             if edges[y][x] == 255:
         #                 return(x,y)
 
-        for x,y in spiral_out(xP,yP, 50):
+        for x,y in spiral_out(xP,yP, 2):
             if 0 <= x < edges.shape[1] and 0 <= y < edges.shape[0]:
                 if edges[y][x] == 255:
                         return(x,y)
@@ -132,30 +132,24 @@ def process_edges_raw(filename, blur_radius = 17, lower_thresh = 0,
 
         return count
 
-    if filename.find(".jpg") == -1:
-        # Load .png image
-        image = cv2.imread(filename)
-
-        # Save .jpg image
-        cv2.imwrite('image.jpg', image, [int(cv2.IMWRITE_JPEG_QUALITY), 100])
-        input_img = cv2.imread("image.jpg")
-    else:
-        input_img = cv2.imread(filename)
+    
 
     gray = cv2.cvtColor(input_img,cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (blur_radius, blur_radius), 0)
 
     edges = cv2.Canny(gray, lower_thresh, upper_thresh)
-    edges2 = copy.deepcopy(edges)
+    # cv2.imshow("edges", edges)
+    # cv2.waitKey(0)
+    # edges2 = copy.deepcopy(edges)
 
-    for y in range(len(edges)):
-        for x in range(len(edges[y])):
-            if edges[y][x] == 255:
-                # print(check_closes(x,y,1))
-                if check_closes(x,y,1) < 2:
-                    edges2[y][x] = 0
+    # for y in range(len(edges)):
+    #     for x in range(len(edges[y])):
+    #         if edges[y][x] == 255:
+    #             # print(check_closes(x,y,1))
+    #             if check_closes(x,y,1) < 2:
+    #                 edges2[y][x] = 0
 
-    edges = edges2
+    # edges = edges2
 
     saved_edges = copy.deepcopy(edges)
 
@@ -165,22 +159,29 @@ def process_edges_raw(filename, blur_radius = 17, lower_thresh = 0,
     # cv2.imshow("images", combined)
     # cv2.waitKey(0)
 
+    tt0 = time.time() 
 
     points = []
     for y in range(len(edges)):
         for x in range(len(edges[y])):
             if edges[y][x] == 255:
-                points.append((x,y))
+                # print(check_closes(x,y,1))
+                if check_closes(x,y,1) == 1:
+                    points.append((x,y))
+                        
     sortedPoints = [points[0]]
 
     len_points = len(points)
 
-    tt0 = time.time() 
-    for i in range(len_points-1):
+    
+    
+    i = 0
+    while points:
+    # for i in range(len_points-1):
         t0 = time.time()
         targetPoint = sortedPoints[i]
 
-        if i % (len_points//200) == 0:
+        if i % 50 == 0:
 
             print('\r', end="")
             print(f"{i/(len(points) + len(sortedPoints)) * 100: .2f}% complete", end = "")
@@ -194,19 +195,26 @@ def process_edges_raw(filename, blur_radius = 17, lower_thresh = 0,
                 if dist < mindist and j not in sortedPoints:
                     mindist = dist
                     nearby = j
-                    # break
-
+                
+                    
             
-
+                # nearby = points[0]
             
+        try:
+            edges[nearby[1]][nearby[0]] = 0
+        except TypeError:
+            break
 
         sortedPoints.append(nearby)
-        points.remove(nearby) #TODO make this better
-        edges[nearby[1]][nearby[0]] = 0
+        try:
+            points.remove(nearby)
+        except ValueError:
+            pass\
+        
+        i += 1
         
         
-    print("")
-    print(f"took {time.time()-tt0: .2f} seconds to sort all {len(sortedPoints)} points")
+    
     # filtered path = []
 
 
@@ -238,7 +246,7 @@ def process_edges_raw(filename, blur_radius = 17, lower_thresh = 0,
 
 
     while True:
-        print("running iteration")
+        # print("running iteration")
         seg_len = sum(len(seg) for seg in segments)
 
         for seg in segments:
@@ -275,6 +283,8 @@ def process_edges_raw(filename, blur_radius = 17, lower_thresh = 0,
                 cv2.line(img,(x1,y1), (x1,y1), (0,0,0), 4)
                 cv2.line(img,(x2,y2), (x2,y2), (0,0,0), 4)
                 cv2.line(img,(x1,y1),(x2,y2),color,2)
+                
+    
 
     # print(len(points))
     # print(len(lines))
@@ -293,7 +303,8 @@ def process_edges_raw(filename, blur_radius = 17, lower_thresh = 0,
         for j, point in enumerate(seg):
             segments[i][j] = (point[0]/max_size,point[1]/max_size)
 
-
+    print("")
+    print(f"took {time.time()-tt0: .2f} seconds to process all {len(sortedPoints)} points")
 
 
     # import os
@@ -307,8 +318,7 @@ def process_edges_raw(filename, blur_radius = 17, lower_thresh = 0,
 
 
 
-    print("{} segments with a total of {} points".format(len(segments), sum(len(seg) for seg in segments)))
-    cv2.imwrite('houghlines6.jpg', img)
+    # print("{} segments with a total of {} points".format(len(segments), sum(len(seg) for seg in segments)))
 
 
 
@@ -323,21 +333,25 @@ def process_edges_raw(filename, blur_radius = 17, lower_thresh = 0,
     # new_points = calc_path(segments, max_accel, max_lr, turn_vel_multiplier, freq)
     new_points = segments
     
+    print("Finished Edges")
+    
+    if q is not None:
+        q.put(new_points)
+
     return new_points
 
-def process_shading_raw(filename, blur_radius = 3, n = 5, density = 20, theta = None, segmentSplitDistance = 20, areaCut = 10,
-        minNumPixels = 15, max_accel = 2, max_lr = .02, turn_vel_multiplier = 1, 
-        freq = 60, plot_steps = False):
+def process_shading_raw(input_img, blur_radius = 21, line_dist = 10, theta = None, segmentSplitDistance = 20, areaCut = 5,
+                        minNumPixels = 15, plot_steps = False, q = None):
 
     splitDistance = 1.5
     
     # input_img = utilities.resize(cv2.imread(filename))
-    input_img = cv2.imread(filename)
+
     # input_img = cv2.imread("obama.png")
     
     gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (blur_radius, blur_radius), 0)
-    shades = posterize.get_spinny(gray, n, density, theta)
+    shades = posterize.get_spinny(gray, line_dist, theta)
     
 
     def distance(x1, y1, x2, y2):
@@ -419,9 +433,10 @@ def process_shading_raw(filename, blur_radius = 3, n = 5, density = 20, theta = 
     mask = cv2.inRange(img, (0,0,0), (255,255,255))
     img[mask>0] = (255,255,255)
     
-
+    # shades = [shades[3]]
     for edges in shades:
-
+        
+        tt0 = time.time() 
         # edges = cv2.Canny(gray, lower_thresh, upper_thresh)
         edges2 = copy.deepcopy(edges)
 
@@ -444,9 +459,8 @@ def process_shading_raw(filename, blur_radius = 3, n = 5, density = 20, theta = 
                     
         sortedPoints = [points[0]]
 
-        len_points = len(points)
 
-        tt0 = time.time() 
+        # tt0 = time.time() 
         i=0
         while points:
             t0 = time.time()
@@ -456,10 +470,10 @@ def process_shading_raw(filename, blur_radius = 3, n = 5, density = 20, theta = 
             #     break
 
 
-            # if i % (len_points//200) == 0:
+            if i % 50 == 0:
 
-            #     print('\r', end="")
-            #     print(f"{i/(len(points) + len(sortedPoints)) * 100: .2f}% complete", end = "")
+                print('\r', end="")
+                print(f"{i/(len(points) + len(sortedPoints)) * 100: .2f}% complete", end = "")
             
             nearby = check_close(*targetPoint)
 
@@ -523,7 +537,7 @@ def process_shading_raw(filename, blur_radius = 3, n = 5, density = 20, theta = 
 
 
         while True:
-            print("running iteration")
+            # print("running iteration")
             seg_len = sum(len(seg) for seg in segments)
 
             for seg in segments:
@@ -566,7 +580,7 @@ def process_shading_raw(filename, blur_radius = 3, n = 5, density = 20, theta = 
 
 
 
-        print("{} segments with a total of {} points".format(len(segments), sum(len(seg) for seg in segments)))
+        # print("{} segments with a total of {} points".format(len(segments), sum(len(seg) for seg in segments)))
 
 
         if plot_steps:
@@ -606,30 +620,69 @@ def process_shading_raw(filename, blur_radius = 3, n = 5, density = 20, theta = 
 
         cv2.imshow("images", img)
         cv2.waitKey(0)
+    print("Finished Shading")
+    if q is not None:
+        q.put(new_points)
 
     return new_points
 
-def process_combo_raw(filename):
-    
-    segments = process_edges_raw(filename, blur_radius = 11, lower_thresh = 10,
-        upper_thresh = 50, segmentSplitDistance=15, areaCut = 3,
-        minNumPixels = 15)
-    segments.extend(process_shading_raw(filename, density = 10, areaCut=1))
-    
+def process_combo_raw(input_img):
+
+    print("starting edge processing")
+    segments = process_edges_raw(input_img)
+    print("starting shading processing")
+    segments.extend(process_shading_raw(input_img))
+    print("finished pre processing")
     return segments
 
-def process_combo(filename, max_accel, max_radius, turn_vel_multiplier, freq):
-    return calc_path(process_combo_raw(filename), max_accel, max_radius, turn_vel_multiplier, freq)
+def process_combo_raw_multi(input_img):
+    from multiprocessing import Process
+    
+    q = multiprocessing.Queue()
+    edges = Process(target=process_edges_raw, args=(input_img,), kwargs={"q": q})
+    shading = Process(target=process_shading_raw, args=(input_img,), kwargs={"q": q})
+    
+    edges.start()
+    shading.start()
+    
+    segments = q.get() + q.get()
+    
+    return segments
+    
+    
+
+
+def process_combo(input_img, max_accel, max_radius, turn_vel_multiplier, freq):
+
+    return calc_path(process_combo_raw(input_img), max_accel, max_radius, turn_vel_multiplier, freq)
 
 
 if __name__ == "__main__":
 
-    filename = "small_obama.jpg"
+    filename = "C:/Users/Samir/OneDrive/Documents/Drawing Bot/GantryGame3.0/GantryGame3.0/brian.jpg"
+    filename = "brian.jpg"
+
+    if filename.find(".jpg") == -1:
+        # Load .png image
+        image = cv2.imread(filename)
+
+        # Save .jpg image
+        cv2.imwrite('image.jpg', image, [int(cv2.IMWRITE_JPEG_QUALITY), 100])
+        input_img = cv2.imread("image.jpg")
+    else:
+        input_img = cv2.imread(filename)
+
+    input_img = utilities.resize(input_img, 800, int(800 * input_img.shape[0]/input_img.shape[1]))
 
     # segments = process_combo(filename, 30, 1, 1, 120)
     # plot_path_full(segments)
 
-    segments= process_combo_raw(filename)
-    # segments = process_shading_raw(filename)
-    # segments = process_edges_raw(filename)
-    plot_segments(segments)
+    # segments= process_combo_raw_multi(input_img)
+    # # segments = process_shading_raw(filename)
+    # # segments = process_edges_raw(filename, blur_radius=15, lower_thresh=5, upper_thresh=40, areaCut=10, minNumPixels=5, segmentSplitDistance=20)
+    # plot_segments(segments)
+
+    segments = process_combo_raw_multi(input_img)
+    segments =  calc_path(segments, 40, .001, 1, 1020)
+    plot_path_full(segments)
+

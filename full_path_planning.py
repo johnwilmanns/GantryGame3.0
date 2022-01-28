@@ -50,7 +50,7 @@ def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb")
 
         abc_angle = getAngle(a,b,c)
 
-        if abs(abc_angle - 180) < .5 or abs(abc_angle - 360) < .5 or abs(abc_angle) < .5: #Todo: fix this
+        if abs(abc_angle - 180) < 1 or abs(abc_angle - 360) < 1 or abs(abc_angle) < 1: #Todo: fix this
 
             l = ab_dist
             r = 0
@@ -166,14 +166,14 @@ def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb")
     buffer_parts = []
     for i, part in enumerate(parts[:]):
         if isinstance(part, Arc):
-            angle_step = 2
+            angle_step = 10
             n = math.ceil(abs(part.angle_delta)/angle_step)
             stepsize = (part.angle_delta)/n
             vals = np.linspace(part.start_angle, part.start_angle+part.angle_delta, n+1)[:-1]
 
             # pairs = [[val % 360, stepsize] for val in np.linspace(part.start_angle, part.start_angle+part.angle_delta-stepsize, n)]
             
-            print("split into :", len(vals))
+            # print("split into :", len(vals))
             arcs = []  
             for val in vals:
                 arcs.append(Arc(part.center_pos, part.radius, val, stepsize))
@@ -246,7 +246,7 @@ def chunks_to_points(parts, freq):
     period = 1/freq
     points = []
     total_time = sum(part.get_total_time() for part in parts)
-    print("takes: ", total_time)
+    # print("takes: ", total_time)
 
     # for part in parts:
     #     print(part)

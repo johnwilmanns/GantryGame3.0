@@ -28,13 +28,14 @@ def reboot_ODrive(od):
 
 class Axis(object):
     def __init__(self, axis, endstop_pin = None):
+
         self.axis = axis
         self.home = 0
         self.endstop_pin = endstop_pin
 
     #odrive control methods
 
-    def set_pos(self, pos, ensure_control_mode=True):
+    def set_pos(self, pos, ensure_control_mode=False):
         desired_pos = pos + self.home
 
         if ensure_control_mode:
@@ -192,7 +193,7 @@ class Axis(object):
         while True:
             print("pooping early")
             self.set_home()
-            self.set_pos(-10)
+            self.set_pos(-10, True)
             time.sleep(1)
             print("pooping")
 
