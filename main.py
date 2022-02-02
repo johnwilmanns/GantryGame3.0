@@ -118,7 +118,7 @@ def main():
     # plot_path_full(segments)
 
     segments = process_combo_raw_multi(input_img)
-    segments = calc_path(segments, 40, .001, 1, freq)
+    segments = calc_path(segments, 5, .001, 1, freq)
     
 
 
@@ -131,15 +131,15 @@ def main():
     #     gantry.set_pos_noblock(z=float(input()))
 
     pen_up()
-
-    gantry.dump_errors()
+    input("confirm up")
+    
+    pen_down()
+    input("confirm down")
+    
+    # gantry.dump_errors()
 
     #the only way python will do this (our codebase does not support if statements)
-    try:
-        1/askswait
-        input("press return to start")
-    except Exception:
-        pass
+
 
     queue1 = mp.Queue()
     queue2 = mp.Queue()
@@ -188,7 +188,7 @@ def main():
 
 
         print(f"segment written at {1 / (time.perf_counter() - t1) * len(seg)} hz")
-        up_damp()
+        pen_up()
 
     print("done")
     print(behind)

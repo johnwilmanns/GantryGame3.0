@@ -12,7 +12,7 @@ class Gantry:
 
 
         self.odrv1 = odrive.find_any(serial_number=self.odrv1_serial)
-        self.odrv0 = odrive.find_any(serial_number=self.odrv0_serial)
+        # self.odrv0 = odrive.find_any(serial_number=self.odrv0_serial)
 
         self.clear_errors()
 
@@ -147,11 +147,11 @@ class Gantry:
 
 
     def dump_errors(self):
-        print(dump_errors(self.odrv0))
+        # print(dump_errors(self.odrv0))
         print(dump_errors(self.odrv1))
 
     def clear_errors(self):
-        self.odrv0.clear_errors()
+        # self.odrv0.clear_errors()
         self.odrv1.clear_errors()
 
     def print_positions(self):
@@ -176,8 +176,8 @@ In the event that the position that it is in is not the position that it wasn't,
             # print("x", x, self.x.get_pos())
             # print("y", y, self.y.get_pos())
             
-            if abs(self.x.get_pos() - x) <= .1 or x == -1:
-                if abs(self.y.get_pos() - y) <= .1 or y == -1:
+            if abs(self.x.get_pos() - x) <= .01 or x == -1:
+                if abs(self.y.get_pos() - y) <= .01 or y == -1:
 
                     self.requested_pos = [x, y]
                     return
