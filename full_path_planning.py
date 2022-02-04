@@ -277,10 +277,12 @@ def calc_path(in_segments, max_accel, max_radius, turn_vel_multiplier, freq):
     #     total_time += seg_time
     #     segments.append(points)
 
-    # print(total_time)
-    return pool.map(calc_seg, (in_segments, max_accel, max_radius, turn_vel_multiplier, freq)
+
+    stuff = pool.map(calc_seg, (in_segments, max_accel, max_radius, turn_vel_multiplier, freq))
+    return stuff
 
 def calc_seg(seg, max_accel, max_radius, turn_vel_multiplier, freq):
+    # print(total_time)
     parts = calc_segment(seg, max_accel, max_radius, turn_vel_multiplier)
     points, seg_time = chunks_to_points(parts, freq)
     return points
