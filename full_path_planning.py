@@ -267,16 +267,25 @@ def chunks_to_points(parts, freq):
     return points, total_time
 
 def calc_path(in_segments, max_accel, max_radius, turn_vel_multiplier, freq):
-    segments = []
-    total_time = 0
-    for seg in in_segments:
-        parts = calc_segment(seg, max_accel, max_radius, turn_vel_multiplier)
-        points, seg_time = chunks_to_points(parts, freq)
-        total_time += seg_time
-        segments.append(points)
+    import multiprocessing as mp
+    pool = mp.Pool(processes=4)
+    # segments = []
+    # total_time = 0
+    # for seg in in_segments:
+    #     parts = calc_segment(seg, max_accel, max_radius, turn_vel_multiplier)
+    #     points, seg_time = chunks_to_points(parts, freq)
+    #     total_time += seg_time
+    #     segments.append(points)
 
-    print(total_time)
-    return segments
+    # print(total_time)
+    return pool.map(calc_seg, (in_segments, max_accel, max_radius, turn_vel_multiplier, freq)
+
+def calc_seg(seg, max_accel, max_radius, turn_vel_multiplier, freq):
+    parts = calc_segment(seg, max_accel, max_radius, turn_vel_multiplier)
+    points, seg_time = chunks_to_points(parts, freq)
+    return points
+
+
 
 def plot_chunks(parts):
     import matplotlib.pyplot as plt
