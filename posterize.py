@@ -283,6 +283,19 @@ def get_spinny(im, line_dist=30, theta=None, thresholds = [30, 80, 120]):
 
     return lines
 
+def wave_function(im, line_dist=30, wave_int = 10):
+
+    #makes a blank image
+    blank = utilities.copy_blank(im)
+    for y in range(int((line_dist / 2)), im.shape[0], line_dist):
+        print(y)
+        for x in range(im.shape[1]):
+
+            blank[y, x] = 255
+    cv2.imshow("lines", blank)
+
+
+
 
 def get_calcd_path(input_img, gaps=[5, 10, 15], max_accel=10, max_lr=.01, turn_vel_multiplier=1, freq=60, john="dumb"):
     return full_path_planning.calc_path(get_segments(input_img, gaps), max_accel, max_lr, turn_vel_multiplier, freq)
@@ -294,39 +307,6 @@ if __name__ == "__main__":
 
     gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (3, 3), 0)
-    edges = get_spinny(gray, 5, 10)
-    full_face_processing.process_shading(edges, plot_steps=True, segmentSplitDistance=2, minNumPixels=3)
-
-    print('calc\'d path')
-    # cv2.imshow("pp", (255-edges))
-    # print(parts)
-    # full_face_processing.plot_path_full(parts)
-
-    # dst = edges
-    #
-    # # Copy edges to the images that will display the results in BGR
-    # cdst = cv2.cvtColor(dst, cv2.COLOR_GRAY2BGR)
-    # cdstP = np.copy(cdst)
-    # inverted = utilities.copy_blank(edges)
-    # for x in range(len(edges)):
-    #     for y in range(len(edges[1])):
-    #         if edges[x][y] == 255:
-    #             inverted[x][y] = 0
-    #         else:
-    #             inverted[x][y] = 255
-    # cv2.imshow("final", inverted)
-    # cv2.imshow("the actual lines", edges)
-
-    # linesP = cv2.HoughLinesP(dst, 1, np.pi / 180, 1, None, 0, 0)
-    #
-    # if linesP is not None:
-    #     for i in range(0, len(linesP)):
-    #         l = linesP[i][0]
-    #         cv2.line(cdstP, (l[0], l[1]), (l[2], l[3]), (0, 0, 255), 2, cv2.LINE_AA)
-    #
-    # cv2.imshow("Detected Lines (in red) - Probabilistic Line Transform", cdstP)
-    #
-    # cv2.waitKey()
-
+    edges = wave_function(gray, 10, 10)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
