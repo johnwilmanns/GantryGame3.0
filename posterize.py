@@ -290,12 +290,15 @@ def wave_function(im, line_dist=30, wave_int = 5):
     for y in range(int((line_dist / 2)), im.shape[0], line_dist):
 
         up = True
-        for x in range(int(wave_int / 2), im.shape[1], wave_int * 2):
+        x=0
+        for x < im.shape[1]:
+        # for x in range(int(wave_int / 2), im.shape[1], wave_int * 2):
 
             # intensity = cv2.mean(im[10:11,10:11])
             intensity = im[y][x]
             print((255 - intensity)/255)
-            intensity = int((line_dist * ((255 - intensity)/255)) )
+            intensity = int((line_dist * ((255 - intensity)/255)))
+            space =
             if up:
                 cv2.ellipse(blank, (x,y), (int(wave_int), intensity), 0, 180, 360, 255, 1)
             else:
