@@ -296,9 +296,9 @@ def wave_function(im, line_dist=30, wave_int = 10):
             intensity = im[x][y]
             dist = int(line_dist * 255 / (255 - intensity) - wave_int/2)
             if up:
-                cv2.ellipse(blank, (x,y + dist), (int(wave_int/2), int(wave_int/2)), 0, 180, 360, 100, 1)
+                cv2.ellipse(blank, (x,y + dist), (int(wave_int), int(wave_int)), 0, 180, 360, 100, 1)
             else:
-                cv2.ellipse(blank, (x,y + dist), (int(wave_int/2), int(wave_int/2)), 0, 0, 180, 255, 1)
+                cv2.ellipse(blank, (x,y + dist), (int(wave_int), int(wave_int)), 0, 0, 180, 255, 1)
             up = not up
 
     cv2.imshow("lines", blank)
