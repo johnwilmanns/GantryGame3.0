@@ -289,9 +289,17 @@ def wave_function(im, line_dist=30, wave_int = 10):
     blank = utilities.copy_blank(im)
     for y in range(int((line_dist / 2)), im.shape[0], line_dist):
         print(y)
-        for x in range(im.shape[1]):
+        up = True
+        for x in range(int(wave_int / 2), im.shape[1], wave_int * 2):
 
-            blank[y, x] = 255
+            # intensity = cv2.mean(im[10:11,10:11])
+            intensity = im[x][y]
+            dist = int(line_dist * 255 / (255 - intensity) - wave_int/2)
+            if up:
+                cv2.ellipse(blank, (x,y + dist), (int(wave_int/2), int(wave_int/2)), 0, 180, 360, 100, 1)
+            else:
+                cv2.ellipse(blank, (x, y - dist), (int(wave_int / 2), int(wave_int / 2)), 0, 360, 180, 255, 1)
+
     cv2.imshow("lines", blank)
 
 
