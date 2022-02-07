@@ -90,6 +90,7 @@ def main():
         # # time.sleep(.1)
         # while any(axis.is_moving() for axis in gantry.axes()):
         #     time.sleep(.1)
+        
 
         threshold = .1
 

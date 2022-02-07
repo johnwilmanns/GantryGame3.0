@@ -176,8 +176,8 @@ In the event that the position that it is in is not the position that it wasn't,
             # print("x", x, self.x.get_pos())
             # print("y", y, self.y.get_pos())
             
-            if abs(self.x.get_pos() - x) <= .01 or x == -1:
-                if abs(self.y.get_pos() - y) <= .01 or y == -1:
+            if abs(self.x.get_pos() - x) <= .05 or x == -1:
+                if abs(self.y.get_pos() - y) <= .05 or y == -1:
 
                     self.requested_pos = [x, y]
                     return

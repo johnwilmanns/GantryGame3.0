@@ -8,13 +8,15 @@ pwm.write(180)
 #puts the pen up
 def pen_up():
     print("Pen up")
-    pwm.write(100) #writes pwm
+    pwm.write(90) #writes pwm
+    time.sleep(.05)
 
 
 #puts the pen down
 def pen_down():
     print("pen down")
     pwm.write(80) #writes pwm
+    time.sleep(.05)
 
     
 def up_damp(delay=.015, hold_pow=.2):
@@ -24,6 +26,7 @@ def up_damp(delay=.015, hold_pow=.2):
     
     
 if __name__ == "__main__":
+    print("ready")
     while True:
         input()
         pen_up()
