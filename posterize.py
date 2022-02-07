@@ -283,22 +283,23 @@ def get_spinny(im, line_dist=30, theta=None, thresholds = [30, 80, 120]):
 
     return lines
 
-def wave_function(im, line_dist=30, wave_int = 10):
+def wave_function(im, line_dist=30, wave_int = 5):
 
     #makes a blank image
     blank = utilities.copy_blank(im)
     for y in range(int((line_dist / 2)), im.shape[0], line_dist):
-        print(y)
+
         up = True
         for x in range(int(wave_int / 2), im.shape[1], wave_int * 2):
 
             # intensity = cv2.mean(im[10:11,10:11])
             intensity = im[x][y]
-            dist = int(line_dist * 255 / (255 - intensity) - wave_int/2)
+            print((255 - intensity)/255)
+            intensity = int((line_dist * ((255 - intensity)/255)) )
             if up:
-                cv2.ellipse(blank, (x,y + dist), (int(wave_int), int(wave_int)), 0, 180, 360, 100, 1)
+                cv2.ellipse(blank, (x,y), (int(wave_int), intensity), 0, 180, 360, 255, 1)
             else:
-                cv2.ellipse(blank, (x,y + dist), (int(wave_int), int(wave_int)), 0, 0, 180, 255, 1)
+                cv2.ellipse(blank, (x,y), (int(wave_int), intensity), 0, 0, 180, 255, 1)
             up = not up
 
     cv2.imshow("lines", blank)
@@ -316,6 +317,6 @@ if __name__ == "__main__":
 
     gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (3, 3), 0)
-    edges = wave_function(gray, 10, 10)
+    edges = wave_function(gray, 30)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
