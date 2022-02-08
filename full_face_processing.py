@@ -14,6 +14,7 @@ import pickle
 from auto_edge import auto_canny
 import posterize
 import utilities
+import rust
 
 
 # from test import *
@@ -73,7 +74,7 @@ def process_edges_raw(input_img, blur_radius = 15, lower_thresh = 5,
 
 
     #TODO add rust method here
-    #segments = rust.process_image(edges, area_cut, 3, min_ler, bind_dist)
+    segments = rust.process_image(edges, area_cut, 3, min_len, bind_dist)
 
     for i, seg in enumerate(segments):
         for j, point in enumerate(seg):
@@ -108,7 +109,7 @@ def process_shading_raw(input_img, blur_radius = 21, line_dist = 10, theta = Non
 
     t0 = time.time()
 
-    for edges in shades:
+    for edges in shades[:2]:
         
         edges = edges.astype(bool)
         edges = edges.tolist()
@@ -117,7 +118,7 @@ def process_shading_raw(input_img, blur_radius = 21, line_dist = 10, theta = Non
 
 
         #TODO add rust method here
-        #segments = rust.process_image(edges, area_cut, 3, min_ler, bind_dist)
+        segments = rust.process_image(edges, area_cut, 3, min_len, bind_dist)
 
 
 
@@ -170,20 +171,22 @@ def process_combo(input_img, max_accel, max_radius, turn_vel_multiplier, freq):
 if __name__ == "__main__":
 
 
-    filename = "s1.jpg"
-    filename = "C:/Users/Samir/OneDrive/Documents/Drawing Bot/GantryGame3.0/GantryGame3.0/lowres.jpg"
+    # filename = "s1.jpg"
+    filename = "C:/Users/Samir/OneDrive/Documents/Drawing Bot/GantryGame3.0/GantryGame3/lowres.jpg"
     
-    if filename.find(".jpg") == -1:
-        # Load .png image
-        image = cv2.imread(filename)
+    input_img = cv2.imread(filename)
+    
+    # if filename.find(".jpg") == -1:
+    #     # Load .png image
+    #     image = cv2.imread(filename)
 
-        # Save .jpg image
-        cv2.imwrite('image.jpg', image, [int(cv2.IMWRITE_JPEG_QUALITY), 100])
-        input_img = cv2.imread("image.jpg")
-    else:
-        input_img = cv2.imread(filename)
+    #     # Save .jpg image
+    #     cv2.imwrite('image.jpg', image, [int(cv2.IMWRITE_JPEG_QUALITY), 100])
+    #     input_img = cv2.imread("image.jpg")
+    # else:
+    #     input_img = cv2.imread(filename)
 
-    input_img = utilities.resize(input_img, 800, int(800 * input_img.shape[0]/input_img.shape[1]))
+    # input_img = utilities.resize(input_img, 800, int(800 * input_img.shape[0]/input_img.shape[1]))
 
     # segments = process_combo(filename, 30, 1, 1, 120)
     # plot_path_full(segments)
@@ -194,11 +197,11 @@ if __name__ == "__main__":
     # plot_segments(segments)
 
     t0 = time.perf_counter()
-    segments = process_combo_raw_multi(input_img)
+    segments = process_combo_raw(input_img)
     print("face processing took: ", time.perf_counter()-t0) #Raw: 11.6, Raw_multi: 6.9
 
     t0 = time.perf_counter()    
-    segments =  calc_path(segments, 40, .001, 1, 1020)
+    segments =  calc_path(segments, 5, .1, 1, 120)
     print("calc processing took ", time.perf_counter() - t0) #1 thread: 4s, 4 threads: 1.65s, 8 threads 1.4s, 16 threads: 2.1s
     
-    # plot_path_full(segments)
+    plot_path_full(segments)

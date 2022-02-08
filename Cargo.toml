@@ -1,0 +1,20 @@
+[package]
+name = "GantryGame3"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "rust"
+crate-type = ["cdylib"]
+
+[dependencies]
+imageproc = "0.22.0"
+image = "0.23.0"
+num-complex = "0.4.0"
+cpython = "0.7"
+
+[dependencies.pyo3]
+version = "0.15.1"
+features = ["extension-module"]
