@@ -268,18 +268,19 @@ def chunks_to_points(parts, freq):
 
 def calc_path(in_segments, max_accel, max_radius, turn_vel_multiplier, freq):
     import multiprocessing as mp
-    pool = mp.Pool(processes=4)
-    # segments = []
-    # total_time = 0
-    # for seg in in_segments:
-    #     parts = calc_segment(seg, max_accel, max_radius, turn_vel_multiplier)
-    #     points, seg_time = chunks_to_points(parts, freq)
-    #     total_time += seg_time
-    #     segments.append(points)
+    with mp.Pool(mp.cpu_count()) as pool:
+        # segments = []
+        # total_time = 0
+        # for seg in in_segments:
+        #     parts = calc_segment(seg, max_accel, max_radius, turn_vel_multiplier)
+        #     points, seg_time = chunks_to_points(parts, freq)
+        #     total_time += seg_time
+        #     segments.append(points)
+        
+        multiple_results = [pool.apply_async(calc_seg, (seg)) for seg in in_segments]
 
-
-    stuff = pool.map(calc_seg, (in_segments))
-    return stuff
+        # stuff = pool.map(calc_seg, (in_segments))
+        return multiple_results
 
 def calc_seg(seg, max_accel=1, max_radius=1, turn_vel_multiplier=1, freq=60):
     # print(total_time)
