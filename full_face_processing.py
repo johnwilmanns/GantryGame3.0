@@ -197,8 +197,12 @@ if __name__ == "__main__":
     # plot_segments(segments)
 
     t0 = time.perf_counter()
-    segments = process_combo_raw(input_img)
-    print("face processing took: ", time.perf_counter()-t0) #Raw: 11.6, Raw_multi: 6.9
+    segments = process_edges_raw(input_img)
+    print(time.time()-t0)
+
+    # segments = process_combo_raw_multi(input_img)
+    # segments =  calc_path(segments, 40, .001, 1, 1020)
+    # plot_path_full(segments)
 
     t0 = time.perf_counter()    
     segments =  calc_path(segments, 5, .1, 1, 120)
