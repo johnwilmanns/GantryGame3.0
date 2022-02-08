@@ -277,7 +277,7 @@ def calc_path(in_segments, max_accel, max_radius, turn_vel_multiplier, freq):
         #     total_time += seg_time
         #     segments.append(points)
         
-        multiple_results = [pool.apply_async(calc_seg, (seg)) for seg in in_segments]
+        multiple_results = [pool.apply_async(calc_seg, (seg, max_accel, max_radius, turn_vel_multiplier, freq)) for seg in in_segments]
 
         # stuff = pool.map(calc_seg, (in_segments))
         return multiple_results
