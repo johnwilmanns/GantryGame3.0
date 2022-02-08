@@ -15,6 +15,18 @@ fn process_image(img: Vec<Vec<bool>>, area_cut: f64, min_pixels: usize, min_len:
 
     // let elapsed = now.elapsed();
     // println!("Cannied in: {:.2?}", elapsed);
+    let mut is_empty = true;
+    for row in img.iter(){
+        for val in row.iter(){
+            if *val{
+                // println!("found hot");
+                is_empty = false;
+            }
+        }
+    }
+    if is_empty {
+        return Ok(Vec::new());
+    }
 
     let segments = process_edges(img, area_cut, min_pixels, min_len, bind_dist);
 
@@ -42,7 +54,7 @@ pub fn process_edges(mut img: Vec<Vec<bool>>, area_cut: f64, min_pixels: usize, 
     let now = Instant::now();
 
     let mut points = find_endpoints(&mut img);
-    // println!("endpoints: {:?}", points);
+    println!("endpoints: {:?}", points);
     // let mut path: Vec<(u32,u32)> = Vec::with_capacity(points.len() as usize);
     let mut sorted_points = sort_pixels(&mut img, &mut points);
     // println!("sorted_points: {:?}", sorted_points);
@@ -262,7 +274,7 @@ fn find_endpoints(img: &mut Vec<Vec<bool>>)->Vec<(usize,usize)>{
 
 fn is_endpoint(img:& Vec<Vec<bool>>, x: usize, y: usize)->bool{
 
-    let dim = (img.len(), img[0].len());
+    let dim = (img[0].len(), img.len());
 
 
     let offsets: [(i32, i32); 4] = [(-1,0), (0, -1), (0,1), (1, 0)];
@@ -272,7 +284,7 @@ fn is_endpoint(img:& Vec<Vec<bool>>, x: usize, y: usize)->bool{
     for offset in offsets{
 
         let pos = (((x as i32) + offset.0) as usize, ((y as i32) + offset.1) as usize);
-        if pos.0 > dim.0 || pos.1 > dim.1{ // TODO: figure out why this shouldn't be >=
+        if pos.0 >= dim.0 || pos.1 >= dim.1{ // TODO: figure out why this shouldn't be >=
             continue;
         }
 

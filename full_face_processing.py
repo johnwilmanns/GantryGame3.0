@@ -56,8 +56,8 @@ def plot_segments(segments, shape = (512 *2, 512 * 2)):
     cv2.imshow("images", img)
     cv2.waitKey(0)
 
-def process_edges_raw(input_img, blur_radius = 15, lower_thresh = 5,
-        upper_thresh = 40, bind_dist = 4, area_cut = 3,
+def process_edges_raw(input_img, blur_radius = 7, lower_thresh =40,
+        upper_thresh = 90, bind_dist = 4, area_cut = 3,
         min_len = 3, q = None):
 
     t0 = time.time()
@@ -66,6 +66,9 @@ def process_edges_raw(input_img, blur_radius = 15, lower_thresh = 5,
     gray = cv2.GaussianBlur(gray, (blur_radius, blur_radius), 0)
 
     edges = cv2.Canny(gray, lower_thresh, upper_thresh)
+    
+    cv2.imshow("edges", edges)
+    cv2.waitKey(0)
     edges = edges.astype(bool)
     edges = edges.tolist()
 
@@ -91,7 +94,7 @@ def process_edges_raw(input_img, blur_radius = 15, lower_thresh = 5,
 
     return segments
 
-def process_shading_raw(input_img, blur_radius = 21, line_dist = 10, theta = None, bind_dist = 4, area_cut = 3,
+def process_shading_raw(input_img, blur_radius = 21, line_dist = 10, theta = None, bind_dist = 5, area_cut = 3,
         min_len = 3, q = None):
 
     splitDistance = 1.5
@@ -109,8 +112,10 @@ def process_shading_raw(input_img, blur_radius = 21, line_dist = 10, theta = Non
 
     t0 = time.time()
 
-    for edges in shades[:2]:
+    for edges in shades:
         
+        cv2.imshow("edges", edges)
+        cv2.waitKey(0)
         edges = edges.astype(bool)
         edges = edges.tolist()
         
@@ -119,8 +124,11 @@ def process_shading_raw(input_img, blur_radius = 21, line_dist = 10, theta = Non
 
         #TODO add rust method here
         segments = rust.process_image(edges, area_cut, 3, min_len, bind_dist)
+        if not segments:
+            print("warning, empty segments list")
 
-
+        print(segments)
+        print(len(segments))
 
         for i, seg in enumerate(segments):
             for j, point in enumerate(seg):
@@ -172,7 +180,7 @@ if __name__ == "__main__":
 
 
     # filename = "s1.jpg"
-    filename = "C:/Users/Samir/OneDrive/Documents/Drawing Bot/GantryGame3.0/GantryGame3/lowres.jpg"
+    filename = "lowres.jpg"
     
     input_img = cv2.imread(filename)
     
@@ -197,14 +205,14 @@ if __name__ == "__main__":
     # plot_segments(segments)
 
     t0 = time.perf_counter()
-    segments = process_edges_raw(input_img)
-    print(time.time()-t0)
+    segments = process_shading_raw(input_img)
+    print(time.perf_counter()-t0)
 
     # segments = process_combo_raw_multi(input_img)
     # segments =  calc_path(segments, 40, .001, 1, 1020)
     # plot_path_full(segments)
 
-    t0 = time.perf_counter()    
+    t0 = time.perf_counter()   
     segments =  calc_path(segments, 5, .1, 1, 120)
     print("calc processing took ", time.perf_counter() - t0) #1 thread: 4s, 4 threads: 1.65s, 8 threads 1.4s, 16 threads: 2.1s
     
