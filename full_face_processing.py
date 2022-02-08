@@ -659,9 +659,10 @@ def process_combo(input_img, max_accel, max_radius, turn_vel_multiplier, freq):
 
 if __name__ == "__main__":
 
-    filename = "C:/Users/Samir/OneDrive/Documents/Drawing Bot/GantryGame3.0/GantryGame3.0/brian.jpg"
-    filename = "brian.jpg"
 
+    filename = "s1.jpg"
+    filename = "C:/Users/Samir/OneDrive/Documents/Drawing Bot/GantryGame3.0/GantryGame3.0/lowres.jpg"
+    
     if filename.find(".jpg") == -1:
         # Load .png image
         image = cv2.imread(filename)
