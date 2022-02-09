@@ -15,6 +15,8 @@ GLOBALS
 '''
 pause = False  # pauses or unpauses the camera feed
 
+isSamir = True
+isNikhil = False
 
 # to access the array of the picture being taken, call variable final_picture, might need try/except
 def take_picture(picture):  # takes a picture, in a thread later on
@@ -37,6 +39,7 @@ END GLOBALS
 
 
 class CamApp(App):  # build for kivy display
+    global isSamir, isNikhil
     '''
     Colors and Shading
     '''
@@ -58,6 +61,12 @@ class CamApp(App):  # build for kivy display
     # extra
     x = Window.size[0]
     y = Window.size[1]
+    if isSamir:
+        size_x = x/800
+        size_y = 120/y
+    elif isNikhil:
+        size_x  = x/1600
+        size_y = y/5900
     '''
     End Colors and Shading
     '''
@@ -150,17 +159,17 @@ class CamApp(App):  # build for kivy display
             Thread(target=printing).start()
 
 
-        picture_button = Button(size_hint_x=self.x/1600, size_hint_y=self.y/5900, text=self.picture_button_text,
+        picture_button = Button(size_hint_x=self.size_x, size_hint_y=self.size_y, text=self.picture_button_text,
                                 font_size=self.button_font_size, on_press=take_picture_button,
                                 background_color=self.picture_button_color, pos=(0, 0),
                                 disabled=self.disable_all_buttons)
 
-        print_button = Button(pos=(0, 960), size_hint_x=self.x/1600, size_hint_y=self.y/5900,
+        print_button = Button(pos=(0, 960), size_hint_x=self.size_x, size_hint_y=self.size_y,
                               background_color=self.print_button_color,
                               on_press=thread_printing, font_size=self.button_font_size, text=self.print_button_text,
                               disabled=self.disable_all_buttons)
 
-        retake_button = Button(size_hint_x=self.x/1600, size_hint_y=self.y/5900, text=self.retake_button_text,
+        retake_button = Button(size_hint_x=self.size_x, size_hint_y=self.size_y, text=self.retake_button_text,
                                font_size=self.button_font_size, on_press=retake_picture_button,
                                background_color=self.retake_button_color, pos=(0, 0),
                                disabled=self.disable_all_buttons)
