@@ -54,7 +54,7 @@ pub fn process_edges(mut img: Vec<Vec<bool>>, area_cut: f64, min_pixels: usize, 
     let now = Instant::now();
 
     let mut points = find_endpoints(&mut img);
-    println!("endpoints: {:?}", points);
+    // println!("endpoints: {:?}", points);
     // let mut path: Vec<(u32,u32)> = Vec::with_capacity(points.len() as usize);
     let mut sorted_points = sort_pixels(&mut img, &mut points);
     // println!("sorted_points: {:?}", sorted_points);
@@ -239,13 +239,18 @@ fn sort_pixels(img:&mut Vec<Vec<bool>>, endpoints:&mut Vec<(usize, usize)>)->Vec
     }
 
     // TODO: this is just for debugging, maybe fix this
-    // let mut i = 0;
-    // for pixel in img.pixels(){
-    //     if pixel.0[0] > 0{
-    //         i+=1;
-    //     }
-    // }
-    // println!("there are {} leftover pixels that will not make it into the final image", i);
+    let mut i = 0;
+
+    for row in img.iter(){
+        for val in row.iter(){
+            if *val{
+                // println!("found hot");
+                i+=1;
+            }
+        }
+    }
+
+    println!("there are {} leftover pixels that will not make it into the final image", i);
 
     // segments.remove(0);
     if !segment.is_empty(){
@@ -272,16 +277,102 @@ fn find_endpoints(img: &mut Vec<Vec<bool>>)->Vec<(usize,usize)>{
     endpoints
 }
 
+// fn is_endpoint(img:& Vec<Vec<bool>>, x: usize, y: usize)->bool{
+
+//     let dim = (img[0].len(), img.len());
+
+
+//     let offsets: [(i32, i32); 4] = [(-1,0), (0, -1), (0,1), (1, 0)];
+
+//     let mut dir = (0_i32, 0);
+
+//     for offset in offsets{
+
+//         let pos = (((x as i32) + offset.0) as usize, ((y as i32) + offset.1) as usize);
+//         if pos.0 >= dim.0 || pos.1 >= dim.1{ // TODO: figure out why this shouldn't be >=
+//             continue;
+//         }
+
+//         if img[pos.1][pos.0]{
+//             if dir != (0,0){
+//                 return false;
+//             }
+//             dir = offset;
+//         }
+//     }
+//     if dir == (0,0){
+//         return false;
+//     } else if dir.0 == 0{
+//         for shift in -1..=1{
+//             let pos= (((x as i32) + shift) as usize, ((y as i32) - dir.1) as usize);
+//             if pos.0 >= dim.0 || pos.1 >= dim.1{
+//                 continue;
+//             }
+//             if img[pos.1][pos.0]{
+//                 return false;
+//             }
+//         }
+        
+//         return true;
+//     } else if dir.1 == 0{
+//         for shift in -1..=1{
+//             let pos= (((x as i32) - dir.0) as usize, ((y as i32) + shift) as usize);
+//             if pos.0 >= dim.0 || pos.1 >= dim.1{
+//                 continue;
+//             }
+//             if img[pos.1][pos.0]{
+//                 return false;
+//             }
+//         }
+        
+//         return true;
+//     } 
+
+//     false
+
+    
+    
+// }
+
+
+
+// fn is_endpoint(img:& Vec<Vec<bool>>, x: usize, y: usize)->bool{
+
+//     let dim = (img[0].len(), img.len());
+
+
+//     let offsets: [(i32, i32); 8] = [(-1,0), (0, -1), (0,1), (1, 0), (1,1), (1,-1), (-1,1), (-1,-1)];
+
+//     let mut has_neighbor = false;
+
+//     for offset in offsets{
+
+//         let pos = (((x as i32) + offset.0) as usize, ((y as i32) + offset.1) as usize);
+//         if pos.0 >= dim.0 || pos.1 >= dim.1{ // TODO: figure out why this shouldn't be >=
+//             continue;
+//         }
+
+//         if img[pos.1][pos.0]{
+//             if has_neighbor{
+//                 return false;
+//             }
+//             has_neighbor = true;
+//         }
+//     }
+//     return has_neighbor
+// }
+
+
 fn is_endpoint(img:& Vec<Vec<bool>>, x: usize, y: usize)->bool{
 
     let dim = (img[0].len(), img.len());
 
 
-    let offsets: [(i32, i32); 4] = [(-1,0), (0, -1), (0,1), (1, 0)];
+    // let offsets: [(i32, i32); 8] = [(-1,0), (0, -1), (0,1), (1, 0), (1,1), (1,-1), (-1,1), (-1,-1)];
+    let offsets: [(i32, i32); 8] = [(1,0), (1, 1), (0,1), (-1, 1), (-1,0), (-1,-1), (0,-1), (1,-1)];
 
-    let mut dir = (0_i32, 0);
 
-    for offset in offsets{
+    for (i,offset) in offsets.enumerate(){
 
         let pos = (((x as i32) + offset.0) as usize, ((y as i32) + offset.1) as usize);
         if pos.0 >= dim.0 || pos.1 >= dim.1{ // TODO: figure out why this shouldn't be >=
@@ -289,45 +380,8 @@ fn is_endpoint(img:& Vec<Vec<bool>>, x: usize, y: usize)->bool{
         }
 
         if img[pos.1][pos.0]{
-            if dir != (0,0){
-                return false;
-            }
-            dir = offset;
+            new_offsets = 
         }
     }
-    if dir == (0,0){
-        return false;
-    } else if dir.0 == 0{
-        for shift in -1..=1{
-            let pos= (((x as i32) + shift) as usize, ((y as i32) - dir.1) as usize);
-            if pos.0 >= dim.0 || pos.1 >= dim.1{
-                continue;
-            }
-            if img[pos.1][pos.0]{
-                return false;
-            }
-        }
-        
-        return true;
-    } else if dir.1 == 0{
-        for shift in -1..=1{
-            let pos= (((x as i32) - dir.0) as usize, ((y as i32) + shift) as usize);
-            if pos.0 >= dim.0 || pos.1 >= dim.1{
-                continue;
-            }
-            if img[pos.1][pos.0]{
-                return false;
-            }
-        }
-        
-        return true;
-    } 
-
-    false
-
-    
-    
+    return has_neighbor
 }
-
-
-
