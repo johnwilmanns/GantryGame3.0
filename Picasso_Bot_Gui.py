@@ -164,7 +164,7 @@ class CamApp(App):  # build for kivy display
                                 background_color=self.picture_button_color, pos=(0, 0),
                                 disabled=self.disable_all_buttons)
 
-        print_button = Button(pos=(0, 960), size_hint_x=self.size_x, size_hint_y=self.size_y,
+        print_button = Button(pos=(0, 500), size_hint_x=self.size_x, size_hint_y=self.size_y,
                               background_color=self.print_button_color,
                               on_press=thread_printing, font_size=self.button_font_size, text=self.print_button_text,
                               disabled=self.disable_all_buttons)

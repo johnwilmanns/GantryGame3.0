@@ -383,9 +383,18 @@ fn is_endpoint(img:& Vec<Vec<bool>>, x: usize, y: usize)->bool{
 
             let first_part = &offsets[0..i-1];
             let second_part = &offsets[i+2..];
-            for offset in first_part.iter().chain(second_part).collect(){
-                
+            for offset in first_part.iter().chain(second_part){
+                let pos = (((x as i32) + offset.0) as usize, ((y as i32) + offset.1) as usize);
+                if pos.0 >= dim.0 || pos.1 >= dim.1{ // TODO: figure out why this shouldn't be >=
+                    continue;
+                }
+
+                if img[pos.1][pos.0]{
+                    return false;
+                }
+
             }
+            return true;
 
         }
     }
