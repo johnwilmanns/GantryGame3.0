@@ -1,3 +1,3 @@
-import rust
+import cv2
+import numpy as np
 
-print(rust.process_image("s1.jgp"))

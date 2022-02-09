@@ -13,7 +13,7 @@ def capture_image():
     while rval:
         cv2.imshow("preview", frame)
         rval, frame = vc.read()
-        key = cv2.waitKey(20)
+        key = cv2.waitKey(0)
         # if key == 27: # exit on ESC
         #     break
         if key == ord(' '):

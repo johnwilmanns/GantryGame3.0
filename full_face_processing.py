@@ -67,8 +67,8 @@ def process_edges_raw(input_img, blur_radius = 7, lower_thresh =40,
 
     edges = cv2.Canny(gray, lower_thresh, upper_thresh)
     
-    cv2.imshow("edges", edges)
-    cv2.waitKey(0)
+    # cv2.imshow("edges", edges)
+    # cv2.waitKey(0)
     edges = edges.astype(bool)
     edges = edges.tolist()
 
@@ -114,8 +114,8 @@ def process_shading_raw(input_img, blur_radius = 21, line_dist = 10, theta = Non
 
     for edges in shades:
         
-        cv2.imshow("edges", edges)
-        cv2.waitKey(0)
+        # cv2.imshow("edges", edges)
+        # cv2.waitKey(0)
         edges = edges.astype(bool)
         edges = edges.tolist()
         
@@ -126,6 +126,7 @@ def process_shading_raw(input_img, blur_radius = 21, line_dist = 10, theta = Non
         segments = rust.process_image(edges, area_cut, 3, min_len, bind_dist)
         if not segments:
             print("warning, empty segments list")
+            continue;
 
         print(segments)
         print(len(segments))
@@ -141,9 +142,9 @@ def process_shading_raw(input_img, blur_radius = 21, line_dist = 10, theta = Non
     print(f"took {time.time()-t0: .2f} seconds to process edges")
     
     if q is not None:
-        q.put(segments)
+        q.put(all_segments)
 
-    return segments
+    return all_segments
 
 def process_combo_raw(input_img):
 
@@ -205,8 +206,8 @@ if __name__ == "__main__":
     # plot_segments(segments)
 
     t0 = time.perf_counter()
-    segments = process_shading_raw(input_img)
-    print(time.perf_counter()-t0)
+    segments = process_combo_raw(input_img)
+    print("combo took", time.perf_counter()-t0)
 
     # segments = process_combo_raw_multi(input_img)
     # segments =  calc_path(segments, 40, .001, 1, 1020)
