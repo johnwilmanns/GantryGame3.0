@@ -120,8 +120,8 @@ class CamApp(App):  # build for kivy display
             add_button(retake_button)
             add_button(print_button)
 
-
-
+            print(self.x)
+            print(self.y)
 
             # cv2.destroyAllWindows()
             # self.capture.release()

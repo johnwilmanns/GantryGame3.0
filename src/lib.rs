@@ -372,7 +372,7 @@ fn is_endpoint(img:& Vec<Vec<bool>>, x: usize, y: usize)->bool{
     let offsets: [(i32, i32); 8] = [(1,0), (1, 1), (0,1), (-1, 1), (-1,0), (-1,-1), (0,-1), (1,-1)];
 
 
-    for (i,offset) in offsets.enumerate(){
+    for (i,offset) in offsets.iter().enumerate(){
 
         let pos = (((x as i32) + offset.0) as usize, ((y as i32) + offset.1) as usize);
         if pos.0 >= dim.0 || pos.1 >= dim.1{ // TODO: figure out why this shouldn't be >=
@@ -380,8 +380,15 @@ fn is_endpoint(img:& Vec<Vec<bool>>, x: usize, y: usize)->bool{
         }
 
         if img[pos.1][pos.0]{
-            new_offsets = 
+
+            let first_part = &offsets[0..i-1];
+            let second_part = &offsets[i+2..];
+            for offset in first_part.iter().chain(second_part).collect(){
+                
+            }
+
         }
     }
-    return has_neighbor
+    false
+    // return has_neighbor
 }
