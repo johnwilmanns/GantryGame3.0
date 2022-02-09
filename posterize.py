@@ -283,7 +283,7 @@ def get_spinny(im, line_dist=30, theta=None, thresholds = [30, 80, 120]):
 
     return lines
 
-def wave_function(im, line_dist=12, wave_int = 3):
+def wave_function(im, line_dist=12, wave_int = 4):
 
     #makes a blank image
     blank = utilities.copy_blank(im)
@@ -297,10 +297,10 @@ def wave_function(im, line_dist=12, wave_int = 3):
             brightness = im[y][x]
             print(f"{x}, {y}")
             # print((255 - brightness)/255)
-            intensity = int((line_dist * ((255 - brightness)/255)))
+            intensity = int((line_dist * ((255 - brightness)/255)) * .66)
             # intensity = int(line_dist * .5)
             space = int(wave_int / (brightness / 255))
-            # space = wave_int
+            space = wave_int
             x += space
             if up:
                 cv2.ellipse(blank, (x,y), (space, intensity), 0, 180, 360, 255, 1)
