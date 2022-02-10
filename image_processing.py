@@ -52,13 +52,17 @@ def plot_segments(segments, shape = (512 *2, 512 * 2)):
     #     x1,y1,x2,y2 = int(segments[i][-1][0]*shape[0]), int(segments[i][-1][1]*shape[0]), int(segments[i+1][0][0]*shape[1]), int(segments[i+1][0][1]*shape[1])
     #     cv2.line(img,(x1,y1),(x2,y2),color,2)
                 
+                
+    
+    return img
+    
     cv2.imwrite("test.jpg", img)
 
     cv2.imshow("images", img)
     cv2.waitKey(0)
 
-def process_edges_raw(input_img, blur_radius = 7, lower_thresh =40,
-        upper_thresh = 90, bind_dist = 5, area_cut = 3,
+def process_edges_raw(input_img, blur_radius = 7, lower_thresh =0,
+        upper_thresh = 40, bind_dist = 5, area_cut = 2,
         min_len = 15, q = None):
 
     t0 = time.time()
@@ -96,7 +100,7 @@ def process_edges_raw(input_img, blur_radius = 7, lower_thresh =40,
 
     return segments
 
-def process_shading_raw(input_img, blur_radius = 21, line_dist = 10, theta = None, bind_dist = 5, area_cut = 5,
+def process_shading_raw(input_img, blur_radius = 21, line_dist = 10, theta = None, bind_dist = 20, area_cut = 10,
         min_len = 0, q = None):
 
     splitDistance = 1.5
@@ -184,7 +188,7 @@ if __name__ == "__main__":
 
 
     # filename = "s1.jpg"
-    filename = "lowres.jpg"
+    filename = "picassopicture.png"
     
     input_img = cv2.imread(filename)
     
@@ -212,14 +216,17 @@ if __name__ == "__main__":
     segments = process_combo_raw(input_img)
     print("combo took", time.perf_counter()-t0)
     
-    # plot_segments(segments)
-
+    img = plot_segments(segments)
+    # img = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
+    img = np.fliplr(img)
+    cv2.imshow("picasso pic", img)
+    cv2.waitKey(0)
     # segments = process_combo_raw_multi(input_img)
     # segments =  calc_path(segments, 40, .001, 1, 1020)
     # plot_path_full(segments)
 
-    t0 = time.perf_counter()   
-    segments =  calc_path(segments, 5, .1, 1, 120)
-    print("calc processing took ", time.perf_counter() - t0) #1 thread: 4s, 4 threads: 1.65s, 8 threads 1.4s, 16 threads: 2.1s
+    # t0 = time.perf_counter()   
+    # segments =  calc_path(segments, 5, .1, 1, 120)
+    # print("calc processing took ", time.perf_counter() - t0) #1 thread: 4s, 4 threads: 1.65s, 8 threads 1.4s, 16 threads: 2.1s
     
-    plot_path_full(segments)
+    # plot_path_full(segments)

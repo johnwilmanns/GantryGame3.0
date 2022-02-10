@@ -9,12 +9,14 @@ pwm.write(180)
 def pen_up():
     print("Pen up")
     pwm.write(100) #writes pwm
+    time.sleep(.1)
 
 
 #puts the pen down
 def pen_down():
     print("pen down")
     pwm.write(80) #writes pwm
+    time.sleep(.1)
 
     
 def up_damp(delay=.015, hold_pow=.2):

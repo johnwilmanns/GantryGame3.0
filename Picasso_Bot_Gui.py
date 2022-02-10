@@ -12,6 +12,9 @@ from time import sleep  # not needed, but could become necessary
 import time
 # import draw_image
 import preview_image
+import image_processing
+import trajectory_planning
+import run_gantry
 
 '''
 GLOBALS
@@ -22,20 +25,7 @@ isSamir = True
 isNikhil = False
 
 # to access the array of the picture being taken, call variable final_picture, might need try/except
-def take_picture(picture):  # takes a picture, in a thread later on
-    global pause
-    # picture = cv2.VideoCapture(0)
-    
-    ret, frame = picture.read()
-    final_picture = np.fliplr(frame)
-    # cv2.imwrite("/home/soft-dev/Documents/GantryGame3.0/picassopicture.png", final_picture)
-    cv2.imwrite("picassopicture.png", final_picture)
-    
-    preview_image.main(final_picture)
 
-    # picture.release()
-    pause = True
-    return final_picture
 
 
 '''
@@ -44,6 +34,29 @@ END GLOBALS
 
 
 class CamApp(App):  # build for kivy display
+    
+    def take_picture(self, picture):  # takes a picture, in a thread later on
+        global pause
+        # picture = cv2.VideoCapture(0)
+        
+        ret, frame = picture.read()
+        final_picture = np.fliplr(frame)
+        final_picture = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
+        # cv2.imwrite("/home/soft-dev/Documents/GantryGame3.0/picassopicture.png", final_picture)
+        # cv2.imwrite("picassopicture.png", final_picture)
+        
+        # preview_image.main(final_picture)
+        
+        # picture.release()
+        pause = True
+        segments = image_processing.process_combo_raw(final_picture)
+        self.segments = segments
+    #     segments = trajectory_planning.calc_path(segments, 5, .01, 1, 120)
+        self.final_picture = image_processing.plot_segments(segments)
+        
+        
+        return final_picture
+    
     global isSamir, isNikhil
     '''
     Colors and Shading
@@ -84,6 +97,8 @@ class CamApp(App):  # build for kivy display
         layout.add_widget(self.img1)
         self.capture = cv2.VideoCapture(0)
         self.print_image = None
+        self.segments = None
+        self.final_picture = None
         Clock.schedule_interval(self.update, 1.0 / 33.0)
 
         # end cv2stuff
@@ -142,7 +157,7 @@ class CamApp(App):  # build for kivy display
             # self.capture.release()
 
             print('pic taken, see picassopicture.jpg')
-            self.print_image = take_picture(self.capture)
+            self.print_image = self.take_picture(self.capture)
             # Thread(target=take_picture, args=(self.capture,)).start()
             # take_picture()
 
@@ -156,6 +171,10 @@ class CamApp(App):  # build for kivy display
 
         def printing():
             print('start print here')
+            # print(self.segments)
+            freq = 120
+            segments = trajectory_planning.calc_path(self.segments, 5, .001, 1, freq)
+            run_gantry.main(self.segments, freq)
             sleep(5)
             ready_to_print()
 
@@ -198,6 +217,7 @@ class CamApp(App):  # build for kivy display
         global final_picture
         ret, frame = self.capture.read()
         if not pause:
+            frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
             buf1 = np.flipud(frame)
             buf2 = np.fliplr(buf1)
             buf = buf2.tobytes()
@@ -206,9 +226,11 @@ class CamApp(App):  # build for kivy display
             self.img1.texture = texture1
         if pause:
             try:
-                buf = final_picture.tobytes()
+                buf1 = np.flipud(self.final_picture)
+                buf2 = np.fliplr(buf1)
+                buf = buf2.tobytes()
                 cv2.destroyAllWindows()
-                texture1 = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
+                texture1 = Texture.create(size=(self.final_picture.shape[1], self.final_picture.shape[0]), colorfmt='bgr')
                 texture1.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
                 self.img1.texture = texture1
             except NameError:  # occurs because variable final_image is not created yet (instantaneously)
