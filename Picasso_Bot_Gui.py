@@ -217,6 +217,8 @@ class CamApp(App):  # build for kivy display
         global final_picture
         ret, frame = self.capture.read()
         if not pause:
+            
+            
             final_picture = np.fliplr(frame)
             final_picture = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
             # cv2.imwrite("/home/soft-dev/Documents/GantryGame3.0/picassopicture.png", final_picture)
@@ -225,17 +227,18 @@ class CamApp(App):  # build for kivy display
             # preview_image.main(final_picture)
             
             # picture.release()
-            pause = True
+
             segments = image_processing.process_combo_raw(final_picture)
-            # self.segments = segments
+
         #     segments = trajectory_planning.calc_path(segments, 5, .01, 1, 120)
-            frame = image_processing.plot_segments(segments)
+            final_picture = image_processing.plot_segments(segments)
+
+        
             
-            
-            buf1 = np.flipud(frame)
+            buf1 = np.flipud(final_picture)
             buf2 = np.fliplr(buf1)
             buf = buf2.tobytes()
-            texture1 = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')  # see https://kivy.org/doc/stable/api-kivy.graphics.texture.html
+            texture1 = Texture.create(size=(final_picture.shape[1], final_picture.shape[0]), colorfmt='bgr')  # see https://kivy.org/doc/stable/api-kivy.graphics.texture.html
             texture1.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
             self.img1.texture = texture1
         if pause:

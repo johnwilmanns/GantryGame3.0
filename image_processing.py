@@ -32,8 +32,8 @@ def plot_segments(segments, shape = (512 *2, 512 * 2)):
 
     for seg in segments:
 
-        color = tuple(rd.randrange(0,255) for i in range(3))
-        # color = (0,0,0)
+        # color = tuple(rd.randrange(0,255) for i in range(3))
+        color = (0,0,0)
 
         i = 0
         for i in range(len(seg)-1):
