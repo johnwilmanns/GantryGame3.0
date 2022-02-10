@@ -10,6 +10,9 @@ import cv2
 import numpy as np  # used to flip array for properly mirrored output and picture taken
 from time import sleep  # not needed, but could become necessary
 import time
+# import draw_image
+import preview_image
+
 '''
 GLOBALS
 '''
@@ -22,15 +25,17 @@ isNikhil = False
 def take_picture(picture):  # takes a picture, in a thread later on
     global pause
     # picture = cv2.VideoCapture(0)
-    result = True
-    while result:
-        ret, frame = picture.read()
-        final_picture = np.fliplr(frame)
-        # cv2.imwrite("/home/soft-dev/Documents/GantryGame3.0/picassopicture.png", final_picture)
-        cv2.imwrite("picassopicture.png", final_picture)
-        result = False
+    
+    ret, frame = picture.read()
+    final_picture = np.fliplr(frame)
+    # cv2.imwrite("/home/soft-dev/Documents/GantryGame3.0/picassopicture.png", final_picture)
+    cv2.imwrite("picassopicture.png", final_picture)
+    
+    preview_image.main(final_picture)
+
     # picture.release()
     pause = True
+    return final_picture
 
 
 '''
@@ -78,6 +83,7 @@ class CamApp(App):  # build for kivy display
         layout = FloatLayout()
         layout.add_widget(self.img1)
         self.capture = cv2.VideoCapture(0)
+        self.print_image = None
         Clock.schedule_interval(self.update, 1.0 / 33.0)
 
         # end cv2stuff
@@ -136,8 +142,8 @@ class CamApp(App):  # build for kivy display
             # self.capture.release()
 
             print('pic taken, see picassopicture.jpg')
-            take_picture(self.capture)
-            Thread(target=take_picture, args=(self.capture,)).start()
+            self.print_image = take_picture(self.capture)
+            # Thread(target=take_picture, args=(self.capture,)).start()
             # take_picture()
 
         def retake_picture_button(instance):  # changes ui accordingly, pauses the camera

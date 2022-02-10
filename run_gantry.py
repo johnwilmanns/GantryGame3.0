@@ -4,16 +4,16 @@ import numpy as np
 from odrive.enums import *
 
 import utilities
-from full_face_processing import process_combo, process_combo_raw_multi
-from full_path_planning import calc_path
+from image_processing import process_combo, process_combo_raw_multi
+from trajectory_planning import calc_path
 
-import solenoid
-from solenoid import pen_up, pen_down, up_damp
-
-
+import servo
+from servo import pen_up, pen_down, up_damp
 
 
-def main():
+
+
+def main(segments):
     import gantry
     import pickle
     import time

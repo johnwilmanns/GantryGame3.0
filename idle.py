@@ -4,5 +4,5 @@ gantry = gantry.Gantry()
 for axis in gantry.axes():
     axis.idle()
     
-import solenoid
+import servo
 # solenoid.pen_down()
