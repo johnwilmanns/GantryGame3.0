@@ -58,8 +58,8 @@ def plot_segments(segments, shape = (512 *2, 512 * 2)):
     cv2.waitKey(0)
 
 def process_edges_raw(input_img, blur_radius = 7, lower_thresh =40,
-        upper_thresh = 90, bind_dist = 0, area_cut = 1,
-        min_len = 0, q = None):
+        upper_thresh = 90, bind_dist = 5, area_cut = 3,
+        min_len = 15, q = None):
 
     t0 = time.time()
     
@@ -68,9 +68,9 @@ def process_edges_raw(input_img, blur_radius = 7, lower_thresh =40,
 
     edges = cv2.Canny(gray, lower_thresh, upper_thresh)
     
-    cv2.imshow("edges", edges)
-    cv2.imwrite("thisdontwork.png", edges)
-    cv2.waitKey(0)
+    # cv2.imshow("edges", edges)
+    # cv2.imwrite("thisdontwork.png", edges)
+    # cv2.waitKey(0)
     edges = edges.astype(bool)
     edges = edges.tolist()
 
@@ -114,11 +114,11 @@ def process_shading_raw(input_img, blur_radius = 21, line_dist = 10, theta = Non
 
     t0 = time.time()
 
-    for edges in shades[0:1]:
+    for edges in shades:
         
-        cv2.imshow("edges", edges)
-        cv2.imwrite("thisdontwork.png", edges)
-        cv2.waitKey(0)
+        # cv2.imshow("edges", edges)
+        # cv2.imwrite("thisdontwork.png", edges)
+        # cv2.waitKey(0)
         edges = edges.astype(bool)
         edges = edges.tolist()
         
@@ -209,17 +209,17 @@ if __name__ == "__main__":
     # plot_segments(segments)
 
     t0 = time.perf_counter()
-    segments = process_edges_raw(input_img)
+    segments = process_combo_raw(input_img)
     print("combo took", time.perf_counter()-t0)
     
-    plot_segments(segments)
+    # plot_segments(segments)
 
     # segments = process_combo_raw_multi(input_img)
     # segments =  calc_path(segments, 40, .001, 1, 1020)
     # plot_path_full(segments)
 
-    # t0 = time.perf_counter()   
-    # segments =  calc_path(segments, 5, .1, 1, 120)
-    # print("calc processing took ", time.perf_counter() - t0) #1 thread: 4s, 4 threads: 1.65s, 8 threads 1.4s, 16 threads: 2.1s
+    t0 = time.perf_counter()   
+    segments =  calc_path(segments, 5, .1, 1, 120)
+    print("calc processing took ", time.perf_counter() - t0) #1 thread: 4s, 4 threads: 1.65s, 8 threads 1.4s, 16 threads: 2.1s
     
-    # plot_path_full(segments)
+    plot_path_full(segments)

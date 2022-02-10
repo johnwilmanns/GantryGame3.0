@@ -54,16 +54,19 @@ pub fn process_edges(mut img: Vec<Vec<bool>>, area_cut: f64, min_pixels: usize, 
     let now = Instant::now();
 
     let mut points = find_endpoints(&mut img);
-    // println!("endpoints: {:?}", points);
+    println!("endpoints: {:?}", points);
     // let mut path: Vec<(u32,u32)> = Vec::with_capacity(points.len() as usize);
     let mut sorted_points = sort_pixels(&mut img, &mut points);
-    // println!("sorted_points: {:?}", sorted_points);
+    println!("sorted_points: {:?}", sorted_points);
 
     area_cull(&mut sorted_points, area_cut, min_pixels);
+    println!("sorted_points: {:?}", sorted_points);
 
     line_len_cull(&mut sorted_points, min_len);
+    println!("sorted_points: {:?}", sorted_points);
 
     bind_segments(&mut sorted_points, bind_dist);
+    println!("sorted_points: {:?}", sorted_points);
     // println!("{:?}", sorted_points[0]);
 
     // test(&mut img);
@@ -171,7 +174,7 @@ fn sort_pixels(img:&mut Vec<Vec<bool>>, endpoints:&mut Vec<(usize, usize)>)->Vec
 
     
 
-    let dim = (img.len(), img[0].len());
+    let dim = (img[0].len(), img.len());
 
     let offsets: [(i32, i32); 8] = [(-1,0), (0, -1), (0,1), (1, 0), (1,1), (1,-1), (-1,1), (-1,-1)];
     let mut x = endpoints[0].0;
@@ -205,6 +208,9 @@ fn sort_pixels(img:&mut Vec<Vec<bool>>, endpoints:&mut Vec<(usize, usize)>)->Vec
             }
         }
 
+        segments.push(segment);
+        segment = Vec::new();
+
         let mut mindist = std::u32::MAX;
         let mut min_index = std::usize::MAX;
         for (index, pos) in endpoints.iter().enumerate(){
@@ -222,12 +228,15 @@ fn sort_pixels(img:&mut Vec<Vec<bool>>, endpoints:&mut Vec<(usize, usize)>)->Vec
             // if (x,y) != (0,0){
             //     panic!();
             // }
-            segments.push(segment);
-            segment = Vec::new();
 
             let pos = endpoints.swap_remove(min_index);
             img[pos.1][pos.0] = false;
             segment.push(pos);
+
+            // segments.push(segment);
+            // segment = Vec::new();
+
+        
             x = pos.0;
             y = pos.1;
         } else {
@@ -381,9 +390,10 @@ fn is_endpoint(img:& Vec<Vec<bool>>, x: usize, y: usize)->bool{
 
         if img[pos.1][pos.0]{
 
-            let first_part = &offsets[0..i-1];
-            let second_part = &offsets[i+2..];
-            for offset in first_part.iter().chain(second_part){
+            for j in i+2..i+7{
+                let index = j % 8;
+                let offset = offsets[index];
+
                 let pos = (((x as i32) + offset.0) as usize, ((y as i32) + offset.1) as usize);
                 if pos.0 >= dim.0 || pos.1 >= dim.1{ // TODO: figure out why this shouldn't be >=
                     continue;
@@ -392,8 +402,8 @@ fn is_endpoint(img:& Vec<Vec<bool>>, x: usize, y: usize)->bool{
                 if img[pos.1][pos.0]{
                     return false;
                 }
-
             }
+            
             return true;
 
         }
