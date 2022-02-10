@@ -8,7 +8,7 @@ def main(input_img):
     
     segments = image_processing.process_combo_raw(input_img)
 #     segments = trajectory_planning.calc_path(segments, 5, .01, 1, 120)
-    image_processing.plot_segments(segments)
+    # image_processing.plot_segments(segments)
     
     
 if __name__ == "__main__":
