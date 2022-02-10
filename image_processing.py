@@ -19,7 +19,7 @@ import rust
 
 # from test import *
 
-from full_path_planning import calc_path, plot_path, plot_path_full, distance
+from trajectory_planning import calc_path, plot_path, plot_path_full, distance
 
 def plot_segments(segments, shape = (512 *2, 512 * 2)):
     

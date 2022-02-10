@@ -1,9 +1,9 @@
 from matplotlib.pyplot import plot
 import numpy as np
 # imports full path planning
-import full_path_planning
+import trajectory_planning
 import utilities
-import full_face_processing
+import image_processing
 import math
 
 # imports cv2
@@ -285,7 +285,7 @@ def get_spinny(im, line_dist=30, theta=None, thresholds = [30, 50, 80]):
 
 
 def get_calcd_path(input_img, gaps=[5, 10, 15], max_accel=10, max_lr=.01, turn_vel_multiplier=1, freq=60, john="dumb"):
-    return full_path_planning.calc_path(get_segments(input_img, gaps), max_accel, max_lr, turn_vel_multiplier, freq)
+    return trajectory_planning.calc_path(get_segments(input_img, gaps), max_accel, max_lr, turn_vel_multiplier, freq)
 
 
 if __name__ == "__main__":
@@ -295,7 +295,7 @@ if __name__ == "__main__":
     gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (3, 3), 0)
     edges = get_spinny(gray, 5, 10)
-    full_face_processing.process_shading(edges, plot_steps=True, segmentSplitDistance=2, minNumPixels=3)
+    image_processing.process_shading(edges, plot_steps=True, segmentSplitDistance=2, minNumPixels=3)
 
     print('calc\'d path')
     # cv2.imshow("pp", (255-edges))

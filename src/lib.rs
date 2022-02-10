@@ -54,19 +54,19 @@ pub fn process_edges(mut img: Vec<Vec<bool>>, area_cut: f64, min_pixels: usize, 
     let now = Instant::now();
 
     let mut points = find_endpoints(&mut img);
-    println!("endpoints: {:?}", points);
+    // println!("endpoints: {:?}", points);
     // let mut path: Vec<(u32,u32)> = Vec::with_capacity(points.len() as usize);
     let mut sorted_points = sort_pixels(&mut img, &mut points);
-    println!("sorted_points: {:?}", sorted_points);
+    // println!("sorted_points: {:?}", sorted_points);
 
     area_cull(&mut sorted_points, area_cut, min_pixels);
-    println!("sorted_points: {:?}", sorted_points);
+    // println!("sorted_points: {:?}", sorted_points);
 
     line_len_cull(&mut sorted_points, min_len);
-    println!("sorted_points: {:?}", sorted_points);
+    // println!("sorted_points: {:?}", sorted_points);
 
     bind_segments(&mut sorted_points, bind_dist);
-    println!("sorted_points: {:?}", sorted_points);
+    // println!("sorted_points: {:?}", sorted_points);
     // println!("{:?}", sorted_points[0]);
 
     // test(&mut img);
