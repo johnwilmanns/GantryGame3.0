@@ -4,11 +4,11 @@ import numpy as np
 from odrive.enums import *
 
 import utilities
-from image_processing import process_combo, process_combo_raw_multi
+# from image_processing import process_combo_raw_multi
 from trajectory_planning import calc_path
 
 import servo
-from servo import pen_up, pen_down, up_damp
+from servo import pen_up, pen_down
 
 from gantry import Gantry
 import pickle
@@ -82,7 +82,9 @@ import sys
 
 gantry = Gantry()
 gantry.startup()
-pen_up()
+
+servo.set_up()
+servo.set_down()
 
 def main(segments, freq):
     
@@ -144,6 +146,7 @@ def main(segments, freq):
 
             move(point)
 
+        time.sleep(1/freq)
         # t3 =
         pen_up()
         # time.sleep(1/freq)

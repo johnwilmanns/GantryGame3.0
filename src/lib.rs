@@ -54,6 +54,10 @@ pub fn process_edges(mut img: Vec<Vec<bool>>, area_cut: f64, min_pixels: usize, 
     let now = Instant::now();
 
     let mut points = find_endpoints(&mut img);
+
+    if points.is_empty(){
+        return Vec::new()
+    }
     // println!("endpoints: {:?}", points);
     // let mut path: Vec<(u32,u32)> = Vec::with_capacity(points.len() as usize);
     let mut sorted_points = sort_pixels(&mut img, &mut points);
@@ -64,6 +68,9 @@ pub fn process_edges(mut img: Vec<Vec<bool>>, area_cut: f64, min_pixels: usize, 
 
     line_len_cull(&mut sorted_points, min_len);
     // println!("sorted_points: {:?}", sorted_points);
+    if sorted_points.is_empty(){
+        return Vec::new()
+    }
 
     bind_segments(&mut sorted_points, bind_dist);
     // println!("sorted_points: {:?}", sorted_points);
@@ -248,18 +255,18 @@ fn sort_pixels(img:&mut Vec<Vec<bool>>, endpoints:&mut Vec<(usize, usize)>)->Vec
     }
 
     // TODO: this is just for debugging, maybe fix this
-    let mut i = 0;
+    // let mut i = 0;
 
-    for row in img.iter(){
-        for val in row.iter(){
-            if *val{
-                // println!("found hot");
-                i+=1;
-            }
-        }
-    }
+    // for row in img.iter(){
+    //     for val in row.iter(){
+    //         if *val{
+    //             // println!("found hot");
+    //             i+=1;
+    //         }
+    //     }
+    // }
 
-    println!("there are {} leftover pixels that will not make it into the final image", i);
+    // println!("there are {} leftover pixels that will not make it into the final image", i);
 
     // segments.remove(0);
     if !segment.is_empty(){

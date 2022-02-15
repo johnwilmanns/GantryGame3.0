@@ -172,8 +172,8 @@ class CamApp(App):  # build for kivy display
         def printing():
             print('start print here')
             # print(self.segments)
-            freq = 120
-            segments = trajectory_planning.calc_path(self.segments, 5, .001, 1, freq)
+            freq = 60
+            segments = trajectory_planning.calc_path(self.segments, 5, .1, 1, freq)
             run_gantry.main(self.segments, freq)
             sleep(5)
             ready_to_print()
@@ -228,9 +228,11 @@ class CamApp(App):  # build for kivy display
             
             # picture.release()
 
-            segments = image_processing.process_combo_raw(final_picture)
+            # final_picture = image_processing.render_combo(final_picture)
+            # final_picture = cv2.cvtColor(final_picture,cv2.COLOR_GRAY2RGB)
 
-        #     segments = trajectory_planning.calc_path(segments, 5, .01, 1, 120)
+            
+            segments = image_processing.process_combo_raw(final_picture)
             final_picture = image_processing.plot_segments(segments)
 
         
