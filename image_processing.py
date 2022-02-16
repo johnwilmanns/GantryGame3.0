@@ -1,17 +1,10 @@
-import multiprocessing
-from os import unlink
-try:
-    from cv2 import cv2
-except:
-    import cv2
+
+import cv2
 import numpy as np
-import random as rd
-import copy
 import time
 import math
-import sys
-import pickle
-from auto_edge import auto_canny
+
+
 import posterize
 import utilities
 import rust
@@ -19,7 +12,6 @@ import rust
 
 # from test import *
 
-from trajectory_planning import calc_path, plot_path, plot_path_full, distance
 
 def plot_segments(segments, shape = (512 *2, 512 * 2)):
     
@@ -32,8 +24,8 @@ def plot_segments(segments, shape = (512 *2, 512 * 2)):
 
     for seg in segments:
 
-        color = tuple(rd.randrange(0,255) for i in range(3))
-        # color = (0,0,0)
+        # color = tuple(rd.randrange(0,255) for i in range(3))
+        color = (0,0,0)
 
         i = 0
         for i in range(len(seg)-1):
@@ -61,9 +53,11 @@ def plot_segments(segments, shape = (512 *2, 512 * 2)):
     cv2.imshow("images", img)
     cv2.waitKey(0)
 
+    
+
 def process_edges_raw(input_img, blur_radius = 7, lower_thresh =0,
         upper_thresh = 40, bind_dist = 5, area_cut = 2,
-        min_len = 15, q = None):
+        min_len = 15, q = None, render = False):
 
     t0 = time.time()
     
@@ -75,7 +69,11 @@ def process_edges_raw(input_img, blur_radius = 7, lower_thresh =0,
     # cv2.imshow("edges", edges)
     # cv2.imwrite("thisdontwork.png", edges)
     # cv2.waitKey(0)
+    if render:
+        return edges
     edges = edges.astype(bool)
+    
+    
     edges = edges.tolist()
 
 
@@ -101,7 +99,7 @@ def process_edges_raw(input_img, blur_radius = 7, lower_thresh =0,
     return segments
 
 def process_shading_raw(input_img, blur_radius = 21, line_dist = 10, theta = None, bind_dist = 20, area_cut = 10,
-        min_len = 0, q = None):
+        min_len = 0, q = None, render = False):
 
     splitDistance = 1.5
     
@@ -112,6 +110,10 @@ def process_shading_raw(input_img, blur_radius = 21, line_dist = 10, theta = Non
     gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (blur_radius, blur_radius), 0)
     shades = posterize.get_spinny(gray, line_dist, theta)
+    
+    if render:
+        return shades
+    
     all_segments = []
     
     max_size = max(input_img.shape[:2])
@@ -162,26 +164,17 @@ def process_combo_raw(input_img):
     print("finished pre processing")
     return segments
 
-def process_combo_raw_multi(input_img):
-    from multiprocessing import Process
+def render_combo(input_img):
+    img = process_edges_raw(input_img, render=True)
+    for edges in process_shading_raw(input_img, render=True):
+        img |= edges
+
+    return np.invert(img)
+    # edges.extend()
     
-    q = multiprocessing.Queue()
-    edges = Process(target=process_edges_raw, args=(input_img,), kwargs={"q": q})
-    shading = Process(target=process_shading_raw, args=(input_img,), kwargs={"q": q})
-    
-    edges.start()
-    shading.start()
-    
-    segments = q.get() + q.get()
-    
-    return segments
-    
+    return img
     
 
-
-def process_combo(input_img, max_accel, max_radius, turn_vel_multiplier, freq):
-
-    return calc_path(process_combo_raw(input_img), max_accel, max_radius, turn_vel_multiplier, freq)
 
 
 if __name__ == "__main__":
@@ -191,42 +184,19 @@ if __name__ == "__main__":
     filename = "picassopicture.png"
     
     input_img = cv2.imread(filename)
+    # print(input_img)
+    t0 = time.time()
+    render = process_combo_raw(input_img)
+    # img = plot_segments(render)
+    print("time: ", time.time()-t0)
     
-    # if filename.find(".jpg") == -1:
-    #     # Load .png image
-    #     image = cv2.imread(filename)
 
-    #     # Save .jpg image
-    #     cv2.imwrite('image.jpg', image, [int(cv2.IMWRITE_JPEG_QUALITY), 100])
-    #     input_img = cv2.imread("image.jpg")
-    # else:
-    #     input_img = cv2.imread(filename)
-
-    # input_img = utilities.resize(input_img, 800, int(800 * input_img.shape[0]/input_img.shape[1]))
-
-    # segments = process_combo(filename, 30, 1, 1, 120)
-    # plot_path_full(segments)
-
-    # segments= process_combo_raw_multi(input_img)
-    # # segments = process_shading_raw(filename)
-    # # segments = process_edges_raw(filename, blur_radius=15, lower_thresh=5, upper_thresh=40, areaCut=10, minNumPixels=5, segmentSplitDistance=20)
-    # plot_segments(segments)
-
-    t0 = time.perf_counter()
-    segments = process_combo_raw(input_img)
-    print("combo took", time.perf_counter()-t0)
+    # t0 = time.perf_counter()
+    # segments = process_combo_raw(input_img)
+    # print("combo took", time.perf_counter()-t0)
     
-    img = plot_segments(segments)
-    # img = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
-    img = np.fliplr(img)
-    cv2.imshow("picasso pic", img)
-    cv2.waitKey(0)
-    # segments = process_combo_raw_multi(input_img)
-    # segments =  calc_path(segments, 40, .001, 1, 1020)
-    # plot_path_full(segments)
-
-    # t0 = time.perf_counter()   
-    # segments =  calc_path(segments, 5, .1, 1, 120)
-    # print("calc processing took ", time.perf_counter() - t0) #1 thread: 4s, 4 threads: 1.65s, 8 threads 1.4s, 16 threads: 2.1s
-    
-    # plot_path_full(segments)
+    # img = plot_segments(segments)
+    # # img = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
+    # img = np.fliplr(img)
+    # cv2.imshow("picasso pic", img)
+    # cv2.waitKey(0)

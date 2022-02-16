@@ -172,8 +172,8 @@ class CamApp(App):  # build for kivy display
         def printing():
             print('start print here')
             # print(self.segments)
-            freq = 120
-            segments = trajectory_planning.calc_path(self.segments, 5, .001, 1, freq)
+            freq = 60
+            segments = trajectory_planning.calc_path(self.segments, 5, .1, 1, freq)
             run_gantry.main(self.segments, freq)
             sleep(5)
             ready_to_print()
@@ -217,11 +217,30 @@ class CamApp(App):  # build for kivy display
         global final_picture
         ret, frame = self.capture.read()
         if not pause:
-            frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
-            buf1 = np.flipud(frame)
+            
+            
+            final_picture = np.fliplr(frame)
+            final_picture = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
+            # cv2.imwrite("/home/soft-dev/Documents/GantryGame3.0/picassopicture.png", final_picture)
+            # cv2.imwrite("picassopicture.png", final_picture)
+            
+            # preview_image.main(final_picture)
+            
+            # picture.release()
+
+            # final_picture = image_processing.render_combo(final_picture)
+            # final_picture = cv2.cvtColor(final_picture,cv2.COLOR_GRAY2RGB)
+
+            
+            segments = image_processing.process_combo_raw(final_picture)
+            final_picture = image_processing.plot_segments(segments)
+
+        
+            
+            buf1 = np.flipud(final_picture)
             buf2 = np.fliplr(buf1)
             buf = buf2.tobytes()
-            texture1 = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')  # see https://kivy.org/doc/stable/api-kivy.graphics.texture.html
+            texture1 = Texture.create(size=(final_picture.shape[1], final_picture.shape[0]), colorfmt='bgr')  # see https://kivy.org/doc/stable/api-kivy.graphics.texture.html
             texture1.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
             self.img1.texture = texture1
         if pause:

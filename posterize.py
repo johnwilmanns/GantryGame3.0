@@ -128,7 +128,7 @@ def make_linerinos(image, p1, p2, color=255):
 '''shit method I really should have programmed while I was awake, but being awake is rather cringe'''
 
 
-def get_spinny(im, line_dist=30, theta=None, thresholds = [30, 50, 80]):
+def get_spinny(im, line_dist=30, theta=None, thresholds = [ 30, 50, 80]):
 
     n = len(thresholds)
     blank = im.copy()
