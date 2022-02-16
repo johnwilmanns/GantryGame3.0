@@ -283,6 +283,32 @@ def get_spinny(im, line_dist=30, theta=None, thresholds = [30, 50, 80]):
 
     return lines
 
+def wave_function(im, line_dist=30, wave_int = 5):
+
+    #makes a blank image
+    blank = utilities.copy_blank(im)
+    for y in range(int((line_dist / 2)), im.shape[0], line_dist):
+
+        up = True
+        x=0
+        for x < im.shape[1]:
+        # for x in range(int(wave_int / 2), im.shape[1], wave_int * 2):
+
+            # intensity = cv2.mean(im[10:11,10:11])
+            intensity = im[y][x]
+            print((255 - intensity)/255)
+            intensity = int((line_dist * ((255 - intensity)/255)))
+            space =
+            if up:
+                cv2.ellipse(blank, (x,y), (int(wave_int), intensity), 0, 180, 360, 255, 1)
+            else:
+                cv2.ellipse(blank, (x,y), (int(wave_int), intensity), 0, 0, 180, 255, 1)
+            up = not up
+
+    cv2.imshow("lines", blank)
+
+
+
 
 def get_calcd_path(input_img, gaps=[5, 10, 15], max_accel=10, max_lr=.01, turn_vel_multiplier=1, freq=60, john="dumb"):
     return trajectory_planning.calc_path(get_segments(input_img, gaps), max_accel, max_lr, turn_vel_multiplier, freq)
@@ -294,39 +320,6 @@ if __name__ == "__main__":
 
     gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (3, 3), 0)
-    edges = get_spinny(gray, 5, 10)
-    image_processing.process_shading(edges, plot_steps=True, segmentSplitDistance=2, minNumPixels=3)
-
-    print('calc\'d path')
-    # cv2.imshow("pp", (255-edges))
-    # print(parts)
-    # full_face_processing.plot_path_full(parts)
-
-    # dst = edges
-    #
-    # # Copy edges to the images that will display the results in BGR
-    # cdst = cv2.cvtColor(dst, cv2.COLOR_GRAY2BGR)
-    # cdstP = np.copy(cdst)
-    # inverted = utilities.copy_blank(edges)
-    # for x in range(len(edges)):
-    #     for y in range(len(edges[1])):
-    #         if edges[x][y] == 255:
-    #             inverted[x][y] = 0
-    #         else:
-    #             inverted[x][y] = 255
-    # cv2.imshow("final", inverted)
-    # cv2.imshow("the actual lines", edges)
-
-    # linesP = cv2.HoughLinesP(dst, 1, np.pi / 180, 1, None, 0, 0)
-    #
-    # if linesP is not None:
-    #     for i in range(0, len(linesP)):
-    #         l = linesP[i][0]
-    #         cv2.line(cdstP, (l[0], l[1]), (l[2], l[3]), (0, 0, 255), 2, cv2.LINE_AA)
-    #
-    # cv2.imshow("Detected Lines (in red) - Probabilistic Line Transform", cdstP)
-    #
-    # cv2.waitKey()
-
+    edges = wave_function(gray, 30)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
