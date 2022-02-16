@@ -59,16 +59,22 @@ class Gantry:
         # start_liveplotter(lambda: [self.x.axis.encoder.pos_estimate, self.x.axis.encoder.vel_estimate,
         #                            self.y.axis.encoder.pos_estimate, self.y.axis.encoder.vel_estimaty ])
         # start_liveplotter(lambda: [self.x.axis.encoder.pos_estimate, self.x.axis.controller.pos_setpoint,self.y.axis.encoder.pos_estimate, self.y.axis.controller.pos_setpoint,])
+        while True:
+            try:
 
-        try:
-            self.x.check_status()
-            self.y.check_status()
-        except:
-            print("gotta crank one out rq")
-            self.calibrate()
 
-        self.x.check_status() #if these throw an assertion error, make sure the gantry is not up against the axis
-        self.y.check_status()
+                try:
+                    self.x.check_status()
+                    self.y.check_status()
+                except AssertionError:
+                    print("gotta crank one out rq")
+                    self.calibrate()
+
+                self.x.check_status() #if these throw an assertion error, make sure the gantry is not up against the axis
+                self.y.check_status()
+                break
+            except AssertionError:
+                input("^w^ oopSie whoopSie, the gantwi is stukky wukki. Pwease pwace it in a new wowcation ^w^ \n Then pwess enter UwU")
 
         self.sensorless_home(home_axes=[True,True,True])
         # self.stupid_manual_home_becaues_gibson_still_dont_have_a_collet()
