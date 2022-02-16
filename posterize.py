@@ -292,7 +292,7 @@ def wave_function(im, line_dist=30, wave_int = 5):
         up = True
         x=0
         for x < im.shape[1]:
-        # for x in range(int(wave_int / 2), im.shape[1], wave_int * 2):
+            # for x in range(int(wave_int / 2), im.shape[1], wave_int * 2):
 
             # intensity = cv2.mean(im[10:11,10:11])
             intensity = im[y][x]
