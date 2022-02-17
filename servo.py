@@ -50,8 +50,7 @@ def pen_up():
 #puts the pen down
 def pen_down():
     # print("pen down")
-    pwm.\
-        write(downval) #writes pwm
+    pwm.write(downval) #writes pwm
     time.sleep(.1)
 
 
