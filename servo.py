@@ -3,10 +3,10 @@ import time
 from pynput import keyboard
 
 board = pyfirmata.Arduino('/dev/ttyACM1')
-pwm = board.get_pin('d:10:s')
+pwm = board.get_pin('d:9:s')
 pwm.write(0)
 
-upval = 102
+upval = 108
 downval = 100
 
 def set_up():
@@ -50,10 +50,11 @@ def pen_up():
 #puts the pen down
 def pen_down():
     # print("pen down")
-    pwm.write(downval) #writes pwm
+    pwm.\
+        write(downval) #writes pwm
     time.sleep(.1)
 
 
 if __name__ == "__main__":
     set_up()
-        
+

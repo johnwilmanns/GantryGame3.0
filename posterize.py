@@ -306,6 +306,9 @@ def wave_function(im, line_dist=30, wave_int = 5):
             up = not up
 
     cv2.imshow("lines", blank)
+    edges = []
+    edges.append(blank)
+    return edges
 
 
 
