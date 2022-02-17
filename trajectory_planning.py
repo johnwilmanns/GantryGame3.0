@@ -365,10 +365,13 @@ if __name__ == "__main__":
     # rd.seed(42)
 
     rd.seed(42)
+    
+    
     # seg = [(i, rd.random()/10) for i in range(0,10)]
     seg = [(.5,0), (1,0), (1,1), (1.5,1)]
 
     segments = [seg]
+    
     # for i in range(0,len(segments)):
     
     parts = calc_segment(seg,1,1,1)
