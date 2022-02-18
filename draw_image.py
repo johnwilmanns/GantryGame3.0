@@ -14,14 +14,14 @@ def main(input_img):
     
 if __name__ == "__main__":
     import cv2
-    filename = "picassopicture.png"
+    filename = "obama.png"
     input_img = cv2.imread(filename)
     
     segments = image_processing.process_combo_raw(input_img)
     preview = image_processing.plot_segments(segments)
     cv2.imshow("preview", preview)
     cv2.waitKey(0)
-    segments = trajectory_planning.calc_path(segments, 40, 1, 1, 60)
+    segments = trajectory_planning.calc_path(segments, 5, .01, 1, 60)
     
     run_gantry.main(segments, 60)
 

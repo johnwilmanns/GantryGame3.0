@@ -12,7 +12,7 @@ try:
     from cv2 import cv2  # 'ery nice
 except:
     import cv2
-
+import math
 
 # gets the posturized edges
 def get_posterized_edges(im, gaps=[5, 10, 15]):
@@ -295,10 +295,12 @@ def wave_function(im, line_dist=30, wave_int = 5):
         # for x < im.shape[1]:
         for x in range(int(wave_int / 2), im.shape[1], wave_int * 2):
 
-            # intensity = cv2.mean(im[10:11,10:11])
+            intensity = cv2.mean(im[10:11,10:11])
             intensity = im[y][x]
             print((255 - intensity)/255)
-            intensity = int(((line_dist * ((255 - intensity)/255))) * .75)
+            intensity = (255 - intensity)/255
+            # intensity = math.sqrt(intensity)
+            intensity = int(((line_dist * intensity * .75)))
             # space =
             if up:
                 cv2.ellipse(blank, (x,y), (int(wave_int), intensity), 0, 180, 360, 255, 1)

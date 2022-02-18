@@ -6,8 +6,8 @@ board = pyfirmata.Arduino('/dev/ttyACM1')
 pwm = board.get_pin('d:9:s')
 pwm.write(0)
 
-upval = 108
-downval = 100
+upval = 100
+downval = 108
 
 def set_up():
     global upval
