@@ -286,9 +286,10 @@ def get_spinny(im, line_dist=30, theta=None, thresholds = [ 30, 50, 80]):
 def wave_function(im, line_dist=30, wave_int = 5):
 
     #makes a blank image
-    blank = utilities.copy_blank(im)
+    edges = []
     for y in range(int((line_dist / 2)), im.shape[0], line_dist):
 
+        blank = utilities.copy_blank(im)
         up = True
         # x=0
         # for x < im.shape[1]:
@@ -304,10 +305,9 @@ def wave_function(im, line_dist=30, wave_int = 5):
             else:
                 cv2.ellipse(blank, (x,y), (int(wave_int), intensity), 0, 0, 180, 255, 1)
             up = not up
+        edges.append(blank)
 
-    cv2.imshow("lines", blank)
-    edges = []
-    edges.append(blank)
+    # cv2.imshow("lines", blank)
     return edges
 
 
