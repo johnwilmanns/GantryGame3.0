@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="pi@gantry-game-pi:22 agent" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" autoUpload="Always" serverName="soft-dev@soft-dev-00.local:22 password" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
-      <paths name="pi@gantry-game-pi:22 agent">
+      <paths name="soft-dev@soft-dev-00.local:22 password (1)">
         <serverdata>
           <mappings>
-            <mapping deploy="/home/pi/Desktop/GantryGame3.0" local="$PROJECT_DIR$" />
+            <mapping deploy="/tmp/pycharm_project_506" local="$PROJECT_DIR$" />
           </mappings>
         </serverdata>
       </paths>
