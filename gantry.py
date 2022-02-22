@@ -74,7 +74,7 @@ class Gantry:
                 self.y.check_status()
                 break
             except AssertionError:
-                input("^w^ oopSie whoopSie, the gantwi is stukky wukki. Pwease pwace it in a new wowcation ^w^ \n Then pwess enter UwU")
+                input("^w^ oopSie whoopSie, the gantwi is stukky wukki. Pwease pwace it in a new wowcation ^w^ \nThen pwess enter UwU")
 
         self.sensorless_home(home_axes=[True,True,True])
         # self.stupid_manual_home_becaues_gibson_still_dont_have_a_collet()
