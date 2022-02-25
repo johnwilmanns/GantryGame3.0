@@ -155,6 +155,63 @@ def process_shading_raw(input_img, blur_radius = 21, line_dist = 10, theta = Non
 
     return all_segments
 
+def process_shading_raw_wave(input_img, blur_radius = 21, line_dist = 10, theta = None, bind_dist = 20, area_cut = 10,
+        min_len = 0, q = None, render = False):
+
+    splitDistance = 1.5
+
+    # input_img = utilities.resize(cv2.imread(filename))
+
+    # input_img = cv2.imread("obama.png")
+
+    gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
+    gray = cv2.GaussianBlur(gray, (blur_radius, blur_radius), 0)
+    shades = posterize.wave_function(gray, line_dist = 10, wave_int = 4)
+    # return shades
+    if render:
+        return shades
+
+    all_segments = []
+
+    max_size = max(input_img.shape[:2])
+
+    t0 = time.time()
+
+    for edges in shades:
+
+        # cv2.imshow("edges", edges)
+        # cv2.imwrite("thisdontwork.png", edges)
+        # cv2.waitKey(0)
+        edges = edges.astype(bool)
+        edges = edges.tolist()
+
+
+
+
+        #TODO add rust method here
+        segments = rust.process_image(edges, area_cut, 3, min_len, bind_dist)
+        if not segments:
+            print("warning, empty segments list")
+            continue;
+
+        # print(segments)
+        # print(len(segments))
+
+        for i, seg in enumerate(segments):
+            for j, point in enumerate(seg):
+                segments[i][j] = (point[0]/max_size,point[1]/max_size)
+
+
+
+        all_segments.extend(segments)
+
+    print(f"took {time.time()-t0: .2f} seconds to process edges")
+
+    if q is not None:
+        q.put(all_segments)
+
+    return all_segments
+
 def process_combo_raw(input_img):
 
     print("starting edge processing")
