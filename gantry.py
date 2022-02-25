@@ -18,10 +18,10 @@ class Gantry:
 
 
 
-        self.x = ODrive_Ease_Lib.Axis(self.odrv1.axis0) # X
-        self.x2 = ODrive_Ease_Lib.Axis(self.odrv1.axis1) # X
+        self.y = ODrive_Ease_Lib.Axis(self.odrv1.axis0) # X
+        self.y2 = ODrive_Ease_Lib.Axis(self.odrv1.axis1) # X
         
-        self.y = ODrive_Ease_Lib.Axis(self.odrv0.axis1) # Y
+        self.x = ODrive_Ease_Lib.Axis(self.odrv0.axis1) # Y
         # self.z = ODrive_Ease_Lib.Axis(self.odrv0.axis1) # Z
         self.x_max_accel = 50
         self.y_max_accel = 50
@@ -89,9 +89,9 @@ class Gantry:
             axis.axis.controller.config.control_mode = 3
             axis.axis.controller.config.input_mode = 1
             
-        self.x2.axis.requested_state = 8
+        self.y2.axis.requested_state = 8
         # self.x2.axis.config.control_mode = 3
-        self.x2.axis.controller.config.input_mode = INPUT_MODE_MIRROR
+        self.y2.axis.controller.config.input_mode = INPUT_MODE_MIRROR
             
         
             
@@ -114,7 +114,7 @@ class Gantry:
 
     def axes(self):
         yield self.x
-        yield self.x2
+        yield self.y2
         yield self.y
 
 
