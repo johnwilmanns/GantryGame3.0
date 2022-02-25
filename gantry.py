@@ -55,14 +55,14 @@ class Gantry:
         self.y.axis.controller.config.vel_limit = 40
         self.y.axis.controller.config.enable_overspeed_error = False
 
-        self.clear_errors()
+
         # self.x.start_pos_liveplotter()
         # start_liveplotter(lambda: [self.x.axis.encoder.pos_estimate, self.x.axis.encoder.vel_estimate,
         #                            self.y.axis.encoder.pos_estimate, self.y.axis.encoder.vel_estimaty ])
         # start_liveplotter(lambda: [self.x.axis.encoder.pos_estimate, self.x.axis.controller.pos_setpoint,self.y.axis.encoder.pos_estimate, self.y.axis.controller.pos_setpoint,])
         while True:
             try:
-
+                self.clear_errors()
                 try:
                     self.x.check_status()
                     self.y.check_status()
@@ -76,7 +76,8 @@ class Gantry:
                 self.y.check_status()
                 break
             except AssertionError:
-                input("^w^ oopSie whoopSie, the gantwi is stukky wukki >w<. Pwease pwace it in a new wowcation ^w^ \nThen pwess enter UwU")
+                if input("^w^ oopSie whoopSie, the gantwi is stukky wukki >w<. Pwease pwace it in a new wowcation ^w^ \nThen pwess enter UwU") == "dump":
+                    self.dump_errors()
 
         for axis in self.axes():
             axis.axis.controller.config.control_mode = 3

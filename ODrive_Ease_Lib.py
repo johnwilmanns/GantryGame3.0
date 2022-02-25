@@ -188,7 +188,7 @@ class Axis(object):
         assert direction == 1 or direction == -1
         print("bathroom break!")
         oldvel = self.get_vel_limit()
-        self.set_vel_limit(4)
+        self.set_vel_limit(2)
         print("pee")
         while True:
             print("pooping early")
