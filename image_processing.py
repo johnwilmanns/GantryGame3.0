@@ -109,10 +109,7 @@ def process_shading_raw(input_img, blur_radius = 21, line_dist = 10, theta = Non
     
     gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (blur_radius, blur_radius), 0)
-    shades = posterize.wave_function(gray, line_dist = 10, wave_int = 4)
-    # return shades
-    if render:
-        return shades
+    shades = posterize.get_spinny(gray, line_dist, theta)
     
     all_segments = []
     
@@ -217,7 +214,7 @@ def process_combo_raw(input_img):
     print("starting edge processing")
     segments = process_edges_raw(input_img)
     print("starting shading processing")
-    segments = process_shading_raw(input_img, area_cut = 1, line_dist = 1)
+    segments.extend(process_shading_raw(input_img))
     print("finished pre processing")
     return segments
 
