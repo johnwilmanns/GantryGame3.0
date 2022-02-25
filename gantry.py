@@ -12,14 +12,15 @@ class Gantry:
 
 
         self.odrv1 = odrive.find_any(serial_number=self.odrv1_serial)
-        # self.odrv0 = odrive.find_any(serial_number=self.odrv0_serial)
+        self.odrv0 = odrive.find_any(serial_number=self.odrv0_serial)
 
         self.clear_errors()
 
 
 
-        self.x = ODrive_Ease_Lib.Axis(self.odrv1.axis1) # X
-        self.y = ODrive_Ease_Lib.Axis(self.odrv1.axis0) # Y
+        self.y = ODrive_Ease_Lib.Axis(self.odrv1.axis0) # X
+        self.y2 = ODrive_Ease_Lib.Axis(self.odrv1.axis1) # X
+        self.x = ODrive_Ease_Lib.Axis(self.odrv0.axis1) # Y
         # self.z = ODrive_Ease_Lib.Axis(self.odrv0.axis1) # Z
         self.x_max_accel = 50
         self.y_max_accel = 50
@@ -62,19 +63,24 @@ class Gantry:
         while True:
             try:
 
-
                 try:
                     self.x.check_status()
                     self.y.check_status()
+                    self.x2.check_status()
                 except AssertionError:
                     print("gotta crank one out rq")
                     self.calibrate()
 
                 self.x.check_status() #if these throw an assertion error, make sure the gantry is not up against the axis
+                self.x2.check_status() #if these throw an assertion error, make sure the gantry is not up against the axis
                 self.y.check_status()
                 break
             except AssertionError:
                 input("^w^ oopSie whoopSie, the gantwi is stukky wukki >w<. Pwease pwace it in a new wowcation ^w^ \nThen pwess enter UwU")
+
+        for axis in self.axes():
+            axis.axis.controller.config.control_mode = 3
+            axis.axis.controller.config.input_mode = 1
 
         self.sensorless_home(home_axes=[True,True,True])
         # self.stupid_manual_home_becaues_gibson_still_dont_have_a_collet()
@@ -82,10 +88,20 @@ class Gantry:
         self.dump_errors()
         
         for axis in self.axes():
-            axis.axis.requested_state = 8
+            axis.axis.requested_state = AXIS_STATE_IDLE
             axis.axis.controller.config.control_mode = 3
             axis.axis.controller.config.input_mode = 1
             
+        self.y2.axis.requested_state = 8
+        # self.x2.axis.config.control_mode = 3
+        self.y2.axis.controller.config.input_mode = INPUT_MODE_MIRROR
+
+
+
+        # self.x2.axis.controller.config.input_mode = INPUT_MODE_MIRROR
+        self.x2.axis.controller.config.axis_to_mirror = 0
+        self.x2.axis.controller.config.mirror_ratio = 1
+
         # for axis in self.axes():
         #     axis.idle()
 
@@ -101,6 +117,7 @@ class Gantry:
 
     def axes(self):
         yield self.x
+        yield self.y2
         yield self.y
 
 
@@ -113,35 +130,35 @@ class Gantry:
             motor.hold_until_calibrated()
         print("anus initialized")
 
-    def home(self, axis=[True, True]):
+    def home(self):
         print("homing")
-        if axis[0]:  # x axis
-            self.x.set_vel(-1)
-            while True:
-                print(self.odrv0.get_gpio_states() & 0b00100)
-                if self.odrv0.get_gpio_states() & 0b00100 == 0:  # needs to be changed upon rewire
 
-                    self.x.set_vel(0)
-                    self.x.set_home()
-                    print("yes")
-                    break
-                time.sleep(.1)
+        self.x.set_vel(-1)
+        while True:
+            print(self.odrv0.get_gpio_states() & 0b00100)
+            if self.odrv0.get_gpio_states() & 0b00100 == 0:  # needs to be changed upon rewire
+
+                self.x.set_vel(0)
+                self.x.set_home()
+                print("yes")
+                break
+            time.sleep(.1)
 
 
 
         print("homed x")
 
-        if axis[1]:  # axis
-            self.y.set_vel(1)
-            while True:
-                print(self.odrv1.get_gpio_states() & 0b00100)
-                if self.odrv1.get_gpio_states() & 0b00100 == 0:  # needs to be changed upon rewire
 
-                    self.x.set_vel(0)
-                    self.x.set_home()
-                    print("yes")
-                    break
-                time.sleep(.1)
+        self.y.set_vel(1)
+        while True:
+            print(self.odrv1.get_gpio_states() & 0b00100)
+            if self.odrv1.get_gpio_states() & 0b00100 == 0:  # needs to be changed upon rewire
+
+                self.x.set_vel(0)
+                self.x.set_home()
+                print("yes")
+                break
+            time.sleep(.1)
 
     def sensorless_home(self, home_axes = [True, True, True]):
         for num, axis in enumerate(self.axes()) :
@@ -275,8 +292,12 @@ In the event that the position that it is in is not the position that it wasn't,
         # self.requested_pos = [x, y]
 
 
-
-
+if __name__ == "__main__":
+    gantry = Gantry()
+    gantry.startup()
+    print("hello")
+    while True:
+        gantry.set_pos(float(input()), 0)
         
         
 
