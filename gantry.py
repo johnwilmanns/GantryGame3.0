@@ -6,7 +6,7 @@ from odrive.utils import *
 class Gantry:
 
     def __init__(self):
-
+        print("make sure the gantry is on")
         self.odrv1_serial = "20793595524B" # Previously Xavier
         self.odrv0_serial = "20673593524B" # Previously Yannie
 
@@ -66,13 +66,13 @@ class Gantry:
                 try:
                     self.x.check_status()
                     self.y.check_status()
-                    self.x2.check_status()
+                    self.y2.check_status()
                 except AssertionError:
                     print("gotta crank one out rq")
                     self.calibrate()
 
                 self.x.check_status() #if these throw an assertion error, make sure the gantry is not up against the axis
-                self.x2.check_status() #if these throw an assertion error, make sure the gantry is not up against the axis
+                self.y2.check_status() #if these throw an assertion error, make sure the gantry is not up against the axis
                 self.y.check_status()
                 break
             except AssertionError:
@@ -93,14 +93,14 @@ class Gantry:
             axis.axis.controller.config.input_mode = 1
             
         self.y2.axis.requested_state = 8
-        # self.x2.axis.config.control_mode = 3
+        # self.y2.axis.config.control_mode = 3
         self.y2.axis.controller.config.input_mode = INPUT_MODE_MIRROR
 
 
 
-        # self.x2.axis.controller.config.input_mode = INPUT_MODE_MIRROR
-        self.x2.axis.controller.config.axis_to_mirror = 0
-        self.x2.axis.controller.config.mirror_ratio = 1
+        # self.y2.axis.controller.config.input_mode = INPUT_MODE_MIRROR
+        self.y2.axis.controller.config.axis_to_mirror = 0
+        self.y2.axis.controller.config.mirror_ratio = 1
 
         # for axis in self.axes():
         #     axis.idle()
@@ -293,6 +293,7 @@ In the event that the position that it is in is not the position that it wasn't,
 
 
 if __name__ == "__main__":
+    print("starting")
     gantry = Gantry()
     gantry.startup()
     print("hello")
