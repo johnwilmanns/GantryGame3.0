@@ -10,7 +10,7 @@ import math
 
 try:
     from cv2 import cv2  # 'ery nice
-except:
+except Exception:
     import cv2
 import math
 

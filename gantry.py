@@ -48,12 +48,14 @@ class Gantry:
 
     def startup(self):
         print("starting up")
-
+        self.dump_errors()
         self.x.axis.controller.config.vel_limit = 40
         self.x.axis.controller.config.enable_overspeed_error = False
 
         self.y.axis.controller.config.vel_limit = 40
         self.y.axis.controller.config.enable_overspeed_error = False
+        self.y2.axis.controller.config.vel_limit = 40
+        self.y2.axis.controller.config.enable_overspeed_error = False
 
 
         # self.x.start_pos_liveplotter()
@@ -83,10 +85,13 @@ class Gantry:
             axis.axis.controller.config.control_mode = 3
             axis.axis.controller.config.input_mode = 1
 
-        self.sensorless_home(home_axes=[True,True,True])
+        # self.sensorless_home(home_axes=[True,True,True])
+        self.x.extremely_scuffed_home(direction=-1)
+        self.y.extremely_scuffed_home(direction=-1)
         # self.stupid_manual_home_becaues_gibson_still_dont_have_a_collet()
         self.print_positions()
         self.dump_errors()
+        self.clear_errors()
         
         for axis in self.axes():
             axis.axis.requested_state = AXIS_STATE_IDLE
@@ -94,17 +99,20 @@ class Gantry:
             axis.axis.controller.config.input_mode = 1
             
         self.y2.axis.requested_state = 8
+        self.y2.mirror_sub(0, 1)
         # self.y2.axis.config.control_mode = 3
-        self.y2.axis.controller.config.input_mode = INPUT_MODE_MIRROR
-
-
-
         # self.y2.axis.controller.config.input_mode = INPUT_MODE_MIRROR
-        self.y2.axis.controller.config.axis_to_mirror = 0
-        self.y2.axis.controller.config.mirror_ratio = 1
+        #
+        #
+        #
+        # # self.y2.axis.controller.config.input_mode = INPUT_MODE_MIRROR
+        # self.y2.axis.controller.config.axis_to_mirror = 0
+        # self.y2.axis.controller.config.mirror_ratio = 1
 
         # for axis in self.axes():
         #     axis.idle()
+        self.clear_errors()
+
 
 
     def __del__(self):
@@ -126,7 +134,8 @@ class Gantry:
     def calibrate(self):
         print("warming up sphincter")
         for motor in self.axes():
-            motor.calibrate_no_hold()
+            motor.calibrate()
+            motor.idle()
         for motor in self.axes():
             motor.hold_until_calibrated()
         print("anus initialized")
@@ -161,17 +170,20 @@ class Gantry:
                 break
             time.sleep(.1)
 
-    def sensorless_home(self, home_axes = [True, True, True]):
+    def sensorless_home(self, home_axes = [True, False, True]):
         for num, axis in enumerate(self.axes()) :
             if home_axes[num]:
-                axis.extremely_scuffed_home()
+                axis.extremely_scuffed_home(direction=-1)
         self.requested_pos = [0, 0]
 
 
-
+    def enable_motors(self):
+        print("warming up sphincter")
+        for motor in self.axes():
+            motor.axis.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
 
     def dump_errors(self):
-        # print(dump_errors(self.odrv0))
+        print(dump_errors(self.odrv0))
         print(dump_errors(self.odrv1))
 
     def clear_errors(self):
@@ -188,7 +200,7 @@ class Gantry:
         The missile knows where it is at all times. It knows this because it knows where it isn't. By subtracting where it is from where it isn't, or where it isn't from where it is (whichever is greater), it obtains a difference, or deviation. The guidance subsystem uses deviations to generate corrective commands to drive the missile from a position where it is to a position where it isn't, and arriving at a position where it wasn't, it now is. Consequently, the position where it is, is now the position that it wasn't, and it follows that the position that it was, is now the position that it isn't.
 In the event that the position that it is in is not the position that it wasn't, the system has acquired a variation, the variation being the difference between where the missile is, and where it wasn't. If variation is considered to be a significant factor, it too may be corrected by the GEA. However, the missile must also know where it was.
         '''
-        
+        print(f"{x} {y}")
         if(x != -1):
             self.x.set_pos(x)
         
@@ -205,7 +217,6 @@ In the event that the position that it is in is not the position that it wasn't,
 
                     self.requested_pos = [x, y]
                     return
-
     def mirror_move(self, new_x, new_y):
         ratio = new_x - self.x.get_pos() / new_y - self.y.get_pos()
         print(ratio)
@@ -298,8 +309,11 @@ if __name__ == "__main__":
     gantry = Gantry()
     gantry.startup()
     print("hello")
+    gantry.enable_motors()
     while True:
-        gantry.set_pos(float(input()), 0)
-        
+
+        gantry.set_pos(float(input("x")), float(input("y")))
+
+        # gantry.y.set_pos(float(input("y:")), ensure_control_mode=True)
         
 

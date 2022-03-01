@@ -2,7 +2,7 @@ import pyfirmata
 import time
 from pynput import keyboard
 
-board = pyfirmata.Arduino('/dev/ttyACM1')
+board = pyfirmata.Arduino('/dev/ttyACM0')
 pwm = board.get_pin('d:9:s')
 pwm.write(0)
 

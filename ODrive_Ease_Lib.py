@@ -14,7 +14,7 @@ def find_ODrives():
             a = next(dev)
             od.append(odrive.find_any('usb:%s:%s' % (a.bus, a.address)))
             print('added')
-    except:
+    except Exception:
         pass
     return od
 
@@ -23,7 +23,7 @@ def reboot_ODrive(od):
     try:
         od.reboot()
         print("rebooted")
-    except:
+    except Exception:
         print('it threw an error????')
 
 class Axis(object):

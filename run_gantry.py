@@ -83,8 +83,8 @@ import sys
 gantry = Gantry()
 gantry.startup()
 
-servo.set_up()
-servo.set_down()
+# servo.set_up()
+# servo.set_down()
 
 def main(segments, freq):
     
@@ -106,7 +106,7 @@ def main(segments, freq):
     #the only way python will do this (our codebase does not support if statements)
 
 
-    
+    gantry.enable_motors()
     pen_up()
     t0 = time.time()
     gantry.x.axis.controller.config.input_mode = INPUT_MODE_POS_FILTER
@@ -115,7 +115,7 @@ def main(segments, freq):
     # gantry.y.axis.controller.config.input_mode = 1
     gantry.x.axis.controller.config.input_filter_bandwidth = freq/2
     gantry.y.axis.controller.config.input_filter_bandwidth = freq/2
-
+    gantry.dump_errors()
 
     try:
         pass
@@ -125,6 +125,7 @@ def main(segments, freq):
         print(f"Currently on segment {i}/{len(segments)}")
         t0 = time.perf_counter()
         blocked_move(seg[0])
+        print("finsheb dlocking move")
         # print(seg[0])
         pen_down()
         t1 = time.perf_counter()
