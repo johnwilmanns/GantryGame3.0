@@ -22,8 +22,9 @@ for i in range(trial_runs)
     oldy = gantry.y.get_pos()
     while time.perf_counter() - t0 < .1:
         pass
-    x_accel.append((gantry.x.get_pos() - oldx)/ (t0-time.perf_counter()))
-    y_accel.append((gantry.y.get_pos() - oldy)/ (t0-time.perf_counter()))
+    x_accel.append( abs(2 * (gantry.x.get_pos() - oldx) / ((t0-time.perf_counter())**2)))
+    y_accel.append( abs(2 * (gantry.y.get_pos() - oldy) / ((t0-time.perf_counter())**2)))
+
     time.sleep(.5)
     gantry.set_pos(1 + x_range, 1+y_range)
     time.sleep(.02)
@@ -32,8 +33,8 @@ for i in range(trial_runs)
     oldy = gantry.y.get_pos()
     while time.perf_counter() - t0 < .1:
         pass
-    x_accel.append(abs(gantry.x.get_pos() - oldx) / (t0-time.perf_counter()))
-    y_accel.append(abs(gantry.y.get_pos() - oldy) / (t0-time.perf_counter()))
+    x_accel.append( abs(2 * (gantry.x.get_pos() - oldx) / ((t0-time.perf_counter())**2)))
+    y_accel.append( abs(2 * (gantry.y.get_pos() - oldy) / ((t0-time.perf_counter())**2)))
 
 print(f"Average x accel = {sum(x_accel) / len(x_accel)}, lowest x accel = {min(x_accel)}")
 print(f"Average y accel = {sum(y_accel) / len(y_accel)}, lowest y accel = {min(y_accel)}")
