@@ -13,6 +13,7 @@ gantry.startup()
 
 x_accel = []
 y_accel = []
+gantry.enable_motors()
 for i in range(trial_runs)
     gantry.set_pos(1, 1)
     time.sleep(.02)
@@ -23,7 +24,7 @@ for i in range(trial_runs)
         pass
     x_accel.append((gantry.x.get_pos() - oldx)/ (t0-time.perf_counter()))
     y_accel.append((gantry.y.get_pos() - oldy)/ (t0-time.perf_counter()))
-
+    time.sleep(.5)
     gantry.set_pos(1 + x_range, 1+y_range)
     time.sleep(.02)
     t0 = time.perf_counter()
