@@ -34,5 +34,5 @@ for i in range(trial_runs)
     x_accel.append(abs(gantry.x.get_pos() - oldx) / (t0-time.perf_counter()))
     y_accel.append(abs(gantry.y.get_pos() - oldy) / (t0-time.perf_counter()))
 
-print(f"Average x accel = {sum(x_accel) / len(x_accel)}, highest x accel = {max(x_accel)}")
-print(f"Average y accel = {sum(y_accel) / len(y_accel)}, highest y accel = {max(y_accel)}")
+print(f"Average x accel = {sum(x_accel) / len(x_accel)}, lowest x accel = {min(x_accel)}")
+print(f"Average y accel = {sum(y_accel) / len(y_accel)}, lowest y accel = {min(y_accel)}")
