@@ -20,7 +20,7 @@ for i in range(trial_runs):
     t0 = time.perf_counter()
     oldx = gantry.x.get_pos()
     oldy = gantry.y.get_pos()
-    while time.perf_counter() - t0 < .1:
+    while time.perf_counter() - t0 < .05:
         pass
     x_accel.append( abs(2 * (gantry.x.get_pos() - oldx) / ((t0-time.perf_counter())**2)))
     y_accel.append( abs(2 * (gantry.y.get_pos() - oldy) / ((t0-time.perf_counter())**2)))
@@ -31,7 +31,7 @@ for i in range(trial_runs):
     t0 = time.perf_counter()
     oldx = gantry.x.get_pos()
     oldy = gantry.y.get_pos()
-    while time.perf_counter() - t0 < .1:
+    while time.perf_counter() - t0 < .05:
         pass
     x_accel.append( abs(2 * (gantry.x.get_pos() - oldx) / ((t0-time.perf_counter())**2)))
     y_accel.append( abs(2 * (gantry.y.get_pos() - oldy) / ((t0-time.perf_counter())**2)))
