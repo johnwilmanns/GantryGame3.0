@@ -14,7 +14,7 @@ def main(input_img):
     
 if __name__ == "__main__":
     import cv2
-    filename = "galaxy_inv.jpg"
+    filename = "obama.jpg"
     input_img = cv2.imread(filename)
     input_img = utilities.resize(input_img, 500, 500)
 
