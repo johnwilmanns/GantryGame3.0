@@ -161,8 +161,4 @@ def main(segments, freq):
     
 
 if __name__ == "__main__":
-    
-    try:
-        main([[(0,0)]])
-    finally:
-        import idle
+    print('pp')
