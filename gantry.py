@@ -183,7 +183,9 @@ class Gantry:
             motor.axis.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
 
     def dump_errors(self):
+        print("dumping odrv0 errors (206)")
         print(dump_errors(self.odrv0))
+        print("dumping odrv1 errors (207)")
         print(dump_errors(self.odrv1))
 
     def clear_errors(self):

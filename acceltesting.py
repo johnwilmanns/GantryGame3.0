@@ -3,7 +3,7 @@ import time
 """VARIABLES"""
 
 x_range = 10
-y_range = 8
+y_range = 7.5
 trial_runs = 10
 
 
