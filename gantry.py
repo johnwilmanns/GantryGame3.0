@@ -13,7 +13,7 @@ class Gantry:
 
         self.odrv1 = odrive.find_any(serial_number=self.odrv1_serial)
         self.odrv0 = odrive.find_any(serial_number=self.odrv0_serial)
-
+        self.dump_errors()
         self.clear_errors()
 
 
