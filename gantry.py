@@ -86,8 +86,8 @@ class Gantry:
             axis.axis.controller.config.input_mode = 1
 
         # self.sensorless_home(home_axes=[True,True,True])
-        self.x.extremely_scuffed_home(direction=-1)
-        self.y.extremely_scuffed_home(direction=-1)
+        self.x.scuffed_home(direction=1)
+        self.y.scuffed_home(direction=1, current=1)
         # self.stupid_manual_home_becaues_gibson_still_dont_have_a_collet()
         self.print_positions()
         self.dump_errors()
@@ -99,7 +99,7 @@ class Gantry:
             axis.axis.controller.config.input_mode = 1
             
         self.y2.axis.requested_state = 8
-        self.y2.mirror_sub(0, 1)
+        # self.y2.mirror_sub(0, 1)
         # self.y2.axis.config.control_mode = 3
         # self.y2.axis.controller.config.input_mode = INPUT_MODE_MIRROR
         #
@@ -197,7 +197,7 @@ class Gantry:
         print(f"Y = {self.y}")
 
 
-    def set_pos(self, x = -1, y = -1):
+    def set_pos(self, x = -1, y = -1, y2 = -1, y_mirror = True):
         '''
         The missile knows where it is at all times. It knows this because it knows where it isn't. By subtracting where it is from where it isn't, or where it isn't from where it is (whichever is greater), it obtains a difference, or deviation. The guidance subsystem uses deviations to generate corrective commands to drive the missile from a position where it is to a position where it isn't, and arriving at a position where it wasn't, it now is. Consequently, the position where it is, is now the position that it wasn't, and it follows that the position that it was, is now the position that it isn't.
 In the event that the position that it is in is not the position that it wasn't, the system has acquired a variation, the variation being the difference between where the missile is, and where it wasn't. If variation is considered to be a significant factor, it too may be corrected by the GEA. However, the missile must also know where it was.
@@ -207,8 +207,14 @@ In the event that the position that it is in is not the position that it wasn't,
             self.x.set_pos(x)
         
         if y != -1:
-            self.y.set_pos(y)
-        
+            if y_mirror:
+                self.y.set_pos(y)
+                self.y2.set_pos(y)
+            else:
+                if y2 != -1:
+                    self.y2.set_pos(y2)
+                self.y.set_pos(y)
+
 
         while True:
             # print("x", x, self.x.get_pos())
