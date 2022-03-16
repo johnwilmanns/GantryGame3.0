@@ -13,7 +13,7 @@ class Gantry:
 
         self.odrv1 = odrive.find_any(serial_number=self.odrv1_serial)
         self.odrv0 = odrive.find_any(serial_number=self.odrv0_serial)
-        self.dump_errors()
+        # self.dump_errors()
         self.clear_errors()
 
 
@@ -48,7 +48,7 @@ class Gantry:
 
     def (self):
         print("starting up")
-        self.dump_errors()
+        # self.dump_errors()
         self.x.axis.controller.config.vel_limit = 40
         self.x.axis.controller.config.enable_overspeed_error = False
 
@@ -65,44 +65,45 @@ class Gantry:
         # start_liveplotter(lambda: [self.x.axis.encoder.pos_estimate, self.x.axis.encoder.vel_estimate,
         #                            self.y.axis.encoder.pos_estimate, self.y.axis.encoder.vel_estimaty ])
         # start_liveplotter(lambda: [self.x.axis.encoder.pos_estimate, self.x.axis.controller.pos_setpoint,self.y.axis.encoder.pos_estimate, self.y.axis.controller.pos_setpoint,])
-        while True:
-            try:
-                self.clear_errors()
-                try:
-                    self.x.check_status()
-                    self.y.check_status()
-                    self.y2.check_status()
-                except AssertionError:
-                    print("gotta crank one out rq")
-                    self.calibrate()
+        
+        self.calibrate()
+        self.dump_errors()
+        # while True:
+        #     try:
+        #         self.clear_errors()
+        #         try:
+        #             self.x.check_status()
+        #             self.y.check_status()
+        #             self.y2.check_status()
+        #         except AssertionError:
+        #             print("gotta crank one out rq")
+        #             self.calibrate()
 
-                self.x.check_status() #if these throw an assertion error, make sure the gantry is not up against the axis
-                self.y2.check_status() #if these throw an assertion error, make sure the gantry is not up against the axis
-                self.y.check_status()
-                break
-            except AssertionError:
-                if input("^w^ oopSie whoopSie, the gantwi is stukky wukki >w<. Pwease pwace it in a new wowcation ^w^ \nThen pwess enter UwU") == "dump":
-                    self.dump_errors()
+        #         self.x.check_status() #if these throw an assertion error, make sure the gantry is not up against the axis
+        #         self.y2.check_status() #if these throw an assertion error, make sure the gantry is not up against the axis
+        #         self.y.check_status()
+        #         break
+        #     except AssertionError:
+        #         if input("^w^ oopSie whoopSie, the gantwi is stukky wukki >w<. Pwease pwace it in a new wowcation ^w^ \nThen pwess enter UwU") == "dump":
+        #             self.dump_errors()
 
         for axis in self.axes():
             axis.axis.controller.config.control_mode = 3
             axis.axis.controller.config.input_mode = 1
+            axis.axis.requested_state = 8
 
+        print("homing")
+        self.home()
         # self.sensorless_home(home_axes=[True,True,True])
-        self.x.scuffed_home(direction=1)
-        self.y.scuffed_home(direction=1, current=1)
+        # self.x.extremely_scuffed_home(direction=-1)
+        # self.y.extremely_scuffed_home(direction=-1)
         # self.stupid_manual_home_becaues_gibson_still_dont_have_a_collet()
         self.print_positions()
-        self.dump_errors()
-        self.clear_errors()
+        # self.dump_errors()
+
         
         for axis in self.axes():
             axis.axis.requested_state = AXIS_STATE_IDLE
-            axis.axis.controller.config.control_mode = 3
-            axis.axis.controller.config.input_mode = 1
-            
-        self.y2.axis.requested_state = 8
-        # self.y2.mirror_sub(0, 1)
         # self.y2.axis.config.control_mode = 3
         # self.y2.axis.controller.config.input_mode = INPUT_MODE_MIRROR
         #
@@ -114,7 +115,7 @@ class Gantry:
 
         # for axis in self.axes():
         #     axis.idle()
-        self.clear_errors()
+
 
 
 
@@ -135,49 +136,66 @@ class Gantry:
 
 
     def calibrate(self):
+        
+        print(self.x.check_status())
+        print(self.y.check_status())
+        print(self.y2.check_status())
+        
         print("warming up sphincter")
-        for motor in self.axes():
-            motor.calibrate()
-            motor.idle()
-        for motor in self.axes():
-            motor.hold_until_calibrated()
-        print("anus initialized")
+        if not self.x.check_status():
+            self.x.axis.config.calibration_lockin.accel = 20
+            self.x.axis.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
+        
+        if not (self.y.check_status() and self.y2.check_status()):
+            self.y.axis.config.calibration_lockin.accel = 20
+            self.y2.axis.config.calibration_lockin.accel = 20
+            self.y.axis.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
+            self.y2.axis.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
+            
+        self.x.hold_until_calibrated()
+        self.y.hold_until_calibrated()
+        self.y2.hold_until_calibrated()
+        self.clear_errors()
+        
+        if not self.x.check_status():
+            self.x.axis.config.calibration_lockin.accel = -20
+            self.x.axis.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
+        
+        if not (self.y.check_status() and self.y2.check_status()):
+            self.y.axis.config.calibration_lockin.accel = -20
+            self.y2.axis.config.calibration_lockin.accel = -20
+            self.y.axis.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
+            self.y2.axis.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
+            
+        self.x.hold_until_calibrated()
+        self.y.hold_until_calibrated()
+        self.y2.hold_until_calibrated()
+        
+        assert(self.x.check_status())
+        assert(self.y.check_status())
+        assert(self.y2.check_status())
+        print("Calibrated!")
 
     def home(self):
-        print("homing")
 
-        self.x.set_vel(-1)
+        self.x.set_vel(-2)
+        self.y2.set_vel(-2)
+        self.y.set_vel(-2)
+        
+        
         while True:
-            print(self.odrv0.get_gpio_states() & 0b00100)
-            if self.odrv0.get_gpio_states() & 0b00100 == 0:  # needs to be changed upon rewire
+            self.x.set_home()
+            self.y.set_home()
+            self.y2.set_home()
+            
+            time.sleep(.5)
+            
+            if abs(self.x.get_pos()) < .05 and abs(self.y.get_pos()) < .05:
+                break   
+            
+        print(self.x.get_pos(), self.y.get_pos())
+        
 
-                self.x.set_vel(0)
-                self.x.set_home()
-                print("yes")
-                break
-            time.sleep(.1)
-
-
-
-        print("homed x")
-
-
-        self.y.set_vel(1)
-        while True:
-            print(self.odrv1.get_gpio_states() & 0b00100)
-            if self.odrv1.get_gpio_states() & 0b00100 == 0:  # needs to be changed upon rewire
-
-                self.x.set_vel(0)
-                self.x.set_home()
-                print("yes")
-                break
-            time.sleep(.1)
-
-    def sensorless_home(self, home_axes = [True, False, True]):
-        for num, axis in enumerate(self.axes()) :
-            if home_axes[num]:
-                axis.extremely_scuffed_home(direction=-1)
-        self.requested_pos = [0, 0]
 
 
     def enable_motors(self):
@@ -192,12 +210,12 @@ class Gantry:
         print(dump_errors(self.odrv1))
 
     def clear_errors(self):
-        # self.odrv0.clear_errors()
+        self.odrv0.clear_errors()
         self.odrv1.clear_errors()
 
     def print_positions(self):
-        print(f"X = {self.x}")
-        print(f"Y = {self.y}")
+        print(f"X = {self.x.get_pos()}")
+        print(f"Y = {self.y.get_pos()}")
 
 
     def set_pos(self, x = -1, y = -1, y2 = -1, y_mirror = True):
@@ -320,10 +338,10 @@ if __name__ == "__main__":
     gantry = Gantry()
     gantry.()
     print("hello")
-    gantry.enable_motors()
-    while True:
+    # gantry.enable_motors()
+    # while True:
 
-        gantry.set_pos(float(input("x")), float(input("y")))
+    #     gantry.set_pos(float(input("x")), float(input("y")))
 
         # gantry.y.set_pos(float(input("y:")), ensure_control_mode=True)
         
