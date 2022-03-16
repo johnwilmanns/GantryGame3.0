@@ -8,8 +8,8 @@ except Exception:
 pwm = board.get_pin('d:9:s')
 pwm.write(0)
 
-upval = 100
-downval = 108
+upval = 108
+downval = 100
 
 def set_up():
     global upval
@@ -41,6 +41,9 @@ def set_down():
                 downval+=1
             print(downval)
             pen_down()
+
+def set_manual(val):
+    pwm.write(val)
 
 #puts the pen up
 def pen_up():
