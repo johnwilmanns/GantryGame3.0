@@ -96,7 +96,7 @@ class Axis(object):
     #get info about current state of odrive
 
     def get_pos(self):
-        return self.axis.encoder.pos_estimate - self.home
+        return self.axis.encoder.pos_estimate
 
     def get_raw_pos(self):
         return self.axis.encoder.pos_estimate
@@ -209,7 +209,7 @@ class Axis(object):
 
 
     def check_status(self):
-        assert self.axis.encoder.is_ready and self.axis.motor.is_calibrated
+        return self.axis.encoder.is_ready and self.axis.motor.is_calibrated
 
 
     def clear_errors(self):
@@ -285,7 +285,8 @@ class Axis(object):
 
 
     def set_home(self):
-        self.home = self.get_raw_pos()
+        # self.home = self.get_raw_pos()
+        self.axis.encoder.set_linear_count(0)
 
     def set_calibration_current(self, current):
         self.axis.motor.config.calibration_current = current
