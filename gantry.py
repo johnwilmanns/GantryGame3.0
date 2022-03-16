@@ -46,7 +46,7 @@ class Gantry:
         self.x_max_vel = xmax
         self.y_max_vel = ymax
 
-    def startup(self):
+    def (self):
         print("starting up")
         # self.dump_errors()
         self.x.axis.controller.config.vel_limit = 40
@@ -56,6 +56,9 @@ class Gantry:
         self.y.axis.controller.config.enable_overspeed_error = False
         self.y2.axis.controller.config.vel_limit = 40
         self.y2.axis.controller.config.enable_overspeed_error = False
+        
+        for axis in self.axes():
+            axis.motor.set_current_control_bandwidth(60)
 
 
         # self.x.start_pos_liveplotter()
@@ -333,7 +336,7 @@ In the event that the position that it is in is not the position that it wasn't,
 if __name__ == "__main__":
     print("starting")
     gantry = Gantry()
-    gantry.startup()
+    gantry.()
     print("hello")
     # gantry.enable_motors()
     # while True:

@@ -13,8 +13,8 @@ odrv0 = odrive.find_any(serial_number=odrv0_serial)
 odrv0.erase_configuration()
 odrv1.erase_configuration()
 """
-odrv0.axis0.motor.config.current_lim = 30
-odrv0.axis1.motor.config.current_lim = 30
+odrv0.axis0.motor.config.current_lim = 4
+odrv0.axis1.motor.config.current_lim = 4
 
 odrv0.axis0.controller.config.vel_limit = 200
 odrv0.axis1.controller.config.vel_limit = 200
@@ -42,8 +42,8 @@ odrv1.axis1.motor.config.requested_current_range = 60
 odrv1.axis0.motor.config.calibration_current = 20
 odrv1.axis1.motor.config.calibration_current = 20
 
-odrv1.axis0.motor.config.current_lim = 45
-odrv1.axis1.motor.config.current_lim = 45
+odrv1.axis0.motor.config.current_lim = 4
+odrv1.axis1.motor.config.current_lim = 4
 
 odrv1.axis0.controller.config.vel_limit = 200
 odrv1.axis1.controller.config.vel_limit = 200
