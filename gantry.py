@@ -58,7 +58,7 @@ class Gantry:
         self.y2.axis.controller.config.enable_overspeed_error = False
         
         for axis in self.axes():
-            axis.motor.set_current_control_bandwidth(60)
+            axis.axis.motor.set_current_control_bandwidth(60)
 
 
         # self.x.start_pos_liveplotter()
