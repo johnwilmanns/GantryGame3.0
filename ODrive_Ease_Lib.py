@@ -111,7 +111,7 @@ class Axis(object):
         start = time.time()
         while self.axis.current_state != AXIS_STATE_IDLE:
             time.sleep(0.1)
-            if time.time() - start > 15:
+            if time.time() - start > 5:
                 print("could not calibrate, try rebooting odrive")
                 return False
         self.axis.motor.config.calibration_current = 0
@@ -133,8 +133,8 @@ class Axis(object):
         start = time.time()
         while self.axis.current_state != AXIS_STATE_IDLE:
             time.sleep(0.1)
-            if time.time() - start > 15:
-                print("could not calibrate, try rebooting odrive")
+            if time.time() - start > 3:
+                print("could not calibrate")
                 return False
 
     #misc utilities, lots of stuff for homing
