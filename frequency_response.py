@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 
 frequency_low = 1
 frequency_high = 60
-test_numbers = 2 #the number of different frequencies it tests
-sampling_amount = 2 #the number of times it tests each frequency
-magnitude = 2
+test_numbers = 60 #the number of different frequencies it tests
+sampling_amount = 10 #the number of times it tests each frequency
+magnitude = 4
 command_frequency = 120
 
 
@@ -34,9 +34,14 @@ for frequency in frequencies:
 
 for locations in locations_list:
     print("locations")
-    x = locations[0]
-    y = locations[1]
-    y1 = locations[2]
+    # x = locations[0]
+    x = [location[0] for location in locations]
+    y = [location[1] for location in locations]
+    y1 = [location[2] for location in locations]
+    
+    
+    # y = locations[1]
+    # y1 = locations[2]
     plt.plot(x, y, label="actual")
     plt.plot(x, y1, label="posaion")
     plt.show()
