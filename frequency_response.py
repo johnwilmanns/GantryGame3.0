@@ -39,5 +39,5 @@ for locations in locations_list:
     y1 = locations[2]
     plt.plot(x, y, label="actual")
     plt.plot(x, y1, label="posaion")
-    plt.plot()
+    plt.show()
     input("pp???")
