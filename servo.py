@@ -1,15 +1,18 @@
 import pyfirmata
 import time
-# from pynput import keyboard
-try:
-    board = pyfirmata.Arduino('/dev/ttyACM0')
-except Exception:
-    board = pyfirmata.Arduino('/dev/ttyACM1')
-pwm = board.get_pin('d:9:s')
-pwm.write(0)
-
-upval = 108
-downval = 100
+from pynput import keyboard
+# try:
+#     board = pyfirmata.Arduino('/dev/ttyACM0')
+# except Exception:
+#     board = pyfirmata.Arduino('/dev/ttyACM1')
+    
+board = pyfirmata.Arduino('/dev/ttyACM1')
+    
+pwm = board.get_pin('d:10:s')
+pwm.write(90)
+# pwm.write(1)
+upval = 60
+downval = 50
 
 def set_up():
     global upval
@@ -60,5 +63,9 @@ def pen_down():
 
 
 if __name__ == "__main__":
+
     set_up()
+    # while True:
+    #     pen_up()    
+    #     time.sleep(1)
 

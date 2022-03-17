@@ -27,8 +27,10 @@ while True:
     y_vals.append(y)
     y_times.append(time.time())
 
-    if x > 4.95 and y > 4.95:
+    if x > 6.95 and y > 6.95:
         break
+    
+gantry.dump_errors()
     
 
 # x_vals = [1,2,3,5]

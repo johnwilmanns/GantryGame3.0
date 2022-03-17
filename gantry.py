@@ -13,7 +13,7 @@ class Gantry:
 
         self.odrv1 = odrive.find_any(serial_number=self.odrv1_serial)
         self.odrv0 = odrive.find_any(serial_number=self.odrv0_serial)
-        # self.dump_errors()
+        self.dump_errors()
         self.clear_errors()
 
 
@@ -57,8 +57,8 @@ class Gantry:
         self.y2.axis.controller.config.vel_limit = 40
         self.y2.axis.controller.config.enable_overspeed_error = False
         
-        for axis in self.axes():
-            axis.axis.motor.set_current_control_bandwidth(60)
+        # for axis in self.axes():
+        #     axis.motor.set_current_control_bandwidth(60)
 
 
         # self.x.start_pos_liveplotter()
@@ -137,10 +137,9 @@ class Gantry:
 
     def calibrate(self):
         
-        print(self.x.check_status())
-        print(self.y.check_status())
-        print(self.y2.check_status())
-        
+        for axis in self.axes():
+            axis.axis.requested_state = AXIS_STATE_IDLE
+
         print("warming up sphincter")
         if not self.x.check_status():
             self.x.axis.config.calibration_lockin.accel = 20
@@ -148,10 +147,10 @@ class Gantry:
         
         if not (self.y.check_status() and self.y2.check_status()):
             self.y.axis.config.calibration_lockin.accel = 20
-            self.y2.axis.config.calibration_lockin.accel = 20
+            self.y2.axis.config.calibration_lockin.accel = -20
             self.y.axis.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
             self.y2.axis.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
-            
+        
         self.x.hold_until_calibrated()
         self.y.hold_until_calibrated()
         self.y2.hold_until_calibrated()
@@ -163,7 +162,7 @@ class Gantry:
         
         if not (self.y.check_status() and self.y2.check_status()):
             self.y.axis.config.calibration_lockin.accel = -20
-            self.y2.axis.config.calibration_lockin.accel = -20
+            self.y2.axis.config.calibration_lockin.accel = 20
             self.y.axis.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
             self.y2.axis.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
             
@@ -178,9 +177,9 @@ class Gantry:
 
     def home(self):
 
-        self.x.set_vel(-2)
-        self.y2.set_vel(-2)
-        self.y.set_vel(-2)
+        self.x.set_vel(-10)
+        self.y2.set_vel(-10)
+        self.y.set_vel(-10)
         
         
         while True:
@@ -191,6 +190,19 @@ class Gantry:
             time.sleep(.5)
             
             if abs(self.x.get_pos()) < .05 and abs(self.y.get_pos()) < .05:
+                self.x.set_vel(0)
+                self.y2.set_vel(0)
+                self.y.set_vel(0)
+                
+                time.sleep(.5)
+                
+                self.x.set_home()
+                self.y.set_home()
+                self.y2.set_home()
+                
+                for axis in self.axes():
+                    axis.set_pos(0.1, True)
+                
                 break   
             
         print(self.x.get_pos(), self.y.get_pos())
@@ -327,6 +339,7 @@ In the event that the position that it is in is not the position that it wasn't,
 
         if y != -1:
             self.y.set_pos(y, False)
+            self.y2.set_pos(y, False)
 
 
 

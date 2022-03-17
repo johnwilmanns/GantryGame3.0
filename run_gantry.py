@@ -17,7 +17,7 @@ askswait = 1
 behind = 0
 
 
-scale_factor = 8
+scale_factor = 1 #TODO fix
 offset = (0,0)
 
     
@@ -108,6 +108,8 @@ def main(segments, freq):
 
     gantry.enable_motors()
     pen_up()
+    input("confirm up")
+    
     t0 = time.time()
     gantry.x.axis.controller.config.input_mode = INPUT_MODE_POS_FILTER
     gantry.y.axis.controller.config.input_mode = INPUT_MODE_POS_FILTER

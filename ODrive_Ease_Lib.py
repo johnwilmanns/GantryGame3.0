@@ -133,7 +133,7 @@ class Axis(object):
         start = time.time()
         while self.axis.current_state != AXIS_STATE_IDLE:
             time.sleep(0.1)
-            if time.time() - start > 3:
+            if time.time() - start > 2:
                 print("could not calibrate")
                 return False
 
