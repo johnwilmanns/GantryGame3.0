@@ -143,7 +143,9 @@ def main(segments, freq):
             # while time.time() - t0 < 1/freq:
             #     # t2 = time.perf_counter()
             #     # # queue2.put([gantry.x.get_pos(), gantry.y.get_pos()])
-            #     # print(f"serial took {time.perf_counter() - t2} seconds")
+            #     # print(f"serial took {time.perf_counter() --
+            # ========
+            =_t2} seconds")
             #     pass
             t0 = time.perf_counter()
 
