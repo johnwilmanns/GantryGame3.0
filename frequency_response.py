@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 
 frequency_low = 1
 frequency_high = 60
-test_numbers = 10
-sampling_amount = 10
+test_numbers = 2 #the number of different frequencies it tests
+sampling_amount = 2 #the number of times it tests each frequency
 magnitude = 2
 command_frequency = 120
 
@@ -22,13 +22,13 @@ for frequency in frequencies:
     locations = []
     positions = np.sin(np.arange(0, np.pi * 2, frequency * 1/command_frequency)) * magnitude
     print(positions)
-    positions = positions * 10
+    positions = positions * sampling_amount
     t0 = time.perf_counter()
     for position in positions:
         while True:
             if (time.perf_counter() - t0 >= 1/command_frequency):
                 break
-            locations.append(time.perf_counter(), axis.get_pos(), position)
+            locations.append([time.perf_counter(), axis.get_pos(), position])
         axis.set_pos(1 + magnitude + position)
     locations_list.append(locations)
 
