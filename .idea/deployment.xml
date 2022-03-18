@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="soft-dev@soft-dev-00.local:22 password (1)" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" autoUpload="Always" serverName="soft-dev@soft-dev-00.local:22 password" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
-      <paths name="soft-dev@soft-dev-00.local:22 password (1)">
+      <paths name="soft-dev@soft-dev-00.local:22 password">
         <serverdata>
           <mappings>
-            <mapping deploy="/tmp/pycharm_project_506" local="$PROJECT_DIR$" />
+            <mapping deploy="/home/soft-dev/Documents/john_stupid_upload_folder" local="$PROJECT_DIR$" />
           </mappings>
         </serverdata>
       </paths>
