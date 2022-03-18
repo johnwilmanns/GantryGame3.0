@@ -3,10 +3,10 @@ import numpy as np
 import time
 import matplotlib.pyplot as plt
 
-frequency_low = .5
+frequency_low = 3
 frequency_high = 60
-test_numbers = 60 #the number of different frequencies it tests
-sampling_amount = 10 #the number of times it tests each frequency
+test_numbers = 3  #the number of different frequencies it tests
+sampling_amount = 3 #the number of times it tests each frequency
 magnitude = 4
 command_frequency = 60
 
@@ -46,11 +46,13 @@ for locations in locations_list:
     y1 = [location[2] for location in locations]
 
     print(f"{x}, {y}, {y1}")
-    
-    # y = locations[1]
-    # y1 = locations[2]
-    plt.plot(x, y, label="actual")
-    plt.plot(x, y1, label="posaion")
+
+    fig, axs = plt.subplots(3, 1)
+    axs[0].plot(x, y, label="X")
+    axs[0].plot(x, y1, label="Y")
+    axs[0].legend()
+    axs[0].set_ylabel("position (in)")
+    axs[0].set_xlabel("time (s)")
     plt.legend()
     plt.show()
     input("pp???")
