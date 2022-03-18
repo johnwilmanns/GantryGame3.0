@@ -47,11 +47,6 @@ for locations in locations_list:
 
     print(f"{x}, {y}, {y1}")
 
-    plt.plot(x, y, label="X")
-    plt.plot(x, y1, label="Y")
-    plt.legend()
-    plt.set_ylabel("position (in)")
-    plt.set_xlabel("time (s)")
-    plt.legend()
+    plt.plot(x, y)
     plt.show()
     input("pp???")
