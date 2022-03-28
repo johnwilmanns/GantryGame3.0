@@ -31,7 +31,7 @@ for frequency in frequencies:
     t0 = time.perf_counter()
     for position in positions:
         while True:
-            # locations.append([time.perf_counter(), axis.get_pos(), 1 + magnitude + position])
+            locations.append([time.perf_counter(), axis.get_pos(), 1 + magnitude + position])
             # print([time.perf_counter(), axis.get_pos(), 1 + magnitude + position])
             if (time.perf_counter() - t0 >= 1/command_frequency):
                 break
