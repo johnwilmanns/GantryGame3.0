@@ -209,13 +209,22 @@ def process_shading_raw_wave(input_img, blur_radius = 21, line_dist = 10, theta 
 
     return all_segments
 
-def process_combo_raw(input_img):
+def process_combo_raw(input_img, scale_factor = 8):
 
     print("starting edge processing")
     segments = process_edges_raw(input_img)
     print("starting shading processing")
     segments.extend(process_shading_raw(input_img))
     print("finished pre processing")
+    
+    
+    for seg in segments:
+        for i, point in enumerate(seg):
+            
+            seg[i] = (point[0]*scale_factor, point[1]*scale_factor)
+            # point[0] *= scale_factor
+            # point[1] *= scale_factor
+    
     return segments
 
 def render_combo(input_img):

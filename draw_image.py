@@ -20,9 +20,9 @@ if __name__ == "__main__":
 
     segments = image_processing.process_combo_raw(input_img)
     preview = image_processing.plot_segments(segments)
-    cv2.imshow("preview", preview)
-    cv2.waitKey(0)
-    segments = trajectory_planning.calc_path(segments, 5, 1, 1, 120)
+    # cv2.imshow("preview", preview)
+    # cv2.waitKey(0)
+    segments = trajectory_planning.calc_path(segments, 40, 1, 1, 120)
     print("running gantry")
     run_gantry.main(segments, 120)
 

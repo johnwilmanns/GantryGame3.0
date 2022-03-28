@@ -20,7 +20,8 @@ behind = 0
 scale_factor = 1 #TODO fix
 offset = (0,0)
 
-    
+def distance(x1, y1, x2, y2):
+    return (((x2-x1) ** 2 + (y2 - y1) ** 2) ** .5) 
 # @timeit
 def move(point):
     
@@ -108,7 +109,7 @@ def main(segments, freq):
 
     gantry.enable_motors()
     pen_up()
-    input("confirm up")
+    # input("confirm up")
     
     t0 = time.time()
     gantry.x.axis.controller.config.input_mode = INPUT_MODE_POS_FILTER
@@ -118,6 +119,8 @@ def main(segments, freq):
     gantry.x.axis.controller.config.input_filter_bandwidth = freq/2
     gantry.y.axis.controller.config.input_filter_bandwidth = freq/2
     gantry.dump_errors()
+    
+    deltas = []
 
     try:
         pass
@@ -131,15 +134,23 @@ def main(segments, freq):
         # print(seg[0])
         pen_down()
         t1 = time.perf_counter()
-        for point in seg[1:]:
+        for i, point in enumerate(seg[1:]):
 
             # queue1.put(point)
-            try:
-                time.sleep(1/freq-(time.perf_counter()-t0))
+            # try:
 
+                # time.sleep(1/freq-(time.perf_counter()-t0))
+                
+            x_targ = gantry.x.axis.controller.pos_setpoint
+            y_targ = gantry.y.axis.controller.pos_setpoint
+            
+            while(time.perf_counter()-t0 < 1/freq):
+                deltas.append((abs(gantry.x.get_pos() - x_targ), abs(gantry.y.get_pos() - y_targ), distance(*seg[i-1], *point)))
+                
                 pass
-            except Exception:
-                pass
+
+            # except Exception:
+            #     pass
             # while time.time() - t0 < 1/freq:
             #     # t2 = time.perf_counter()
             #     # # queue2.put([gantry.x.get_pos(), gantry.y.get_pos()])
@@ -158,9 +169,22 @@ def main(segments, freq):
 
     print("done")
     pen_up()
+    
+    def plot_deltas():
+        import matplotlib.pyplot as plt
+        plt.plot(deltas)
+        plt.show()
+        
+    plot_deltas()
 
 
     
 
 if __name__ == "__main__":
-    print('pp')
+    path = [[[1,1], [16,1], [16,8], [1,8]]]
+    
+    segments = calc_path(path, 40, .1, 0, 60)
+    
+    main(segments, 60)
+    
+    

@@ -1,6 +1,6 @@
 import pyfirmata
 import time
-from pynput import keyboard
+# from pynput import keyboard
 # try:
 #     board = pyfirmata.Arduino('/dev/ttyACM0')
 # except Exception:
