@@ -2,6 +2,7 @@ from gantry import Gantry
 import numpy as np
 import time
 import matplotlib.pyplot as plt
+from bokeh.plotting import figure, show
 
 frequency_low = 3
 frequency_high = 60
@@ -47,6 +48,7 @@ for locations in locations_list:
 
     print(f"{x}, {y}, {y1}")
 
-    plt.plot(x, y)
-    plt.show()
+    p = figure(title="Frequency reponse", x_axis_label="hehe", y_axis_label="hihi")
+    p.line(x, y, legend_label="actual locaitons")
+    show(p)
     input("pp???")
