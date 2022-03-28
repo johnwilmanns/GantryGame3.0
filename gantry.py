@@ -45,6 +45,7 @@ class Gantry:
     def set_max_vel(self, xmax, ymax):
         self.x_max_vel = xmax
         self.y_max_vel = ymax
+         
 
     def startup(self):
         print("starting up")
