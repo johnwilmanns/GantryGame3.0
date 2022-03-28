@@ -50,5 +50,6 @@ for locations in locations_list:
 
     p = figure(title="Frequency reponse", x_axis_label="hehe", y_axis_label="hihi")
     p.line(x, y, legend_label="actual locaitons")
+    p.line(x,y1, legend_label="setposes")
     show(p)
     input("pp???")
