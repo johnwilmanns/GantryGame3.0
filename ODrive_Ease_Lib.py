@@ -25,6 +25,7 @@ def reboot_ODrive(od):
         print("rebooted")
     except Exception:
         print('it threw an error????')
+        
 
 class Axis(object):
     def __init__(self, axis, endstop_pin = None):
@@ -246,7 +247,6 @@ class Axis(object):
 
         vel = self.get_vel()
         return vel > threshold or vel < -threshold
-
 
 
     def idle(self):
