@@ -140,11 +140,14 @@ def main(segments, freq):
             # try:
 
                 # time.sleep(1/freq-(time.perf_counter()-t0))
-                
+            
+            t0 = time.perf_counter()  
+            move(point)        
+        
             x_targ = gantry.x.axis.controller.pos_setpoint
             y_targ = gantry.y.axis.controller.pos_setpoint
             
-            while(time.perf_counter()-t0 < 1/freq):
+            while(time.perf_counter()-t0 < (1/freq)):
                 deltas.append((abs(gantry.x.get_pos() - x_targ), abs(gantry.y.get_pos() - y_targ), distance(*seg[i-1], *point)))
                 
                 pass
@@ -156,9 +159,9 @@ def main(segments, freq):
             #     # # queue2.put([gantry.x.get_pos(), gantry.y.get_pos()])
             #     # print(f"serial took {time.perf_counter() - t2} seconds")
             #     pass
-            t0 = time.perf_counter()
 
-            move(point)
+
+            
 
         time.sleep(1/freq)
         # t3 =

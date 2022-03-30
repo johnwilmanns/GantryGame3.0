@@ -6,7 +6,7 @@ import time
 # except Exception:
 #     board = pyfirmata.Arduino('/dev/ttyACM1')
     
-board = pyfirmata.Arduino('/dev/ttyACM1')
+board = pyfirmata.Arduino('/dev/ttyACM0')
     
 pwm = board.get_pin('d:10:s')
 pwm.write(90)

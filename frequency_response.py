@@ -7,7 +7,7 @@ from bokeh.plotting import figure, show
 frequency_low = 3
 frequency_high = 60
 test_numbers = 3  #the number of different frequencies it tests
-sampling_amount = 3 #the number of times it tests each frequency
+sampling_amount = 10 #the number of times it tests each frequency
 magnitude = 4
 command_frequency = 60
 
@@ -17,6 +17,7 @@ gantry = Gantry()
 gantry.startup()
 axis = gantry.x
 axis.set_pos(1, ensure_control_mode= True)
+time.sleep(1)
 frequencies = np.geomspace(frequency_low, frequency_high, num = test_numbers)
 locations_list = []
 for frequency in frequencies:
@@ -29,6 +30,7 @@ for frequency in frequencies:
     print(min(positions))
     print(max(positions))
     t0 = time.perf_counter()
+    axis.set_pos(1 + magnitude)
     for position in positions:
         while True:
             locations.append([time.perf_counter(), axis.get_pos(), 1 + magnitude + position])
