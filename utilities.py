@@ -14,13 +14,11 @@ def resize(img, x = 800, y = 800):
 
 def auto_resize(img):
     if (img.shape[0] / img.shape[1]) > (max_y / max_x):
-        return resize(img, max_y, max_y * img.shape[1] / img.shape[0])
+        return resize(img, max_y * img.shape[1] / img.shape[0], max_y)
     else:
         return resize(img, max_x, max_x * img.shape[0] / img.shape[1])
     return("forbidden poop")
 
-def resize_maintain(img, n = 500):
-    return cv2.resize(img, (x,y), interpolation = cv2.INTER_AREA)
 
 def get_blank_image(rows,cols,color = False):
     if color:
