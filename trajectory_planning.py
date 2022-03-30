@@ -352,12 +352,28 @@ def plot_path_full(segments):
     # plt.xlim(0,50)
     # plt.ylim(-25,25)
     plt.show()
-    
+
+
+# i wrote none of this, copilot wrote all of it
 def calculate_path_lenth(segments):
     total_length = 0
     for seg in segments:
         total_length += seg.get_length()
     return total_length
+
+#get an integer from a file
+def get_path_distance(filename="distance.txt"):
+    with open(filename) as f:
+        return int(f.read())
+
+def set_path_distance(distance, filename="distance.txt"):
+    with open(filename, 'w') as f:
+        f.write(str(distance))
+
+def update_path_distance(distance, filename="distance.txt"):
+    set_path_distance(get_path_distance() + distance, filename)
+
+
 
 
 
