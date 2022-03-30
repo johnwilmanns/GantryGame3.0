@@ -17,7 +17,7 @@ if __name__ == "__main__":
     filename = "obama.jpg"
     input_img = cv2.imread(filename)
     # input_img = utilities.resize(input_img, 500, 500)
-
+    input_img = utilities.auto_resize(input_img)
     segments = image_processing.process_combo_raw(input_img, 1)
     preview = image_processing.plot_segments(segments)
     cv2.imshow("preview", preview)
