@@ -353,6 +353,13 @@ def plot_path_full(segments):
     # plt.ylim(-25,25)
     plt.show()
     
+def calculate_path_lenth(segments):
+    total_length = 0
+    for seg in segments:
+        total_length += seg.get_length()
+    return total_length
+
+
 
 
 
