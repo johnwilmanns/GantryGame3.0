@@ -12,20 +12,21 @@ class Gantry:
 
 
         self.odrv1 = odrive.find_any(serial_number=self.odrv1_serial)
-        self.odrv0 = odrive.find_any(serial_number=self.odrv0_serial)
+        # self.odrv0 = odrive.find_any(serial_number=self.odrv0_serial)
 
         self.clear_errors()
 
 
+
         self.x = ODrive_Ease_Lib.Axis(self.odrv1.axis1) # X
         self.y = ODrive_Ease_Lib.Axis(self.odrv1.axis0) # Y
-        self.z = ODrive_Ease_Lib.Axis(self.odrv0.axis1) # Z
+        # self.z = ODrive_Ease_Lib.Axis(self.odrv0.axis1) # Z
         self.x_max_accel = 50
         self.y_max_accel = 50
-        self.x_max_decel = 100
-        self.y_max_decel = 100
-        self.x_max_vel = 20
-        self.y_max_vel = 20
+        self.x_max_decel = 200
+        self.y_max_decel = 200
+        self.x_max_vel = 40
+        self.y_max_vel = 40
         self.has_goal = False #for trajectory management
         self.y_goal = 0
         self.x_goal = 0
@@ -44,14 +45,13 @@ class Gantry:
         self.x_max_vel = xmax
         self.y_max_vel = ymax
 
-    #todo, add assert statments
     def startup(self):
         print("starting up")
 
-        self.x.axis.controller.config.vel_limit = 20
+        self.x.axis.controller.config.vel_limit = 40
         self.x.axis.controller.config.enable_overspeed_error = False
 
-        self.y.axis.controller.config.vel_limit = 20
+        self.y.axis.controller.config.vel_limit = 40
         self.y.axis.controller.config.enable_overspeed_error = False
 
         self.clear_errors()
@@ -67,25 +67,36 @@ class Gantry:
             print("gotta crank one out rq")
             self.calibrate()
 
-        self.x.check_status()
+        self.x.check_status() #if these throw an assertion error, make sure the gantry is not up against the axis
         self.y.check_status()
 
-        self.sensorless_home()
+        self.sensorless_home(home_axes=[True,True,True])
+        # self.stupid_manual_home_becaues_gibson_still_dont_have_a_collet()
         self.print_positions()
         self.dump_errors()
+        
+        for axis in self.axes():
+            axis.axis.requested_state = 8
+            axis.axis.controller.config.control_mode = 3
+            axis.axis.controller.config.input_mode = 1
+            
+        # for axis in self.axes():
+        #     axis.idle()
 
 
     def __del__(self):
-        print("setting all states to idle")
-        self.x.idle()
-        self.y.idle()
-        self.z.idle()
-        self.dump_errors()
+        # print("setting all states to idle")
+        # self.x.idle()
+        # self.y.idle()
+        # # self.z.idle()
+        # print("set all states to idle")
+        print("deleted bruh")
+        # self.dump_errors()
 
     def axes(self):
         yield self.x
         yield self.y
-        yield self.z
+
 
 
     def calibrate(self):
@@ -96,7 +107,7 @@ class Gantry:
             motor.hold_until_calibrated()
         print("anus initialized")
 
-    def home(self, axis=[True, True, True]):
+    def home(self, axis=[True, True]):
         print("homing")
         if axis[0]:  # x axis
             self.x.set_vel(-1)
@@ -132,20 +143,27 @@ class Gantry:
                 axis.extremely_scuffed_home()
         self.requested_pos = [0, 0]
 
+
+
+
     def dump_errors(self):
-        print(dump_errors(self.odrv0))
+        # print(dump_errors(self.odrv0))
         print(dump_errors(self.odrv1))
 
     def clear_errors(self):
-        self.odrv0.clear_errors()
+        # self.odrv0.clear_errors()
         self.odrv1.clear_errors()
 
     def print_positions(self):
         print(f"X = {self.x}")
         print(f"Y = {self.y}")
-        print(f"Z = {self.z}")
 
-    def set_pos(self, x = -1, y = -1, z = -1):
+
+    def set_pos(self, x = -1, y = -1):
+        '''
+        The missile knows where it is at all times. It knows this because it knows where it isn't. By subtracting where it is from where it isn't, or where it isn't from where it is (whichever is greater), it obtains a difference, or deviation. The guidance subsystem uses deviations to generate corrective commands to drive the missile from a position where it is to a position where it isn't, and arriving at a position where it wasn't, it now is. Consequently, the position where it is, is now the position that it wasn't, and it follows that the position that it was, is now the position that it isn't.
+In the event that the position that it is in is not the position that it wasn't, the system has acquired a variation, the variation being the difference between where the missile is, and where it wasn't. If variation is considered to be a significant factor, it too may be corrected by the GEA. However, the missile must also know where it was.
+        '''
         
         if(x != -1):
             self.x.set_pos(x)
@@ -153,16 +171,16 @@ class Gantry:
         if y != -1:
             self.y.set_pos(y)
         
-        if z != -1:
-            self.z.set_pos(z)
 
         while True:
-            print(f"waiting: {x}, {y}, {z}")
-            if abs(self.x.get_pos() - x) <= .1 or x == -1:
-                if abs(self.x.get_pos() - y) <= .1 or y == -1:
-                    if abs(self.x.get_pos() - z) <= .1 or z == -1:
-                        self.requested_pos = [x, y]
-                        return
+            # print("x", x, self.x.get_pos())
+            # print("y", y, self.y.get_pos())
+            
+            if abs(self.x.get_pos() - x) <= .05 or x == -1:
+                if abs(self.y.get_pos() - y) <= .05 or y == -1:
+
+                    self.requested_pos = [x, y]
+                    return
 
     def mirror_move(self, new_x, new_y):
         ratio = new_x - self.x.get_pos() / new_y - self.y.get_pos()
@@ -172,7 +190,7 @@ class Gantry:
         self.y.set_pos(new_y)
 
 
-    def trap_move(self, new_x, new_y, cords = None, threshold = .2):
+    def trap_move(self, new_x, new_y, cords = None, threshold = .2, visualizer = None):
 
         if cords is None:
             x_pos = self.x.get_pos()
@@ -224,23 +242,29 @@ class Gantry:
         x_pos = self.x.get_pos()
         y_pos = self.y.get_pos()
 
-        while abs(x_pos - new_x) > threshold or abs(y_pos - new_y) > threshold:
-            x_pos = self.x.get_pos()
-            y_pos = self.y.get_pos()
+        if visualizer == None:
+            while abs(x_pos - new_x) > threshold or abs(y_pos - new_y) > threshold:
+                x_pos = self.x.get_pos()
+                y_pos = self.y.get_pos()
+
+        else:
+            while abs(x_pos - new_x) > threshold or abs(y_pos - new_y) > threshold:
+                x_pos = self.x.get_pos()
+                y_pos = self.y.get_pos()
+            visualizer.put([x_pos,y_pos])
 
         return x_pos, y_pos
 
 
-    def set_pos_noblock(self, x = -1, y = -1, z = -1):
+    def set_pos_noblock(self, x = -1, y = -1):
 
         if(x != -1):
-            self.x.set_pos(x)
+            self.x.set_pos(x, False)
 
         if y != -1:
-            self.y.set_pos(y)
+            self.y.set_pos(y, False)
 
-        if z != -1:
-            self.z.set_pos(z)
+
 
         # self.requested_pos = [x, y]
 

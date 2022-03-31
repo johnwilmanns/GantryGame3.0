@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="pi@gantry-game-pi.local:22 agent" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" autoUpload="Always" serverName="pi@gantry-game-pi:22 agent" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
-      <paths name="pi@gantry-game-pi.local:22 agent">
+      <paths name="pi@gantry-game-pi:22 agent">
         <serverdata>
           <mappings>
-            <mapping deploy="/home/pi/Desktop/test" local="$PROJECT_DIR$" />
+            <mapping deploy="/home/pi/Desktop/GantryGame3.0" local="$PROJECT_DIR$" />
           </mappings>
         </serverdata>
       </paths>

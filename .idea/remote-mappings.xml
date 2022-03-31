@@ -17,6 +17,7 @@
             </list>
           </settings>
         </remote-mappings>
+        <remote-mappings server-id="python@sftp://pi@gantry-game-pi:22/usr/bin/python3" />
       </list>
     </list>
   </component>
