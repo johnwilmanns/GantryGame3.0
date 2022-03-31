@@ -354,11 +354,22 @@ def plot_path_full(segments):
     plt.show()
 
 
+# take an array of points
+#calculate the distance between them
+#return the total distance
+def calc_distance(points):
+    distance = 0
+    for i in range(len(points)-1):
+        distance += np.linalg.norm(points[i+1] - points[i])
+    return distance
+
+
+
 # i wrote none of this, copilot wrote all of it
 def calculate_path_lenth(segments):
     total_length = 0
     for seg in segments:
-        total_length += seg.get_length()
+        total_length += calc_distance(seg)
     return total_length
 
 #get an integer from a file
@@ -370,10 +381,9 @@ def set_path_distance(distance, filename="distance.txt"):
     with open(filename, 'w') as f:
         f.write(str(distance))
 
+#i wrote this part
 def update_path_distance(distance, filename="distance.txt"):
     set_path_distance(get_path_distance() + distance, filename)
-
-
 
 
 
