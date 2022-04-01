@@ -1,3 +1,5 @@
+import math
+
 from gantry import Gantry
 import numpy as np
 import time
@@ -5,8 +7,8 @@ from bokeh.plotting import figure, show
 
 frequency_low = .5
 frequency_high = 20
-test_numbers = 10  #the number of different frequencies it tests
-sampling_amount = 10 #the number of times it tests each frequency
+test_numbers = 8  #the number of different frequencies it tests
+sampling_amount = 8 #the number of times it tests each frequency
 magnitude = 4
 command_frequency = 120
 
@@ -54,23 +56,29 @@ for i, locations in enumerate(locations_list):
 
     # print("locations")
     x = [location[0] for location in locations]
-    y = [location[1] for location in locations]
-    y1 = [location[2] for location in locations]
+    y = [location[1] for location in locations] #encoder position measurment
+    y1 = [location[2] for location in locations] #requested position
 
     # print(f"{x}, {y}, {y1}")
 
     p = figure(title=f"{frequencies[i]} hz", x_axis_label="hehe", y_axis_label="hihi")
     p.line(x, y, legend_label="actual locaitons")
     p.line(x,y1, legend_label="setposes")
-    frequency_response = np.fft.fft(y)
+    # frequency_response = np.fft.fft(y)
     show(p)
     # print(frequency_response)
     # find rms of frequency response 
-    frequency_response = abs(frequency_response)
-    frequency_responses.append([frequencies[i], frequency_response])
+    # frequency_response = abs(frequency_response)
+    frequency_response = math.sqrt(np.dot(y, y)) / len(y) / 2
+    frequency_response_commanded = math.sqrt(np.dot(y1,y1)) / len(y1) / 2
+    print(f"{frequency_response}, {frequency_response_commanded}")
+    response = frequency_response / frequency_response_commanded
+    print(response)
+    frequency_responses.append([frequencies[i], response])
     # input("pp???")
 
 
 e = figure(title = "response")
-e.line(frequency_responses)
+e.line(frequency_responses[0], frequency_responses[1], legend_label = "response")
 show(e)
+input("hold")

@@ -382,8 +382,8 @@ def set_path_distance(distance, filename="distance.txt"):
         f.write(str(distance))
 
 #i wrote this part
-def update_path_distance(distance, filename="distance.txt"):
-    set_path_distance(get_path_distance() + distance, filename)
+def update_path_distance(segments, filename="distance.txt"):
+    set_path_distance(get_path_distance() + calculate_path_lenth(segments), filename)
 
 
 
