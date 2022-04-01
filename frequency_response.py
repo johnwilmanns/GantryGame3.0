@@ -8,7 +8,7 @@ frequency_high = 20
 test_numbers = 10  #the number of different frequencies it tests
 sampling_amount = 10 #the number of times it tests each frequency
 magnitude = 4
-command_frequency = 60
+command_frequency = 120
 
 
 
@@ -41,6 +41,9 @@ for frequency in frequencies:
             
             # print([time.perf_counter(), axis.get_pos(), 1 + magnitude + position])
             if (time.perf_counter() - t0 >= 1/command_frequency):
+                
+                
+                
                 break
 
         axis.set_pos(1 + magnitude + position)
@@ -63,7 +66,7 @@ for i, locations in enumerate(locations_list):
     show(p)
     # print(frequency_response)
     # find rms of frequency response 
-    frequency_response = np.sqrt(sum(frequency_response) / len(frequency_response))
+    frequency_response = abs(frequency_response)
     frequency_responses.append([frequencies[i], frequency_response])
     # input("pp???")
 
