@@ -5,10 +5,10 @@ import numpy as np
 import time
 from bokeh.plotting import figure, show
 
-frequency_low = .5
-frequency_high = 20
+frequency_low = 5
+frequency_high = 30
 test_numbers = 10  #the number of different frequencies it tests
-sampling_amount = 20 #the number of times it tests each frequency
+sampling_amount = 10 #the number of times it tests each frequency
 magnitude = .1
 command_frequency = 120
 
@@ -38,7 +38,7 @@ for frequency in frequencies:
     axis.set_pos(1 + magnitude)
 
     for position in positions:
-        locations.append([time.perf_counter(), axis.get_pos(), 1 + magnitude + position])
+        locations.append([time.perf_counter(), axis.get_pos() - 1 - magnitude, position])
         while True:
             
             # print([time.perf_counter(), axis.get_pos(), 1 + magnitude + position])
@@ -74,11 +74,11 @@ for i, locations in enumerate(locations_list):
     print(f"{frequency_response}, {frequency_response_commanded}")
     response = frequency_response / frequency_response_commanded
     print(response)
-    frequency_responses.append([frequencies[i], response])
+    frequency_responses.append(response)
     # input("pp???")
 
 
-e = figure(title = "response")
-e.line(frequency_responses[0], frequency_responses[1], legend_label = "response", x_scale = "log", y_scale = "log")
+e = figure(title = "response", x_axis_type = "log", y_axis_type = "log")
+e.line(frequencies, frequency_responses, legend_label = "response")
 show(e)
 input("hold")
