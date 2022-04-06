@@ -6,7 +6,7 @@ from odrive.enums import *
 import utilities
 # from image_processing import process_combo_raw_multi
 from trajectory_planning import calc_path
-
+import trajectory_planning
 import servo
 from servo import pen_up, pen_down
 
@@ -119,7 +119,10 @@ def main(segments, freq):
     gantry.x.axis.controller.config.input_filter_bandwidth = freq/2
     gantry.y.axis.controller.config.input_filter_bandwidth = freq/2
     gantry.dump_errors()
-    
+
+    print(trajectory_planning.calc_distance(segments))
+    trajectory_planning.update_path_distance(segments)
+
     deltas = []
 
     try:
