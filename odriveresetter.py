@@ -35,6 +35,9 @@ odrv0.axis1.config.startup_encoder_offset_calibration = False
 odrv0.axis0.config.startup_closed_loop_control = False
 odrv0.axis1.config.startup_closed_loop_control = False
 
+odrv0.axis1.motor.config.current_control_bandwidth = 60
+odrv1.axis0.motor.config.current_control_bandwidth = 60
+odrv1.axis1.motor.config.current_control_bandwidth = 60
 
 odrv1.axis0.motor.config.requested_current_range = 60
 odrv1.axis1.motor.config.requested_current_range = 60
