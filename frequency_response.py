@@ -7,9 +7,9 @@ from bokeh.plotting import figure, show
 
 frequency_low = .5
 frequency_high = 20
-test_numbers = 8  #the number of different frequencies it tests
-sampling_amount = 8 #the number of times it tests each frequency
-magnitude = 4
+test_numbers = 10  #the number of different frequencies it tests
+sampling_amount = 20 #the number of times it tests each frequency
+magnitude = .1
 command_frequency = 120
 
 
@@ -79,6 +79,6 @@ for i, locations in enumerate(locations_list):
 
 
 e = figure(title = "response")
-e.line(frequency_responses[0], frequency_responses[1], legend_label = "response")
+e.line(frequency_responses[0], frequency_responses[1], legend_label = "response", x_scale = "log", y_scale = "log")
 show(e)
 input("hold")

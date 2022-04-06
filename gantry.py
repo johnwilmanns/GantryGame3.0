@@ -144,13 +144,13 @@ class Gantry:
         print("warming up sphincter")
         if not self.x.check_status():
             self.x.axis.config.calibration_lockin.accel = 20
-            self.x.axis.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
+            self.x.axis.requested_state = 3
         
         if not (self.y.check_status() and self.y2.check_status()):
             self.y.axis.config.calibration_lockin.accel = 20
             self.y2.axis.config.calibration_lockin.accel = -20
-            self.y.axis.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
-            self.y2.axis.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
+            self.y.axis.requested_state = 3
+            self.y2.axis.requested_state = 3
         
         self.x.hold_until_calibrated()
         self.y.hold_until_calibrated()
@@ -159,13 +159,13 @@ class Gantry:
         
         if not self.x.check_status():
             self.x.axis.config.calibration_lockin.accel = -20
-            self.x.axis.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
+            self.x.axis.requested_state = 3
         
         if not (self.y.check_status() and self.y2.check_status()):
             self.y.axis.config.calibration_lockin.accel = -20
             self.y2.axis.config.calibration_lockin.accel = 20
-            self.y.axis.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
-            self.y2.axis.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
+            self.y.axis.requested_state = 3
+            self.y2.axis.requested_state = 3
             
         self.x.hold_until_calibrated()
         self.y.hold_until_calibrated()
