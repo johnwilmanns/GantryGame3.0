@@ -5,12 +5,12 @@ import numpy as np
 import time
 from bokeh.plotting import figure, show
 
-frequency_low = 5
+frequency_low = 1
 frequency_high = 30
 test_numbers = 10  #the number of different frequencies it tests
 sampling_amount = 10 #the number of times it tests each frequency
 magnitude = .1
-command_frequency = 120
+command_frequency = 250
 
 
 
@@ -63,7 +63,7 @@ for i, locations in enumerate(locations_list):
 
     p = figure(title=f"{frequencies[i]} hz", x_axis_label="hehe", y_axis_label="hihi")
     p.line(x, y, legend_label="actual locaitons")
-    p.line(x,y1, legend_label="setposes")
+    p.line(x,y1, legend_label="setposes", color="red")
     # frequency_response = np.fft.fft(y)
     show(p)
     # print(frequency_response)

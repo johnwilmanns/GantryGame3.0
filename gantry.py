@@ -3,6 +3,7 @@ import odrive
 import time
 import math
 from odrive.utils import *
+from odrive.enums import *
 class Gantry:
 
     def __init__(self):
@@ -89,7 +90,7 @@ class Gantry:
         #             self.dump_errors()
 
         for axis in self.axes():
-            axis.axis.controller.config.control_mode = 3
+            axis.axis.controller.config.control_mode = AXIS_STATE_ENCODER_INDEX_SEARCH
             axis.axis.controller.config.input_mode = 1
             axis.axis.requested_state = 8
 
@@ -105,7 +106,7 @@ class Gantry:
         
         for axis in self.axes():
             axis.axis.requested_state = AXIS_STATE_IDLE
-        # self.y2.axis.config.control_mode = 3
+        # self.y2.axis.config.control_mode = AXIS_STATE_ENCODER_INDEX_SEARCH
         # self.y2.axis.controller.config.input_mode = INPUT_MODE_MIRROR
         #
         #
@@ -144,13 +145,13 @@ class Gantry:
         print("warming up sphincter")
         if not self.x.check_status():
             self.x.axis.config.calibration_lockin.accel = 20
-            self.x.axis.requested_state = 3
+            self.x.axis.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
         
         if not (self.y.check_status() and self.y2.check_status()):
             self.y.axis.config.calibration_lockin.accel = 20
             self.y2.axis.config.calibration_lockin.accel = -20
-            self.y.axis.requested_state = 3
-            self.y2.axis.requested_state = 3
+            self.y.axis.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
+            self.y2.axis.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
         
         self.x.hold_until_calibrated()
         self.y.hold_until_calibrated()
@@ -159,13 +160,13 @@ class Gantry:
         
         if not self.x.check_status():
             self.x.axis.config.calibration_lockin.accel = -20
-            self.x.axis.requested_state = 3
+            self.x.axis.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
         
         if not (self.y.check_status() and self.y2.check_status()):
             self.y.axis.config.calibration_lockin.accel = -20
             self.y2.axis.config.calibration_lockin.accel = 20
-            self.y.axis.requested_state = 3
-            self.y2.axis.requested_state = 3
+            self.y.axis.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
+            self.y2.axis.requested_state = AXIS_STATE_ENCODER_INDEX_SEARCH
             
         self.x.hold_until_calibrated()
         self.y.hold_until_calibrated()
