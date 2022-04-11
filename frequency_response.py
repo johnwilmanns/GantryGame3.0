@@ -9,17 +9,25 @@ frequency_low = 1
 frequency_high = 30
 test_numbers = 10  #the number of different frequencies it tests
 sampling_amount = 10 #the number of times it tests each frequency
-magnitude = .1
-command_frequency = 250
+magnitude = .05
+command_frequency = 120
 
-
+bandwith = 15
 
 gantry = Gantry()
 gantry.startup()
-axis = gantry.x
+axis = gantry.y
+
+axis.axis.controller.config.vel_gain = .5
+axis.axis.controller.config.pos_gain = 40
+axis.axis.controller.config.vel_integrator_gain = axis.axis.controller.config.vel_gain * .5 * bandwith
+
+
+
+
 axis.set_pos(1, ensure_control_mode= True)
 time.sleep(1)
-frequencies = np.geomspace(frequency_low, frequency_high, num = test_numbers)
+frequencies = np.geomspace(frequency_low, frequency_high, num = test_numbers) #gets a list of frequencies logarithmicly spaced
 locations_list = []
 for frequency in frequencies:
     locations = []
@@ -38,7 +46,7 @@ for frequency in frequencies:
     axis.set_pos(1 + magnitude)
 
     for position in positions:
-        locations.append([time.perf_counter(), axis.get_pos() - 1 - magnitude, position])
+        locations.append([time.perf_counter(), axis.get_pos() - 1 - magnitude, position, axis.axis.motor.current_control.Iq_measured])
         while True:
             
             # print([time.perf_counter(), axis.get_pos(), 1 + magnitude + position])
@@ -58,14 +66,19 @@ for i, locations in enumerate(locations_list):
     x = [location[0] for location in locations]
     y = [location[1] for location in locations] #encoder position measurment
     y1 = [location[2] for location in locations] #requested position
+    current = [location[3] for location in locations]
 
     # print(f"{x}, {y}, {y1}")
 
     p = figure(title=f"{frequencies[i]} hz", x_axis_label="hehe", y_axis_label="hihi")
     p.line(x, y, legend_label="actual locaitons")
     p.line(x,y1, legend_label="setposes", color="red")
+    c = figure(title=f"{frequencies[i]} current", x_axis_label="hehe", y_axis_label="hihi")
+    c.line(x, current, legend_label="current")
+
     # frequency_response = np.fft.fft(y)
     show(p)
+    show(c)
     # print(frequency_response)
     # find rms of frequency response 
     # frequency_response = abs(frequency_response)
