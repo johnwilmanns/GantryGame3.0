@@ -1,5 +1,6 @@
 import ODrive_Ease_Lib
 import odrive
+import servo
 import time
 import math
 from odrive.utils import *
@@ -51,6 +52,7 @@ class Gantry:
     def startup(self):
         print("starting up")
         # self.dump_errors()
+        servo.unlock_droor()
         self.x.axis.controller.config.vel_limit = 40
         self.x.axis.controller.config.enable_overspeed_error = False
 

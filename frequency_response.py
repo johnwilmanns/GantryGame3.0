@@ -17,12 +17,19 @@ bandwith = 15
 gantry = Gantry()
 gantry.startup()
 axis = gantry.y
-
+axis1 = gantry.y2
+#y vals
 axis.axis.controller.config.vel_gain = .5
 axis.axis.controller.config.pos_gain = 40
 axis.axis.controller.config.vel_integrator_gain = axis.axis.controller.config.vel_gain * .5 * bandwith
 
-
+axis1.axis.controller.config.vel_gain = .5
+axis1.axis.controller.config.pos_gain = 40
+axis1.axis.controller.config.vel_integrator_gain = axis.axis.controller.config.vel_gain * .5 * bandwith
+# #x vals
+# axis.axis.controller.config.vel_gain = .15
+# axis.axis.controller.config.pos_gain = 75
+# axis.axis.controller.config.vel_integrator_gain = .13
 
 
 axis.set_pos(1, ensure_control_mode= True)
@@ -57,6 +64,8 @@ for frequency in frequencies:
                 break
 
         axis.set_pos(1 + magnitude + position)
+        if axis1 != None:
+            axis1.set_pos(1 + magnitude + position)
     locations_list.append(locations)
 frequency_responses = []
 print(len(locations_list))

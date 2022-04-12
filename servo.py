@@ -9,10 +9,18 @@ import time
 board = pyfirmata.Arduino('/dev/ttyACM0')
     
 pwm = board.get_pin('d:10:s')
+lock = board.get_pin('d::s')
 pwm.write(90)
 # pwm.write(1)
 upval = 60
 downval = 50
+
+def lock_droor():
+    lock.write(0)
+
+def unlock_droor():
+    lock.write(180)
+
 
 def set_up():
     global upval
