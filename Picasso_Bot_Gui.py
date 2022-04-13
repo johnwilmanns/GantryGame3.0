@@ -172,9 +172,9 @@ class CamApp(App):  # build for kivy display
         def printing():
             print('start print here')
             # print(self.segments)
-            freq = 60
-            segments = trajectory_planning.calc_path(self.segments, 5, .1, 1, freq)
-            run_gantry.main(self.segments, freq)
+            freq = 120
+            segments = trajectory_planning.calc_path(self.segments, 10, 1, 1, freq)
+            run_gantry.main(segments, 120)
             sleep(5)
             ready_to_print()
 

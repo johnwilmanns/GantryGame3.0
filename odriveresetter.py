@@ -64,15 +64,42 @@ odrv1.axis1.config.startup_closed_loop_control = False
 
 time.sleep(1)
 
-# try:
-#     odrv0.save_configuration()
-# except Exception as e:
-#     # pass
-#     print(e)
 
-# try:
-#     odrv1.save_configuration()
-# except Exception as e:
-#     # pass
-#     print(e)
 
+# STARTUP SEQUENCE
+
+odrv0.axis1.encoder.config.use_index = True
+odrv1.axis0.encoder.config.use_index = True
+odrv1.axis1.encoder.config.use_index = True
+
+# run full state calibration for all axes
+odrv0.axis1.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
+odrv1.axis0.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
+odrv1.axis1.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
+
+time.sleep(15)
+print("finished cal")
+
+odrv0.axis1.encoder.config.pre_calibrated = True
+odrv1.axis0.encoder.config.pre_calibrated = True
+odrv1.axis1.encoder.config.pre_calibrated = True
+
+odrv0.axis1.motor.config.pre_calibrated = True
+odrv1.axis0.motor.config.pre_calibrated = True
+odrv1.axis1.motor.config.pre_calibrated = True
+
+
+
+try:
+    odrv0.save_configuration()
+except Exception as e:
+    pass
+    # print(e)
+
+try:
+    odrv1.save_configuration()
+except Exception as e:
+    pass
+    # print(e)
+
+print("Done")

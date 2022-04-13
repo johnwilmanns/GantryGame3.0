@@ -17,8 +17,8 @@ askswait = 1
 behind = 0
 
 
-scale_factor = 1 #TODO fix
-offset = (0,0)
+scale_factor = 8 #TODO fix
+offset = (1,.5)
 
 def distance(x1, y1, x2, y2):
     return (((x2-x1) ** 2 + (y2 - y1) ** 2) ** .5) 
@@ -144,10 +144,16 @@ def main(segments, freq):
             t0 = time.perf_counter()  
             move(point)        
         
-            x_targ = gantry.x.axis.controller.pos_setpoint
-            y_targ = gantry.y.axis.controller.pos_setpoint
+            # x_targ = gantry.x.axis.controller.pos_setpoint
+            # y_targ = gantry.y.axis.controller.pos_setpoint
+            x_targ = point[0]
+            y_targ = point[1]
             
+            
+            k = 0
             while(time.perf_counter()-t0 < (1/freq)):
+                k+=1
+                print(k)
                 deltas.append((abs(gantry.x.get_pos() - x_targ), abs(gantry.y.get_pos() - y_targ), distance(*seg[i-1], *point)))
                 
                 pass
@@ -184,10 +190,12 @@ def main(segments, freq):
     
 
 if __name__ == "__main__":
-    path = [[[1,1], [16,1], [16,8], [1,8]]]
+    # path = [[[1,1], [16,1], [16,8], [1,8]]]
+    path = [[(0,0), (1,0), (1,1)]]
     
-    segments = calc_path(path, 40, .1, 0, 60)
+    segments = calc_path(path, 10, .001, 0, 20)
+    print(segments)
     
-    main(segments, 60)
+    main(segments, 20)
     
     

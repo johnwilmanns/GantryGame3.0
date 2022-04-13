@@ -4,8 +4,8 @@ except Exception:
     import cv2
 import numpy as np
 
-max_x = 600
-max_y = 300
+max_x = 1000
+max_y = 500
 
 
 def resize(img, x = 800, y = 800):
@@ -14,9 +14,9 @@ def resize(img, x = 800, y = 800):
 
 def auto_resize(img):
     if (img.shape[0] / img.shape[1]) > (max_y / max_x):
-        return resize(img, max_y * img.shape[1] / img.shape[0], max_y)
+        return resize(img, int(max_y * img.shape[1] / img.shape[0]), max_y)
     else:
-        return resize(img, max_x, max_x * img.shape[0] / img.shape[1])
+        return resize(img, max_x, int(max_x * img.shape[0] / img.shape[1]))
     return("forbidden poop")
 
 

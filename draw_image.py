@@ -14,11 +14,11 @@ def main(input_img):
     
 if __name__ == "__main__":
     import cv2
-    filename = "obama.jpg"
+    filename = "picassopicture.png"
     input_img = cv2.imread(filename)
     # input_img = utilities.resize(input_img, 500, 500)
     input_img = utilities.auto_resize(input_img)
-    segments = image_processing.process_combo_raw(input_img, 1)
+    segments = image_processing.process_combo_raw(input_img)
     preview = image_processing.plot_segments(segments)
     cv2.imshow("preview", preview)
     cv2.waitKey(0)
