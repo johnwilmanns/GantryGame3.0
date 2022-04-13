@@ -9,12 +9,49 @@ except Exception:
 # board = pyfirmata.Arduino('/dev/ttyUSB1')
     
 pwm = board.get_pin('d:10:s')
+lock = board.get_pin('d::s')
 pwm.write(90)
 # pwm.write(1)
 upval = 60
 downval = 50
 
+def lock_droor():
+    lock.write(0)
 
+def unlock_droor():
+    lock.write(180)
+
+
+def set_up():
+    global upval
+    print("setting up")
+    pen_up()
+    with keyboard.Events() as events:
+        for event in events:
+            if event.key == keyboard.Key.enter and str(event)[0] == "P":
+                break
+            elif event.key == keyboard.Key.up and str(event)[0] == "P":
+                upval-=1
+            elif event.key == keyboard.Key.down and str(event)[0] == "P":
+                upval+=1
+            print(upval)
+            pen_up()
+            
+            
+def set_down():
+    global downval
+    print("setting down")
+    pen_down()
+    with keyboard.Events() as events:
+        for event in events:
+            if event.key == keyboard.Key.enter and str(event)[0] == "P":
+                break
+            elif event.key == keyboard.Key.up and str(event)[0] == "P":
+                downval-=1
+            elif event.key == keyboard.Key.down and str(event)[0] == "P":
+                downval+=1
+            print(downval)
+            pen_down()
 
 def set_manual(val):
     pwm.write(val)
