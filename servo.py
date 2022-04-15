@@ -7,78 +7,62 @@ except Exception:
     board = pyfirmata.Arduino('/dev/ttyUSB1')
     
 # board = pyfirmata.Arduino('/dev/ttyUSB1')
+
+iterator = pyfirmata.util.Iterator(board)
+iterator.start()
+
+time.sleep(1)
     
-pwm = board.get_pin('d:10:s')
-lock = board.get_pin('d::s')
-pwm.write(90)
+pen = board.get_pin('d:10:s')
+lock = board.get_pin('d:9:s')
+limit_switch = board.get_pin('d:2:i')
+
+limit_switch.enable_reporting()
+
+
+# pen.write(90)
 # pwm.write(1)
-upval = 60
-downval = 50
 
-def lock_droor():
-    lock.write(0)
+PEN_UP = 60
+PEN_DOWN = 50
 
-def unlock_droor():
-    lock.write(180)
+LOCK = 180
+UNLOCK = 0
+
+def lock_open():
+    lock.write(UNLOCK)
+
+def lock_close():
+    if is_closed():
+        lock.write(LOCK)
+    else:
+        raise Exception("Limit switch not closed")
 
 
-def set_up():
-    global upval
-    print("setting up")
-    pen_up()
-    with keyboard.Events() as events:
-        for event in events:
-            if event.key == keyboard.Key.enter and str(event)[0] == "P":
-                break
-            elif event.key == keyboard.Key.up and str(event)[0] == "P":
-                upval-=1
-            elif event.key == keyboard.Key.down and str(event)[0] == "P":
-                upval+=1
-            print(upval)
-            pen_up()
-            
-            
-def set_down():
-    global downval
-    print("setting down")
-    pen_down()
-    with keyboard.Events() as events:
-        for event in events:
-            if event.key == keyboard.Key.enter and str(event)[0] == "P":
-                break
-            elif event.key == keyboard.Key.up and str(event)[0] == "P":
-                downval-=1
-            elif event.key == keyboard.Key.down and str(event)[0] == "P":
-                downval+=1
-            print(downval)
-            pen_down()
 
-def set_manual(val):
-    pwm.write(val)
 
-#puts the pen up
 def pen_up():
-    # print("Pen up")
-    pwm.write(upval) #writes pwm
+    pen.write(PEN_UP)
     time.sleep(.05)
 
 
-#puts the pen down
 def pen_down():
-    # print("pen down")
-    pwm.write(downval) #writes pwm
+    pen.write(PEN_DOWN) #writes pwm
     time.sleep(.05)
+    
+def is_closed():
+    return not limit_switch.read()
 
-pen_up()
+
+
 
 if __name__ == "__main__":
-
-    
     while True:
-        print("up")
-        pen_up()    
+        val = input("a/b")
+        if val == 'a':
+            lock_open()
+        if val == 'b':
+            lock_close()
 
-        print("down")
-        pen_down()
 
 
