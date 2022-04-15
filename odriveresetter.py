@@ -3,8 +3,8 @@ import odrive
 import time
 from odrive.utils import *
 
-odrv1_serial = "20793595524B"  # Previously Xavier
-odrv0_serial = "20673593524B"  # Previously Yannie
+odrv1_serial = "20793595524B"  # Previously Xavier #actually Y
+odrv0_serial = "20673593524B"  # Previously Yannie #actually x
 
 odrv1 = odrive.find_any(serial_number=odrv1_serial)
 odrv0 = odrive.find_any(serial_number=odrv0_serial)
@@ -17,6 +17,24 @@ odrv0 = odrive.find_any(serial_number=odrv0_serial)
 odrv0.erase_configuration()
 odrv1.erase_configuration()
 """
+
+
+odrv0.axis1.controller.config.vel_gain = .15
+odrv0.axis1.controller.config.pos_gain = 75
+odrv0.axis1.controller.config.vel_integrator_gain = .13
+
+"""
+Y motor thingis
+"""
+
+odrv1.axis0.controller.config.vel_gain = .5
+odrv1.axis0.controller.config.pos_gain = 40
+odrv1.axis0.controller.config.vel_integrator_gain = axis.axis.controller.config.vel_gain * .5 * bandwith
+
+odrv1.axis1.controller.config.vel_gain = .5
+odrv1.axis1.controller.config.pos_gain = 40
+odrv1.axis1.controller.config.vel_integrator_gain = axis.axis.controller.config.vel_gain * .5 * bandwith
+
 
 
 
