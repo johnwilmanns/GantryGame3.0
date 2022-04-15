@@ -27,13 +27,13 @@ odrv0.axis1.controller.config.vel_integrator_gain = .13
 Y motor thingis
 """
 
-odrv1.axis0.controller.config.vel_gain = .5
-odrv1.axis0.controller.config.pos_gain = 40
-odrv1.axis0.controller.config.vel_integrator_gain = axis.axis.controller.config.vel_gain * .5 * bandwith
+odrv1.axis0.controller.config.vel_gain = .25
+odrv1.axis0.controller.config.pos_gain = 35
+odrv1.axis0.controller.config.vel_integrator_gain = 1.9
 
-odrv1.axis1.controller.config.vel_gain = .5
-odrv1.axis1.controller.config.pos_gain = 40
-odrv1.axis1.controller.config.vel_integrator_gain = axis.axis.controller.config.vel_gain * .5 * bandwith
+odrv1.axis1.controller.config.vel_gain = .25
+odrv1.axis1.controller.config.pos_gain = 35
+odrv1.axis1.controller.config.vel_integrator_gain = 1.9
 
 
 
