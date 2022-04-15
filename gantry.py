@@ -52,7 +52,7 @@ class Gantry:
     def startup(self):
         print("starting up")
         # self.dump_errors()
-        servo.unlock_droor()
+        
         self.x.axis.controller.config.vel_limit = 40
         self.x.axis.controller.config.enable_overspeed_error = False
 
@@ -98,10 +98,8 @@ class Gantry:
 
         print("homing")
         self.home()
-        # self.sensorless_home(home_axes=[True,True,True])
-        # self.x.extremely_scuffed_home(direction=-1)
-        # self.y.extremely_scuffed_home(direction=-1)
-        # self.stupid_manual_home_becaues_gibson_still_dont_have_a_collet()
+        
+        
         self.print_positions()
         # self.dump_errors()
 

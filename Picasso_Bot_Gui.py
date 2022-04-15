@@ -41,7 +41,7 @@ class CamApp(App):  # build for kivy display
         
         ret, frame = picture.read()
         final_picture = np.fliplr(frame)
-        final_picture = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
+        # final_picture = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
         # cv2.imwrite("/home/soft-dev/Documents/GantryGame3.0/picassopicture.png", final_picture)
         # cv2.imwrite("picassopicture.png", final_picture)
         
@@ -52,8 +52,7 @@ class CamApp(App):  # build for kivy display
         segments = image_processing.process_combo_raw(final_picture)
         self.segments = segments
     #     segments = trajectory_planning.calc_path(segments, 5, .01, 1, 120)
-        self.final_picture = image_processing.plot_segments(segments)
-        
+        self.final_picture = image_processing.plot_segments(segments) 
         
         return final_picture
     
@@ -173,8 +172,8 @@ class CamApp(App):  # build for kivy display
             print('start print here')
             # print(self.segments)
             freq = 120
-            segments = trajectory_planning.calc_path(self.segments, 10, 1, 1, freq)
-            run_gantry.main(segments, 120)
+            segments = trajectory_planning.calc_path(self.segments, 40, 1, 1, freq)
+            run_gantry.main(segments, freq)
             sleep(5)
             ready_to_print()
 
@@ -217,10 +216,8 @@ class CamApp(App):  # build for kivy display
         global final_picture
         ret, frame = self.capture.read()
         if not pause:
-            
-            
             final_picture = np.fliplr(frame)
-            final_picture = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
+            # final_picture = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
             # cv2.imwrite("/home/soft-dev/Documents/GantryGame3.0/picassopicture.png", final_picture)
             # cv2.imwrite("picassopicture.png", final_picture)
             
@@ -232,8 +229,8 @@ class CamApp(App):  # build for kivy display
             # final_picture = cv2.cvtColor(final_picture,cv2.COLOR_GRAY2RGB)
 
             
-            segments = image_processing.process_combo_raw(final_picture)
-            final_picture = image_processing.plot_segments(segments)
+            # segments = image_processing.process_combo_raw(final_picture)
+            # final_picture = image_processing.plot_segments(segments)
 
         
             
