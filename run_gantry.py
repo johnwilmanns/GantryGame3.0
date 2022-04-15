@@ -120,8 +120,8 @@ def main(segments, freq):
     gantry.y.axis.controller.config.input_filter_bandwidth = freq/2
     gantry.dump_errors()
 
-    print(trajectory_planning.calc_distance(segments))
-    trajectory_planning.update_path_distance(segments)
+    # print(trajectory_planning.calc_distance(segments))
+    # trajectory_planning.update_path_distance(segments)
 
     deltas = []
 
@@ -153,30 +153,27 @@ def main(segments, freq):
             y_targ = point[1]
             
             
-            k = 0
-            while(time.perf_counter()-t0 < (1/freq)):
-                k+=1
-                print(k)
-                deltas.append((abs(gantry.x.get_pos() - x_targ), abs(gantry.y.get_pos() - y_targ), distance(*seg[i-1], *point)))
-                
-                pass
 
-            # except Exception:
+            # while(time.perf_counter()-t0 < (1/freq)):
+            #     deltas.append((abs(gantry.x.get_pos() - x_targ), abs(gantry.y.get_pos() - y_targ), distance(*seg[i-1], *point)))
             #     pass
-            # while time.time() - t0 < 1/freq:
+
+            while time.perf_counter() - t0 < 1/freq:
+                # print("poop")
             #     # t2 = time.perf_counter()
             #     # # queue2.put([gantry.x.get_pos(), gantry.y.get_pos()])
             #     # print(f"serial took {time.perf_counter() - t2} seconds")
-            #     pass
+                pass
 
 
             
 
         time.sleep(1/freq)
+        print(f"segment written at {1 / (time.perf_counter() - t1) * len(seg)} hz")
         # t3 =
         pen_up()
         # time.sleep(1/freq)
-        print(f"segment written at {1 / (time.perf_counter() - t1) * len(seg)} hz")
+        
         
 
     print("done")
@@ -196,9 +193,9 @@ if __name__ == "__main__":
     # path = [[[1,1], [16,1], [16,8], [1,8]]]
     path = [[(0,0), (1,0), (1,1)]]
     
-    segments = calc_path(path, 10, .001, 0, 20)
+    segments = calc_path(path, 10, .001, 0, 60)
     print(segments)
     
-    main(segments, 20)
+    main(segments, 60)
     
     

@@ -23,8 +23,8 @@ limit_switch.enable_reporting()
 # pen.write(90)
 # pwm.write(1)
 
-PEN_UP = 60
-PEN_DOWN = 50
+PEN_UP = 25
+PEN_DOWN = 34
 
 LOCK = 180
 UNLOCK = 0
@@ -39,7 +39,9 @@ def lock_close():
         raise Exception("Limit switch not closed")
 
 
-
+def pen_high_up():
+    pen.write(10)
+    time.sleep(.05)
 
 def pen_up():
     pen.write(PEN_UP)
@@ -54,15 +56,21 @@ def is_closed():
     return not limit_switch.read()
 
 
-
+pen_high_up()
 
 if __name__ == "__main__":
-    while True:
-        val = input("a/b")
-        if val == 'a':
-            lock_open()
-        if val == 'b':
-            lock_close()
+    pass
+    # while True:
+    #     val = input("a/b")
+    #     if val == 'a':
+    #         lock_open()
+    #     if val == 'b':
+    #         lock_close()
+    # pen_down()
+    # time.sleep(20)
+    # print("pen up")
+    # time.sleep(5)
+    # pen_down()
 
 
 
