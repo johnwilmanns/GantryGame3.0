@@ -172,7 +172,7 @@ class CamApp(App):  # build for kivy display
             print('start print here')
             # print(self.segments)
             freq = 120
-            segments = trajectory_planning.calc_path(self.segments, 40, 1, 1, freq)
+            segments = trajectory_planning.calc_path(self.segments, 10, 1, 1, freq)
             run_gantry.main(segments, freq)
             sleep(5)
             ready_to_print()
@@ -180,7 +180,8 @@ class CamApp(App):  # build for kivy display
 
         def thread_printing(instance): # disables all buttons upon print press
             disable_all_buttons()
-            Thread(target=printing).start()
+            # Thread(target=printing).start()
+            printing()
 
 
         picture_button = Button(size_hint_x=self.size_x, size_hint_y=self.size_y, text=self.picture_button_text,

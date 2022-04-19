@@ -35,7 +35,7 @@ def move(point):
 
 
 
-    gantry.set_pos_noblock(x,y) #todo will this be defined?
+    gantry.set_pos_noblock(x,y) 
 
 def blocked_move(point):
 
@@ -49,7 +49,13 @@ def blocked_move(point):
 
 
 
-    gantry.set_pos(x,y) #todo will this be defined?
+    # gantry.set_po-s(x,y) #
+    gantry.trap_move(x,y, threshold=.05) #todo tune thresh
+    
+    gantry.x.axis.controller.config.input_mode = INPUT_MODE_POS_FILTER
+    gantry.y.axis.controller.config.input_mode = INPUT_MODE_POS_FILTER
+    gantry.y2.axis.controller.config.input_mode = INPUT_MODE_POS_FILTER
+    
     # gantry.dump_errors()
 
     # # time.sleep(.1)
@@ -114,10 +120,14 @@ def main(segments, freq):
     t0 = time.time()
     gantry.x.axis.controller.config.input_mode = INPUT_MODE_POS_FILTER
     gantry.y.axis.controller.config.input_mode = INPUT_MODE_POS_FILTER
+    gantry.y2.axis.controller.config.input_mode = INPUT_MODE_POS_FILTER
+    
+    
     # gantry.x.axis.controller.config.input_mode = 1
     # gantry.y.axis.controller.config.input_mode = 1
     gantry.x.axis.controller.config.input_filter_bandwidth = freq/2
     gantry.y.axis.controller.config.input_filter_bandwidth = freq/2
+    gantry.y2.axis.controller.config.input_filter_bandwidth = freq/2
     gantry.dump_errors()
 
     # print(trajectory_planning.calc_distance(segments))

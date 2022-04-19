@@ -70,9 +70,9 @@ class Axis(object):
         self.axis.trap_traj.config.decel_limit = decel
         self.axis.controller.config.inertia = inertia
 
-        if self.axis.current_state != AXIS_STATE_CLOSED_LOOP_CONTROL:
-            self.axis.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
-        self.axis.controller.config.control_mode = CONTROL_MODE_POSITION_CONTROL
+        # if self.axis.current_state != AXIS_STATE_CLOSED_LOOP_CONTROL:
+        #     self.axis.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
+        # self.axis.controller.config.control_mode = CONTROL_MODE_POSITION_CONTROL
         self.axis.controller.config.input_mode = INPUT_MODE_TRAP_TRAJ
 
     def set_pos_traj(self, pos):

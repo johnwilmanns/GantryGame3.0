@@ -26,8 +26,8 @@ class Gantry:
         # self.z = ODrive_Ease_Lib.Axis(self.odrv0.axis1) # Z
         self.x_max_accel = 50
         self.y_max_accel = 50
-        self.x_max_decel = 200
-        self.y_max_decel = 200
+        self.x_max_decel = 50
+        self.y_max_decel = 50
         self.x_max_vel = 40
         self.y_max_vel = 40
         self.has_goal = False #for trajectory management
@@ -268,6 +268,8 @@ In the event that the position that it is in is not the position that it wasn't,
         self.y.set_pos(new_y)
 
 
+        
+
     def trap_move(self, new_x, new_y, cords = None, threshold = .2, visualizer = None):
 
         if cords is None:
@@ -307,6 +309,7 @@ In the event that the position that it is in is not the position that it wasn't,
         self.x.set_trap_values(x_vel, x_accel, x_decel)
         # print(f"x: {x_vel, x_accel, x_decel}")
         self.y.set_trap_values(y_vel, y_accel, y_decel)
+        self.y2.set_trap_values(y_vel, y_accel, y_decel)
         # print(f"y: {y_vel, y_accel, y_decel}")
 
 
@@ -316,6 +319,7 @@ In the event that the position that it is in is not the position that it wasn't,
 
         self.x.set_pos(new_x, False)
         self.y.set_pos(new_y, False)
+        self.y2.set_pos(new_y, False)
 
         x_pos = self.x.get_pos()
         y_pos = self.y.get_pos()

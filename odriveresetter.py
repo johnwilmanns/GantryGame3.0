@@ -67,74 +67,79 @@ odrv1.axis1.encoder.config.use_index = True
 odrv0.axis0.config.startup_closed_loop_control = False
 odrv0.axis1.config.startup_closed_loop_control = False
 
-odrv0.axis1.motor.config.current_control_bandwidth = 60
-odrv1.axis0.motor.config.current_control_bandwidth = 60
-odrv1.axis1.motor.config.current_control_bandwidth = 60
+odrv0.axis1.motor.config.current_control_bandwidth = 120
+odrv1.axis0.motor.config.current_control_bandwidth = 120
+odrv1.axis1.motor.config.current_control_bandwidth = 120
 
 odrv1.axis0.motor.config.requested_current_range = 60
 odrv1.axis1.motor.config.requested_current_range = 60
 
-odrv1.axis0.motor.config.calibration_current = 20
-odrv1.axis1.motor.config.calibration_current = 20
+# odrv1.axis0.motor.config.calibration_current = 20
+# odrv1.axis1.motor.config.calibration_current = 20
 
-odrv1.axis0.motor.config.current_lim = 30
-odrv1.axis1.motor.config.current_lim = 30
+# odrv1.axis0.motor.config.current_lim = 30
+# odrv1.axis1.motor.config.current_lim = 30
 
-odrv1.axis0.controller.config.vel_limit = 200
-odrv1.axis1.controller.config.vel_limit = 200
+# odrv1.axis0.controller.config.vel_limit = 200
+# odrv1.axis1.controller.config.vel_limit = 200
 
-odrv1.axis0.controller.config.enable_overspeed_error = False
-odrv1.axis1.controller.config.enable_overspeed_error = False
+# odrv1.axis0.controller.config.enable_overspeed_error = False
+# odrv1.axis1.controller.config.enable_overspeed_error = False
 
-odrv1.config.enable_brake_resistor = True
+# odrv1.config.enable_brake_resistor = True
 
+# # odrv1.axis0.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
+# # odrv1.axis1.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
+
+# odrv1.axis0.config.startup_encoder_offset_calibration = False
+# odrv1.axis1.config.startup_encoder_offset_calibration = False
+
+# odrv1.axis0.config.startup_closed_loop_control = False
+# odrv1.axis1.config.startup_closed_loop_control = False
+
+# time.sleep(1)
+
+
+
+# # STARTUP SEQUENCE
+
+# odrv0.axis1.encoder.config.use_index = True
+# odrv1.axis0.encoder.config.use_index = True
+# odrv1.axis1.encoder.config.use_index = True
+
+# # run full state calibration for all axes
+# odrv0.axis1.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
 # odrv1.axis0.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
+# time.sleep(20)
 # odrv1.axis1.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
-
-odrv1.axis0.config.startup_encoder_offset_calibration = False
-odrv1.axis1.config.startup_encoder_offset_calibration = False
-
-odrv1.axis0.config.startup_closed_loop_control = False
-odrv1.axis1.config.startup_closed_loop_control = False
-
-time.sleep(1)
+# time.sleep(20)
+# print("finished cal")
 
 
+# print(odrv0.axis1.encoder.is_ready)
+# print(odrv1.axis0.encoder.is_ready)
+# print(odrv1.axis1.encoder.is_ready)
 
-# STARTUP SEQUENCE
+# odrv0.axis1.encoder.config.pre_calibrated = True
+# odrv1.axis0.encoder.config.pre_calibrated = True
+# odrv1.axis1.encoder.config.pre_calibrated = True
 
-odrv0.axis1.encoder.config.use_index = True
-odrv1.axis0.encoder.config.use_index = True
-odrv1.axis1.encoder.config.use_index = True
-
-# run full state calibration for all axes
-odrv0.axis1.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
-odrv1.axis0.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
-odrv1.axis1.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
-
-time.sleep(15)
-print("finished cal")
-
-odrv0.axis1.encoder.config.pre_calibrated = True
-odrv1.axis0.encoder.config.pre_calibrated = True
-odrv1.axis1.encoder.config.pre_calibrated = True
-
-odrv0.axis1.motor.config.pre_calibrated = True
-odrv1.axis0.motor.config.pre_calibrated = True
-odrv1.axis1.motor.config.pre_calibrated = True
+# odrv0.axis1.motor.config.pre_calibrated = True
+# odrv1.axis0.motor.config.pre_calibrated = True
+# odrv1.axis1.motor.config.pre_calibrated = True
 
 
 
-try:
-    odrv0.save_configuration()
-except Exception as e:
-    pass
-    # print(e)
+# try:
+#     odrv0.save_configuration()
+# except Exception as e:
+#     # pass
+#     print(e)
 
-try:
-    odrv1.save_configuration()
-except Exception as e:
-    pass
-    # print(e)
+# try:
+#     odrv1.save_configuration()
+# except Exception as e:
+#     # pass
+#     print(e)
 
-print("Done")
+# print("Done")
