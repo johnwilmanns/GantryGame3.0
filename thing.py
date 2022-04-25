@@ -26,22 +26,22 @@ while True:
     t0 = time.time()
 
     ret, frame = cam.read()
-    # if not ret:
-    #     print("failed to grab frame")
-    #     break
-    # cv2.imshow("test", frame)
+    if not ret:
+        print("failed to grab frame")
+        break
+    cv2.imshow("test", frame)
 
-    # k = cv2.waitKey(1)
-    # if k%256 == 27:
-    #     # ESC pressed
-    #     print("Escape hit, closing...")
-    #     break
-    # elif k%256 == 32:
-    #     # SPACE pressed
-    #     img_name = "opencv_frame_{}.png".format(img_counter)
-    #     cv2.imwrite(img_name, frame)
-    #     print("{} written!".format(img_name))
-    #     img_counter += 1
+    k = cv2.waitKey(1)
+    if k%256 == 27:
+        # ESC pressed
+        print("Escape hit, closing...")
+        break
+    elif k%256 == 32:
+        # SPACE pressed
+        img_name = "opencv_frame_{}.png".format(img_counter)
+        cv2.imwrite(img_name, frame)
+        print("{} written!".format(img_name))
+        img_counter += 1
     print(f"recording at {1 / (time.time() - t0)}hz")
 cam.release()
 
