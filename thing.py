@@ -45,4 +45,4 @@ while True:
     print(f"recording at {1 / (time.time() - t0)}hz")
 cam.release()
 
-cv2.destroyAllWindows()     
+cv2.destroyAllWindows()
