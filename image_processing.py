@@ -8,12 +8,13 @@ import math
 import posterize
 import utilities
 import rust
+import auto_edge
 
 
 # from test import *
 
 
-def plot_segments(segments, shape = (512 *2, 512 * 2)):
+def plot_segments(segments, shape = (512 *4, 512 * 4)):
     
     
     # img = in_img.copy()
@@ -33,10 +34,10 @@ def plot_segments(segments, shape = (512 *2, 512 * 2)):
             # print(seg[i])
             x1,y1,x2,y2 = int(seg[i][0]*shape[0]), int(seg[i][1]*shape[0]), int(seg[i+1][0]*shape[1]), int(seg[i+1][1]*shape[1])
             
-            cv2.line(img,(x1,y1), (x1,y1), (0,0,0), 4)
-            cv2.line(img,(x2,y2), (x2,y2), (0,0,0), 4)
-            cv2.line(img,(x1,y1),(x2,y2),color,2)
             
+            cv2.line(img,(x1,y1),(x2,y2),color,1)
+            # cv2.line(img,(x1,y1), (x1,y1), (0,0,255), 4)
+            # cv2.line(img,(x2,y2), (x2,y2), (0,0,255), 4)
             
     color = (0,0,255)
     # for i in range(len(segments)-1):
@@ -55,33 +56,38 @@ def plot_segments(segments, shape = (512 *2, 512 * 2)):
 
     
 
-def process_edges_raw(input_img, blur_radius = 7, lower_thresh =0,
-        upper_thresh = 40, bind_dist = 5, area_cut = 2,
-        min_len = 15, q = None, render = False):
+def process_edges_raw(input_img, blur_radius = 7, lower_thresh = None, upper_thresh = None, aperture_size = 7, bind_dist = 5, area_cut = 2,
+        min_len = 15, calc_rogues = True):
 
     t0 = time.time()
     
     gray = cv2.cvtColor(input_img,cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (blur_radius, blur_radius), 0)
 
-    edges = cv2.Canny(gray, lower_thresh, upper_thresh)
+    edges = cv2.Canny(gray, lower_thresh, upper_thresh, apertureSize=aperture_size)
+    # edges = auto_edge.auto_canny(gray, sigma)
+    
+    cv2.imshow("edges", edges)
+    cv2.imwrite("edges.png", edges)
+    # cv2.waitKey(0)
+    
+    # exit(0)
+    # return
+    
     
     # cv2.imshow("edges", edges)
     # cv2.imwrite("thisdontwork.png", edges)
     # cv2.waitKey(0)
-    if render:
-        return edges
+
     edges = edges.astype(bool)
-    
-    
     edges = edges.tolist()
 
 
     max_size = max(input_img.shape[:2])
 
 
-    #TODO add rust method here
-    segments = rust.process_image(edges, area_cut, 3, min_len, bind_dist)
+ 
+    segments = rust.process_image(edges, area_cut, 3, min_len, bind_dist, calc_rogues)
 
     for i, seg in enumerate(segments):
         for j, point in enumerate(seg):
@@ -91,15 +97,13 @@ def process_edges_raw(input_img, blur_radius = 7, lower_thresh =0,
 
 
     
-    print("Finished Edges")
+    # print("Finished Edges")
     
-    if q is not None:
-        q.put(segments)
 
     return segments
 
 def process_shading_raw(input_img, blur_radius = 21, line_dist = 10, theta = None, bind_dist = 20, area_cut = 10,
-        min_len = 0, q = None, render = False):
+        min_len = 0, thresholds = [30, 50, 80]):
 
     splitDistance = 1.5
     
@@ -109,7 +113,7 @@ def process_shading_raw(input_img, blur_radius = 21, line_dist = 10, theta = Non
     
     gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (blur_radius, blur_radius), 0)
-    shades = posterize.get_spinny(gray, line_dist, theta)
+    shades = posterize.get_spinny(gray, line_dist, theta, thresholds)
     
     all_segments = []
     
@@ -129,7 +133,7 @@ def process_shading_raw(input_img, blur_radius = 21, line_dist = 10, theta = Non
 
 
         #TODO add rust method here
-        segments = rust.process_image(edges, area_cut, 3, min_len, bind_dist)
+        segments = rust.process_image(edges, area_cut, 3, min_len, bind_dist, False)
         if not segments:
             print("warning, empty segments list")
             continue;
@@ -145,10 +149,9 @@ def process_shading_raw(input_img, blur_radius = 21, line_dist = 10, theta = Non
 
         all_segments.extend(segments)
         
-    print(f"took {time.time()-t0: .2f} seconds to process edges")
+    print(f"took {time.time()-t0: .2f} seconds to process shading")
     
-    if q is not None:
-        q.put(all_segments)
+    
 
     return all_segments
 

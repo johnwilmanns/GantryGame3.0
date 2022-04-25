@@ -5,7 +5,7 @@ use pyo3::prelude::*;
 
 
 #[pyfunction]
-fn process_image(img: Vec<Vec<bool>>, area_cut: f64, min_pixels: usize, min_len: f64, bind_dist: f64) -> PyResult<Vec<Vec<(usize, usize)>>> {
+fn process_image(img: Vec<Vec<bool>>, area_cut: f64, min_pixels: usize, min_len: f64, bind_dist: f64, calc_rogues: bool) -> PyResult<Vec<Vec<(usize, usize)>>> {
 
     
     // let now = Instant::now();
@@ -28,7 +28,7 @@ fn process_image(img: Vec<Vec<bool>>, area_cut: f64, min_pixels: usize, min_len:
         return Ok(Vec::new());
     }
 
-    let segments = process_edges(img, area_cut, min_pixels, min_len, bind_dist);
+    let segments = process_edges(img, area_cut, min_pixels, min_len, bind_dist, calc_rogues);
 
     // println!("{:?}", segments);
 
@@ -49,7 +49,7 @@ fn rust(_py: Python, m: &PyModule) -> PyResult<()> {
 
 
 
-pub fn process_edges(mut img: Vec<Vec<bool>>, area_cut: f64, min_pixels: usize, min_len: f64, bind_dist: f64)->Vec<Vec<(usize, usize)>>{
+pub fn process_edges(mut img: Vec<Vec<bool>>, area_cut: f64, min_pixels: usize, min_len: f64, bind_dist: f64, calc_rogues: bool)->Vec<Vec<(usize, usize)>>{
 
     let now = Instant::now();
 
@@ -60,7 +60,7 @@ pub fn process_edges(mut img: Vec<Vec<bool>>, area_cut: f64, min_pixels: usize, 
     }
     // println!("endpoints: {:?}", points);
     // let mut path: Vec<(u32,u32)> = Vec::with_capacity(points.len() as usize);
-    let mut sorted_points = sort_pixels(&mut img, &mut points);
+    let mut sorted_points = sort_pixels(&mut img, &mut points, calc_rogues);
     // println!("sorted_points: {:?}", sorted_points);
 
     area_cull(&mut sorted_points, area_cut, min_pixels);
@@ -177,7 +177,7 @@ fn area_cull(segments:&mut Vec<Vec<(usize,usize)>>, area_cut: f64, min_pixels: u
 }
 
 
-fn sort_pixels(img:&mut Vec<Vec<bool>>, endpoints:&mut Vec<(usize, usize)>)->Vec<Vec<(usize,usize)>>{
+fn sort_pixels(img:&mut Vec<Vec<bool>>, endpoints:&mut Vec<(usize, usize)>, calc_rogues: bool)->Vec<Vec<(usize,usize)>>{
 
     
 
@@ -247,7 +247,47 @@ fn sort_pixels(img:&mut Vec<Vec<bool>>, endpoints:&mut Vec<(usize, usize)>)->Vec
             x = pos.0;
             y = pos.1;
         } else {
-            break;
+
+            if !calc_rogues{
+                break;
+            }
+
+            let mut min_dist = std::u32::MAX;
+            let mut min_pos = (std::usize::MAX, std::usize::MAX);
+
+            for (y2, row) in img.iter().enumerate(){
+                for (x2, val) in row.iter().enumerate(){
+                    if *val{
+                        let dist = dist_primitive((x2,y2), (x,y));
+                        if dist < mindist{
+                            min_dist = dist;
+                            min_pos = (x2, y2);
+                            // TODO: remove from endpoints
+                        }
+                    }
+                }
+            }
+
+            if min_dist != std::u32::MAX {
+                // println!("making rogue segment");
+                // println!("breaking at {:?}", (x,y));
+                // if (x,y) != (0,0){
+                //     panic!();
+                // }
+
+                img[min_pos.1][min_pos.0] = false;
+                segment.push(min_pos);
+
+                // segments.push(segment);
+                // segment = Vec::new();
+
+        
+                x = min_pos.0;
+                y = min_pos.1;
+
+            } else {
+                break;
+            }
         }
 
         
@@ -255,18 +295,19 @@ fn sort_pixels(img:&mut Vec<Vec<bool>>, endpoints:&mut Vec<(usize, usize)>)->Vec
     }
 
     // TODO: this is just for debugging, maybe fix this
-    // let mut i = 0;
+    let mut i = 0;
 
-    // for row in img.iter(){
-    //     for val in row.iter(){
-    //         if *val{
-    //             // println!("found hot");
-    //             i+=1;
-    //         }
-    //     }
-    // }
+    for (y, row) in img.iter().enumerate(){
+        for (x, val) in row.iter().enumerate(){
+            if *val{
+                // println!("found hot");
+                // println!("{:?}", (x,y));
+                i+=1;
+            }
+        }
+    }
 
-    // println!("there are {} leftover pixels that will not make it into the final image", i);
+    println!("there are {} leftover pixels that will not make it into the final image", i);
 
     // segments.remove(0);
     if !segment.is_empty(){

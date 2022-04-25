@@ -1,3 +1,4 @@
+from calendar import c
 import math
 import matplotlib
 from matplotlib.pyplot import step
@@ -280,14 +281,20 @@ def calc_path(in_segments, max_accel, max_radius, turn_vel_multiplier, freq):
         multiple_results = [pool.apply_async(calc_seg, (seg, max_accel, max_radius, turn_vel_multiplier, freq)) for seg in in_segments]
         results = [res.get() for res in multiple_results]
 
+
+        segments = [res[0] for res in results]
+        times = [res[1] for res in results]
+        
+        print(f"total time drawing: {sum(times)}s, plus travel: {sum(times)+.2*len(times)}s")
+        
         # stuff = pool.map(calc_seg, (in_segments))
-        return results
+        return segments
 
 def calc_seg(seg, max_accel=1, max_radius=1, turn_vel_multiplier=1, freq=60):
     # print(total_time)
     parts = calc_segment(seg, max_accel, max_radius, turn_vel_multiplier)
     points, seg_time = chunks_to_points(parts, freq)
-    return points
+    return (points, seg_time)
 
 
 
