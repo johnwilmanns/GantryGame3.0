@@ -1,29 +1,96 @@
-from operator import le
+from cv2 import threshold
 import image_processing
 import trajectory_planning
-import run_gantry
-import utilities
+# import run_gantry
+# import utilities
+
+'''Edge Processing Values'''
+EDGE_BLUR_RADIUS = 11
+EDGE_LOWER_THRESHOLD = 10
+EDGE_UPPER_THRESHOLD = 60
+EDGE_APERTURE_SIZE = 3
+EDGE_BIND_DIST = 10
+EDGE_AREA_CUT = 3
+EDGE_MIN_LEN = 10
+EDGE_CALC_ROGUES = True;
+
+
+'''Shading Processing Values'''
+SHADING_BLUR_RADIUS = 3
+SHADING_THRESHOLDS = [10, 30, 50,60,70, 80]
+SHADING_LINE_DIST = 5
+SHADING_BIND_DIST = 40
+SHADING_AREA_CUT = 13
+SHADING_MIN_LEN = 15
+
+
 
 
 def main(input_img):
     
-    segments = image_processing.process_combo_raw(input_img)
-    segments = trajectory_planning.calc_path(segments, 5, .01, 1, 120)
+    print("starting edge processing")
+    segments = []
+    segments = image_processing.process_edges_raw(input_img, 
+                                                    blur_radius = EDGE_BLUR_RADIUS,
+                                                    lower_thresh= EDGE_LOWER_THRESHOLD,
+                                                    upper_thresh= EDGE_UPPER_THRESHOLD,
+                                                    aperture_size= EDGE_APERTURE_SIZE,
+                                                    bind_dist = EDGE_BIND_DIST,
+                                                    area_cut = EDGE_AREA_CUT,
+                                                    min_len = EDGE_MIN_LEN)
     
-    run_gantry.main(segments)
+    print("starting shading processing")
+    segments.extend(image_processing.process_shading_raw(input_img, 
+                                                    blur_radius = SHADING_BLUR_RADIUS, 
+                                                    thresholds = SHADING_THRESHOLDS, 
+                                                    line_dist = SHADING_LINE_DIST, 
+                                                    bind_dist = SHADING_BIND_DIST, 
+                                                    area_cut = SHADING_AREA_CUT, 
+                                                    min_len = SHADING_MIN_LEN))
+
+    
+    # segments = image_processing.process_combo_raw(input_img)
+    # segments = trajectory_planning.calc_path(segments, 5, .01, 1, 120)
+    
+    # run_gantry.main(segments)
+    out_image = image_processing.plot_segments(segments)
+    
+    print(f"{len(segments)} segments found");
+    
+    cv2.imshow("out_image", out_image)
+    
+    segments = trajectory_planning.calc_path(segments, 10, 1, 1, 120)
+    
+    max_x = 0
+    max_y = 0 
+    
+    for seg in segments:
+        for point in seg:
+            max_x = max(max_x, point[0])
+            max_y = max(max_y, point[1])
+            
+    print(f"max x: {max_x}")
+    print(f"max y: {max_y}")    
+    
+    cv2.waitKey(0)
+    
     
 if __name__ == "__main__":
+    
+    
     import cv2
-    filename = "picassopicture.png"
+    filename = "final.jpg"
     input_img = cv2.imread(filename)
-    # input_img = utilities.resize(input_img, 500, 500)
-    input_img = utilities.auto_resize(input_img)
-    segments = image_processing.process_combo_raw(input_img)
-    preview = image_processing.plot_segments(segments)
-    cv2.imshow("preview", preview)
-    cv2.waitKey(0)
-    segments = trajectory_planning.calc_path(segments, 80, 1, 1, 120)
-    print("running gantry")
-    run_gantry.main(segments[:], 120)
+    
+    main(input_img)
+    # # input_img = utilities.resize(input_img, 500, 500)
+
+    # segments = image_processing.process_combo_raw(input_img)
+    # preview = image_processing.plot_segments(segments)
+    # cv2.imshow("preview", preview)
+    # cv2.waitKey(0)
+    # segments = trajectory_planning.calc_path(segments, 80, 1, 1, 120)
+    # print("running gantry")
+    # run_gantry.main(segments[:], 120)
 
     # input_img = utilities.resize(input_img, 800, int(800 * input_img.shape[0] / input_img.shape[1]))

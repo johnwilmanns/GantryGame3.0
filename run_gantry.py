@@ -16,8 +16,19 @@ import time
 askswait = 1
 behind = 0
 
+Y_MAX = 8
+X_MAX = 16
 
-scale_factor = 8 #TODO fix
+X_RES = 1920
+Y_RES = 1080
+
+if X_RES > Y_RES:
+    scale_factor = min(Y_MAX/(Y_RES/X_RES), X_MAX)
+else :
+    scale_factor = min(X_MAX/(X_RES/Y_RES), Y_MAX)
+
+# scale_factor = 8
+
 offset = (1,.5)
 
 def distance(x1, y1, x2, y2):
