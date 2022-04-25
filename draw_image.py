@@ -57,7 +57,7 @@ def main(input_img):
     
     print(f"{len(segments)} segments found");
     
-    cv2.imshow("out_image", out_image)
+    # cv2.imshow("out_image", out_image)
     
     segments = trajectory_planning.calc_path(segments, 10, 1, 1, 120)
     
@@ -72,11 +72,11 @@ def main(input_img):
     print(f"max x: {max_x}")
     print(f"max y: {max_y}")    
     
-    cv2.waitKey(0)
+    # cv2.waitKey(0)
 
     if input("run gantry? (y/n)") == "y":
         import run_gantry
-        run_gantry.main(segments)
+        run_gantry.main(segments, 120)
 
     
     
