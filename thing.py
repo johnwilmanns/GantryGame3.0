@@ -1,5 +1,6 @@
 import cv2
 import time
+import utilities
 
 cam = cv2.VideoCapture(0, cv2.CAP_V4L)
 cam.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
@@ -25,11 +26,13 @@ img_counter = 0
 while True:
     t0 = time.time()
 
+    
     ret, frame = cam.read()
+    
     if not ret:
         print("failed to grab frame")
         break
-    cv2.imshow("test", frame)
+    cv2.imshow("test", utilities.resize(frame, 960, 540))
 
     k = cv2.waitKey(1)
     if k%256 == 27:
@@ -38,7 +41,7 @@ while True:
         break
     elif k%256 == 32:
         # SPACE pressed
-        img_name = "opencv_frame_{}.png".format(img_counter)
+        img_name = "2opencv_frame_{}.png".format(img_counter)
         cv2.imwrite(img_name, frame)
         print("{} written!".format(img_name))
         img_counter += 1
