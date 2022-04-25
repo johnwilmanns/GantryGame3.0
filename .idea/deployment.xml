@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="soft-dev@soft-dev-00.local:22 password" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" autoUpload="Always" serverName="soft-dev@gantry-game.local:22 password" createEmptyFolders="true" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
-      <paths name="soft-dev@soft-dev-00.local:22 password">
+      <paths name="soft-dev@gantry-game.local:22 password">
         <serverdata>
           <mappings>
-            <mapping deploy="/home/soft-dev/Documents/john_stupid_upload_folder" local="$PROJECT_DIR$" />
+            <mapping deploy="/home/soft-dev/Documents/GantryGame3.0" local="$PROJECT_DIR$" />
           </mappings>
         </serverdata>
       </paths>

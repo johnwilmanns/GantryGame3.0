@@ -67,7 +67,7 @@ def process_edges_raw(input_img, blur_radius = 7, lower_thresh = None, upper_thr
     edges = cv2.Canny(gray, lower_thresh, upper_thresh, apertureSize=aperture_size)
     # edges = auto_edge.auto_canny(gray, sigma)
     
-    cv2.imshow("edges", edges)
+    # cv2.imshow("edges", edges)
     cv2.imwrite("edges.png", edges)
     # cv2.waitKey(0)
     

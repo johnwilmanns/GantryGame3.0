@@ -73,6 +73,11 @@ def main(input_img):
     print(f"max y: {max_y}")    
     
     cv2.waitKey(0)
+
+    if input("run gantry? (y/n)") == "y":
+        import run_gantry
+        run_gantry.main(segments)
+
     
     
 if __name__ == "__main__":
