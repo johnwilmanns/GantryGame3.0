@@ -1,3 +1,13 @@
+from re import X
+from kivy.config import Config
+Config.set('graphics', 'fullscreen', 'auto')
+
+Config.set('graphics', 'width', '1280')
+Config.set('graphics', 'height', '800')
+
+Config.write()
+
+
 from kivy.app import App
 from kivy.uix.button import Button
 from kivy.uix.floatlayout import FloatLayout
@@ -14,7 +24,14 @@ import time
 import preview_image
 import image_processing
 import trajectory_planning
-import run_gantry
+
+
+# Config.set('graphics', 'width', '800')
+# Config.set('graphics', 'height', '800')
+
+
+
+# import run_gantry
 
 '''
 GLOBALS
@@ -72,18 +89,22 @@ class CamApp(App):  # build for kivy display
     print_button_color = (0, 1, 0, button_paused_shade)
 
     button_font_size = 88
+    Window.clearcolor = (1, 1, 1, 1)
 
     disable_all_buttons = False
+    
+    
 
     # extra
     x = Window.size[0]
     y = Window.size[1]
-    if isSamir:
-        size_x = x/800
-        size_y = 120/y
-    elif isNikhil:
-        size_x  = x/1600
-        size_y = y/5900
+
+    # size_x = x/800
+    # size_y = 120/y
+
+    size_x = 1
+    size_y = .1
+
     '''
     End Colors and Shading
     '''
@@ -173,7 +194,10 @@ class CamApp(App):  # build for kivy display
             # print(self.segments)
             freq = 120
             segments = trajectory_planning.calc_path(self.segments, 10, 1, 1, freq)
-            run_gantry.main(segments, freq)
+            try:
+                run_gantry.main(segments, freq)
+            except Exception as e:
+                print(f'error \"n{e}\" encountered while printing')
             sleep(5)
             ready_to_print()
 
@@ -189,7 +213,7 @@ class CamApp(App):  # build for kivy display
                                 background_color=self.picture_button_color, pos=(0, 0),
                                 disabled=self.disable_all_buttons)
 
-        print_button = Button(pos=(0, 500), size_hint_x=self.size_x, size_hint_y=self.size_y,
+        print_button = Button(pos_hint={'top':1}, size_hint_x=self.size_x, size_hint_y=self.size_y,
                               background_color=self.print_button_color,
                               on_press=thread_printing, font_size=self.button_font_size, text=self.print_button_text,
                               disabled=self.disable_all_buttons)

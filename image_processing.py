@@ -14,7 +14,7 @@ import auto_edge
 # from test import *
 
 
-def plot_segments(segments, shape = (512 *4, 512 * 4)):
+def plot_segments(segments, shape = (540*2, 960*2)):
     
     
     # img = in_img.copy()
@@ -32,12 +32,12 @@ def plot_segments(segments, shape = (512 *4, 512 * 4)):
         for i in range(len(seg)-1):
 
             # print(seg[i])
-            x1,y1,x2,y2 = int(seg[i][0]*shape[0]), int(seg[i][1]*shape[0]), int(seg[i+1][0]*shape[1]), int(seg[i+1][1]*shape[1])
+            x1,y1,x2,y2 = int(seg[i][0]*shape[1]), int(seg[i][1]*shape[1]), int(seg[i+1][0]*shape[1]), int(seg[i+1][1]*shape[1])
             
             
             cv2.line(img,(x1,y1),(x2,y2),color,1)
-            cv2.line(img,(x1,y1), (x1,y1), (0,0,255), 4)
-            cv2.line(img,(x2,y2), (x2,y2), (0,0,255), 4)
+            # cv2.line(img,(x1,y1), (x1,y1), (0,0,255), 4)
+            # cv2.line(img,(x2,y2), (x2,y2), (0,0,255), 4)
             
     color = (0,0,255)
     # for i in range(len(segments)-1):
@@ -56,8 +56,8 @@ def plot_segments(segments, shape = (512 *4, 512 * 4)):
 
     
 
-def process_edges_raw(input_img, blur_radius = 7, lower_thresh = None, upper_thresh = None, aperture_size = 7, bind_dist = 5, area_cut = 2,
-        min_len = 15, calc_rogues = True):
+def process_edges_raw(input_img, blur_radius = 11, lower_thresh = 0, upper_thresh = 40, aperture_size = 3, bind_dist = 10, area_cut = 3,
+        min_len = 10, calc_rogues = True):
 
     t0 = time.time()
     
@@ -102,8 +102,8 @@ def process_edges_raw(input_img, blur_radius = 7, lower_thresh = None, upper_thr
 
     return segments
 
-def process_shading_raw(input_img, blur_radius = 21, line_dist = 10, theta = None, bind_dist = 20, area_cut = 10,
-        min_len = 0, thresholds = [30, 50, 80]):
+def process_shading_raw(input_img, blur_radius = 21, line_dist = 5, theta = None, bind_dist = 10, area_cut = 10,
+        min_len = 15, thresholds = [10, 30, 50, 80]):
 
     splitDistance = 1.5
     

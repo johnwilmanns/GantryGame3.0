@@ -6,8 +6,8 @@ import trajectory_planning
 
 '''Edge Processing Values'''
 EDGE_BLUR_RADIUS = 11
-EDGE_LOWER_THRESHOLD = 10
-EDGE_UPPER_THRESHOLD = 60
+EDGE_LOWER_THRESHOLD = 0
+EDGE_UPPER_THRESHOLD = 40
 EDGE_APERTURE_SIZE = 3
 EDGE_BIND_DIST = 10
 EDGE_AREA_CUT = 3
@@ -16,11 +16,11 @@ EDGE_CALC_ROGUES = True;
 
 
 '''Shading Processing Values'''
-SHADING_BLUR_RADIUS = 3
-SHADING_THRESHOLDS = [10, 30, 50,60,70, 80]
+SHADING_BLUR_RADIUS = 21
+SHADING_THRESHOLDS = [10, 30, 50,60]
 SHADING_LINE_DIST = 5
-SHADING_BIND_DIST = 40
-SHADING_AREA_CUT = 13
+SHADING_BIND_DIST = SHADING_LINE_DIST * 2
+SHADING_AREA_CUT = 10
 SHADING_MIN_LEN = 15
 
 
@@ -57,26 +57,18 @@ def main(input_img):
     
     print(f"{len(segments)} segments found");
     
-    # cv2.imshow("out_image", out_image)
+    # 
     
-    segments = trajectory_planning.calc_path(segments, 10, 1, 1, 120)
-    
-    max_x = 0
-    max_y = 0 
-    
-    for seg in segments:
-        for point in seg:
-            max_x = max(max_x, point[0])
-            max_y = max(max_y, point[1])
-            
-    print(f"max x: {max_x}")
-    print(f"max y: {max_y}")    
+    segments = trajectory_planning.calc_path(segments, 10, 1, 1, 120)   
     
     # cv2.waitKey(0)
 
-    if input("run gantry? (y/n)") == "y":
-        import run_gantry
-        run_gantry.main(segments, 120)
+    # if input("run gantry? (y/n)") == "y":
+    #     import run_gantry
+    #     run_gantry.main(segments, 120)
+    # else:
+    cv2.imshow("out_image", out_image)
+    cv2.waitKey(0)
 
     
     
@@ -84,7 +76,7 @@ if __name__ == "__main__":
     
     
     import cv2
-    filename = "final.jpg"
+    filename = "2opencv_frame_8.png"
     input_img = cv2.imread(filename)
     
     main(input_img)
