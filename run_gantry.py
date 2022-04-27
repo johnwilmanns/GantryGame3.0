@@ -109,6 +109,7 @@ def main(segments, freq):
     print("started")
     while not servo.is_closed():
         time.sleep(.1)
+        print("waiting for flush")
 
     servo.lock_close()
 
