@@ -328,13 +328,13 @@ In the event that the position that it is in is not the position that it wasn't,
         x_pos = self.x.get_pos()
         y_pos = self.y.get_pos()
 
-        t0 = time.time()
+        t0 = time.perf_counter()
 
         while abs(x_pos - new_x) > threshold or abs(y_pos - new_y) > threshold:
             x_pos = self.x.get_pos()
             y_pos = self.y.get_pos()
 
-            if t0-time.time() > max_time:
+            if time.perf_counter() - t0 > max_time:
                 raise MoveError("Movement timed out")
 
 
