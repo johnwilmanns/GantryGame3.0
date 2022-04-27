@@ -217,7 +217,7 @@ class CamApp(App):  # build for kivy display
             print('start print here')
             # print(self.segments)
             freq = 120
-            segments = trajectory_planning.calc_path(self.segments, 40, 1, 1, freq)
+            segments = trajectory_planning.calc_path(self.segments, 10, 1, 1, freq)
             try:
                 run_gantry.main(segments, freq)
             except Exception as e:
