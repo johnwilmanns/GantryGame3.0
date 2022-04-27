@@ -1,9 +1,12 @@
 from re import X
 from kivy.config import Config
-Config.set('graphics', 'fullscreen', 'auto')
+Config.set('graphics', 'fullscreen', '0')
 
-Config.set('graphics', 'width', '1280')
-Config.set('graphics', 'height', '800')
+# Config.set('graphics', 'width', '1280')
+# Config.set('graphics', 'height', '800')
+
+# Config.set('graphics', 'width', '1280')
+# Config.set('graphics', 'height', '800')
 
 Config.write()
 
@@ -31,7 +34,7 @@ import trajectory_planning
 
 
 
-# import run_gantry
+import run_gantry
 
 '''
 GLOBALS
@@ -91,6 +94,7 @@ class CamApp(App):  # build for kivy display
     button_font_size = 88
     Window.clearcolor = (1, 1, 1, 1)
 
+
     disable_all_buttons = False
     
     
@@ -109,6 +113,13 @@ class CamApp(App):  # build for kivy display
     End Colors and Shading
     '''
 
+    # def update_image(self):
+    #     while True:
+    #         self.current_image = self.capture.read()[1]
+
+
+
+
     def build(self):
 
         # start cv2stuff
@@ -116,6 +127,19 @@ class CamApp(App):  # build for kivy display
         layout = FloatLayout()
         layout.add_widget(self.img1)
         self.capture = cv2.VideoCapture(0)
+
+        self.capture.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
+
+        self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+        self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+
+        width = self.capture.get(cv2.CAP_PROP_FRAME_WIDTH)
+        height = self.capture.get(cv2.CAP_PROP_FRAME_HEIGHT)
+        print(width, height)
+
+        # assert width == 1920 and height == 1080, "the res is wrong"
+
+        self.current_image = None
         self.print_image = None
         self.segments = None
         self.final_picture = None
@@ -193,7 +217,7 @@ class CamApp(App):  # build for kivy display
             print('start print here')
             # print(self.segments)
             freq = 120
-            segments = trajectory_planning.calc_path(self.segments, 10, 1, 1, freq)
+            segments = trajectory_planning.calc_path(self.segments, 40, 1, 1, freq)
             try:
                 run_gantry.main(segments, freq)
             except Exception as e:
@@ -238,31 +262,18 @@ class CamApp(App):  # build for kivy display
         return layout
 
     def update(self, dt):
+        print(1/dt)
         global final_picture
+
         ret, frame = self.capture.read()
+
         if not pause:
-            final_picture = np.fliplr(frame)
-            # final_picture = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
-            # cv2.imwrite("/home/soft-dev/Documents/GantryGame3.0/picassopicture.png", final_picture)
-            # cv2.imwrite("picassopicture.png", final_picture)
-            
-            # preview_image.main(final_picture)
-            
-            # picture.release()
+            buf1 = cv2.flip(frame, 1)
+            buf2 = cv2.flip(buf1, 0)
 
-            # final_picture = image_processing.render_combo(final_picture)
-            # final_picture = cv2.cvtColor(final_picture,cv2.COLOR_GRAY2RGB)
+            buf = buf2.tostring()
 
-            
-            # segments = image_processing.process_combo_raw(final_picture)
-            # final_picture = image_processing.plot_segments(segments)
-
-        
-            
-            buf1 = np.flipud(final_picture)
-            buf2 = np.fliplr(buf1)
-            buf = buf2.tobytes()
-            texture1 = Texture.create(size=(final_picture.shape[1], final_picture.shape[0]), colorfmt='bgr')  # see https://kivy.org/doc/stable/api-kivy.graphics.texture.html
+            texture1 = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')  # see https://kivy.org/doc/stable/api-kivy.graphics.texture.html
             texture1.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
             self.img1.texture = texture1
         if pause:
@@ -275,11 +286,13 @@ class CamApp(App):  # build for kivy display
                 texture1.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
                 self.img1.texture = texture1
             except NameError:  # occurs because variable final_image is not created yet (instantaneously)
-                # print("test")
+                print("test")
                 pass
 
 
 if __name__ == '__main__':
+    Window.size = (1280, 800)
+    Window.maximize()
     CamApp().run()
     cv2.destroyAllWindows()
 '''

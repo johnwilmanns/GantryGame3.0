@@ -5,8 +5,11 @@ import time
 import math
 from odrive.utils import *
 from odrive.enums import *
-class Gantry:
 
+class MoveError(Exception):
+    pass
+
+class Gantry:
     def __init__(self):
         print("make sure the gantry is on")
         self.odrv1_serial = "20793595524B" # Previously Xavier
@@ -53,12 +56,12 @@ class Gantry:
         print("starting up")
         # self.dump_errors()
         
-        self.x.axis.controller.config.vel_limit = 40
+        self.x.axis.controller.config.vel_limit = 400
         self.x.axis.controller.config.enable_overspeed_error = False
 
-        self.y.axis.controller.config.vel_limit = 40
+        self.y.axis.controller.config.vel_limit = 400
         self.y.axis.controller.config.enable_overspeed_error = False
-        self.y2.axis.controller.config.vel_limit = 40
+        self.y2.axis.controller.config.vel_limit = 400
         self.y2.axis.controller.config.enable_overspeed_error = False
         
         # for axis in self.axes():
@@ -270,7 +273,7 @@ In the event that the position that it is in is not the position that it wasn't,
 
         
 
-    def trap_move(self, new_x, new_y, cords = None, threshold = .2, visualizer = None):
+    def trap_move(self, new_x, new_y, cords = None, threshold = .2, max_time = 1):
 
         if cords is None:
             x_pos = self.x.get_pos()
@@ -281,36 +284,37 @@ In the event that the position that it is in is not the position that it wasn't,
 
 
         # the ratio is the x to the y movement distance
-        t0 = time.time()
-        ratio = abs((new_x - x_pos) / (new_y - y_pos))
-        # print(ratio)
-        x_accel = self.x_max_accel
-        y_accel = x_accel / ratio
-        if y_accel > self.y_max_accel:
-            y_accel = self.y_max_accel
-            x_accel = y_accel * ratio
-
-        x_decel = self.x_max_decel
-        y_decel = x_decel / ratio
-
-        if y_decel > self.y_max_decel:
-            y_decel = self.y_max_decel
-            x_decel = y_decel * ratio
-
-        x_vel = self.x_max_vel
-        y_vel = x_vel / ratio
-
-        if y_vel > self.y_max_vel:
-            y_vel = self.y_max_vel
-            x_vel = y_vel * ratio
-        # print("Time taken to calculate ratios:")
-        # print(time.time() - t0)
         # t0 = time.time()
-        self.x.set_trap_values(x_vel, x_accel, x_decel)
-        # print(f"x: {x_vel, x_accel, x_decel}")
-        self.y.set_trap_values(y_vel, y_accel, y_decel)
-        self.y2.set_trap_values(y_vel, y_accel, y_decel)
-        # print(f"y: {y_vel, y_accel, y_decel}")
+        # ratio = abs((new_x - x_pos) / (new_y - y_pos))
+        # # print(ratio)
+        # x_accel = self.x_max_accel
+        # y_accel = x_accel / ratio
+        # if y_accel > self.y_max_accel:
+        #     y_accel = self.y_max_accel
+        #     x_accel = y_accel * ratio
+        #
+        # x_decel = self.x_max_decel
+        # y_decel = x_decel / ratio
+        #
+        # if y_decel > self.y_max_decel:
+        #     y_decel = self.y_max_decel
+        #     x_decel = y_decel * ratio
+        #
+        # x_vel = self.x_max_vel
+        # y_vel = x_vel / ratio
+        #
+        # if y_vel > self.y_max_vel:
+        #     y_vel = self.y_max_vel
+        #     x_vel = y_vel * ratio
+
+        self.x.set_trap_values(self.x_max_accel, self.x_max_vel, self.x_max_decel)
+        self.y.set_trap_values(self.y_max_accel, self.y_max_vel, self.y_max_decel)
+        self.y2.set_trap_values(self.y_max_accel, self.y_max_vel, self.y_max_decel)
+
+        # self.x.set_trap_values(x_vel, x_accel, x_decel)
+        # self.y.set_trap_values(y_vel, y_accel, y_decel)
+        # self.y2.set_trap_values(y_vel, y_accel, y_decel)
+
 
 
         # print("time taken to update trap vals")
@@ -324,18 +328,17 @@ In the event that the position that it is in is not the position that it wasn't,
         x_pos = self.x.get_pos()
         y_pos = self.y.get_pos()
 
-        if visualizer == None:
-            while abs(x_pos - new_x) > threshold or abs(y_pos - new_y) > threshold:
-                x_pos = self.x.get_pos()
-                y_pos = self.y.get_pos()
+        t0 = time.time()
 
-        else:
-            while abs(x_pos - new_x) > threshold or abs(y_pos - new_y) > threshold:
-                x_pos = self.x.get_pos()
-                y_pos = self.y.get_pos()
-            visualizer.put([x_pos,y_pos])
+        while abs(x_pos - new_x) > threshold or abs(y_pos - new_y) > threshold:
+            x_pos = self.x.get_pos()
+            y_pos = self.y.get_pos()
 
-        return x_pos, y_pos
+            if t0-time.time() > max_time:
+                raise MoveError("Movement timed out")
+
+
+
 
 
     def set_pos_noblock(self, x = -1, y = -1):

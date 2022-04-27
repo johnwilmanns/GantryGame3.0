@@ -10,11 +10,11 @@ import trajectory_planning
 import servo
 from servo import pen_up, pen_down
 
-from gantry import Gantry
+from gantry import Gantry, MoveError
 import pickle
 import time
-askswait = 1
-behind = 0
+
+
 
 Y_MAX = 8
 X_MAX = 16
@@ -29,20 +29,21 @@ else :
 
 # scale_factor = 8
 
-offset = (1,.5)
+# offset = (1,.5)
+
 
 def distance(x1, y1, x2, y2):
     return (((x2-x1) ** 2 + (y2 - y1) ** 2) ** .5) 
 # @timeit
 def move(point):
-    
+
+
     x,y = point
     x *= scale_factor
     y *= scale_factor
 
 
-    x += offset[0]
-    y += offset[1]
+
 
 
 
@@ -55,8 +56,6 @@ def blocked_move(point):
     y *= scale_factor
 
 
-    x += offset[0]
-    y += offset[1]
 
 
 
@@ -105,7 +104,7 @@ gantry.startup()
 # servo.set_down()
 
 def main(segments, freq):
-    
+    failed_move = False
     
     print("started")
 
@@ -153,7 +152,33 @@ def main(segments, freq):
     for i, seg in enumerate(segments):
         print(f"Currently on segment {i}/{len(segments)}")
         t0 = time.perf_counter()
-        blocked_move(seg[0])
+
+        try:
+            blocked_move(seg[0])
+        except MoveError:
+            if not failed_move:
+                print("failed move")
+                failed_move = True
+                continue
+            else:
+                print("failed move again")
+                # log here!
+                # gantry.dump_errors()
+                # gantry.clear_errors()
+                servo.pen_high_up()
+                gantry.startup()
+                gantry.enable_motors()
+                failed_move = False
+
+                try:
+                    blocked_move(seg[0])
+                except MoveError:
+                    print("failed for 3rd time, exiting")
+                    break
+
+
+
+
         print("finsheb dlocking move")
         # print(seg[0])
         pen_down()
@@ -205,8 +230,8 @@ def main(segments, freq):
         plt.plot(deltas)
         plt.show()
         
-    plot_deltas()
-
+    # plot_deltas()
+    servo.pen_high_up()
 
     
 

@@ -14,7 +14,7 @@ if FULL_RES:
 width = cam.get(cv2.CAP_PROP_FRAME_WIDTH)
 height = cam.get(cv2.CAP_PROP_FRAME_HEIGHT)
 
-# assert width == 1920 and height == 1080, "the res is wrong"
+assert width == 1920 and height == 1080, "the res is wrong"
 
 
 print(width, height)

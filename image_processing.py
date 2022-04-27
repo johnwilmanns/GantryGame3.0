@@ -56,7 +56,7 @@ def plot_segments(segments, shape = (540*2, 960*2)):
 
     
 
-def process_edges_raw(input_img, blur_radius = 11, lower_thresh = 0, upper_thresh = 40, aperture_size = 3, bind_dist = 10, area_cut = 3,
+def process_edges_raw(input_img, blur_radius = 11, lower_thresh = 0, upper_thresh = 20, aperture_size = 3, bind_dist = 10, area_cut = 3,
         min_len = 10, calc_rogues = True):
 
     t0 = time.time()

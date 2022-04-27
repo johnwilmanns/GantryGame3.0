@@ -7,7 +7,7 @@ import trajectory_planning
 '''Edge Processing Values'''
 EDGE_BLUR_RADIUS = 11
 EDGE_LOWER_THRESHOLD = 0
-EDGE_UPPER_THRESHOLD = 40
+EDGE_UPPER_THRESHOLD = 30
 EDGE_APERTURE_SIZE = 3
 EDGE_BIND_DIST = 10
 EDGE_AREA_CUT = 3
@@ -40,12 +40,12 @@ def main(input_img):
                                                     min_len = EDGE_MIN_LEN)
     
     print("starting shading processing")
-    segments.extend(image_processing.process_shading_raw(input_img, 
-                                                    blur_radius = SHADING_BLUR_RADIUS, 
-                                                    thresholds = SHADING_THRESHOLDS, 
-                                                    line_dist = SHADING_LINE_DIST, 
-                                                    bind_dist = SHADING_BIND_DIST, 
-                                                    area_cut = SHADING_AREA_CUT, 
+    segments.extend(image_processing.process_shading_raw(input_img,
+                                                    blur_radius = SHADING_BLUR_RADIUS,
+                                                    thresholds = SHADING_THRESHOLDS,
+                                                    line_dist = SHADING_LINE_DIST,
+                                                    bind_dist = SHADING_BIND_DIST,
+                                                    area_cut = SHADING_AREA_CUT,
                                                     min_len = SHADING_MIN_LEN))
 
     

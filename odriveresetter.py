@@ -41,13 +41,18 @@ odrv1.axis1.controller.config.vel_integrator_gain = 1.9
 odrv0.axis0.motor.config.current_lim = 0
 odrv0.axis1.motor.config.current_lim = 20
 
-odrv0.axis0.controller.config.vel_limit = 200
-odrv0.axis1.controller.config.vel_limit = 200
+odrv0.axis0.controller.config.vel_limit = 2000
+odrv0.axis1.controller.config.vel_limit = 2000
+
+odrv1.axis0.controller.config.vel_limit = 2000
+odrv1.axis1.controller.config.vel_limit = 2000
 
 
 
 odrv0.axis0.controller.config.enable_overspeed_error = False
 odrv0.axis1.controller.config.enable_overspeed_error = False
+odrv1.axis0.controller.config.enable_overspeed_error = False
+odrv1.axis1.controller.config.enable_overspeed_error = False
 
 odrv0.config.enable_brake_resistor = True
 odrv1.config.enable_brake_resistor = True
