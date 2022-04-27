@@ -60,7 +60,7 @@ class CamApp(App):  # build for kivy display
         # picture = cv2.VideoCapture(0)
         
         ret, frame = picture.read()
-        final_picture = np.fliplr(frame)
+        # final_picture = np.fliplr(frame)
         # final_picture = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
         # cv2.imwrite("/home/soft-dev/Documents/GantryGame3.0/picassopicture.png", final_picture)
         # cv2.imwrite("picassopicture.png", final_picture)
@@ -69,12 +69,12 @@ class CamApp(App):  # build for kivy display
         
         # picture.release()
         pause = True
-        segments = image_processing.process_combo_raw(final_picture)
+        segments = image_processing.process_combo_raw(frame)
         self.segments = segments
     #     segments = trajectory_planning.calc_path(segments, 5, .01, 1, 120)
         self.final_picture = image_processing.plot_segments(segments) 
         
-        return final_picture
+        return self.final_picture
     
     global isSamir, isNikhil
     '''
@@ -139,8 +139,6 @@ class CamApp(App):  # build for kivy display
 
         # assert width == 1920 and height == 1080, "the res is wrong"
 
-        self.current_image = None
-        self.print_image = None
         self.segments = None
         self.final_picture = None
         Clock.schedule_interval(self.update, 1.0 / 33.0)
@@ -201,7 +199,7 @@ class CamApp(App):  # build for kivy display
             # self.capture.release()
 
             print('pic taken, see picassopicture.jpg')
-            self.print_image = self.take_picture(self.capture)
+            self.take_picture(self.capture)
             # Thread(target=take_picture, args=(self.capture,)).start()
             # take_picture()
 
@@ -263,7 +261,7 @@ class CamApp(App):  # build for kivy display
 
     def update(self, dt):
         print(1/dt)
-        global final_picture
+        # global final_picture
 
         ret, frame = self.capture.read()
 
@@ -278,8 +276,8 @@ class CamApp(App):  # build for kivy display
             self.img1.texture = texture1
         if pause:
             try:
-                buf1 = np.flipud(self.final_picture)
-                buf2 = np.fliplr(buf1)
+                buf1 = cv2.flip(self.final_picture, 1)
+                buf2 = cv2.flip(buf1, 0)
                 buf = buf2.tobytes()
                 cv2.destroyAllWindows()
                 texture1 = Texture.create(size=(self.final_picture.shape[1], self.final_picture.shape[0]), colorfmt='bgr')

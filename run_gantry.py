@@ -60,7 +60,7 @@ def blocked_move(point):
 
 
     # gantry.set_po-s(x,y) #
-    gantry.trap_move(x,y, threshold=.05) #todo tune thresh
+    gantry.trap_move(x,y) #todo tune thresh
     
     gantry.x.axis.controller.config.input_mode = INPUT_MODE_POS_FILTER
     gantry.y.axis.controller.config.input_mode = INPUT_MODE_POS_FILTER
@@ -107,6 +107,10 @@ def main(segments, freq):
     failed_move = False
     
     print("started")
+    while not servo.is_closed():
+        time.sleep(.1)
+
+    servo.lock_close()
 
 
     # while True:
@@ -232,7 +236,10 @@ def main(segments, freq):
         
     # plot_deltas()
     servo.pen_high_up()
+    blocked_move((0,0))
+    gantry.idle()
 
+    servo.lock_open()
     
 
 if __name__ == "__main__":

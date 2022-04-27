@@ -138,12 +138,13 @@ class Gantry:
         yield self.y2
         yield self.y
 
-
+    def idle(self):
+        for axis in self.axes():
+            axis.axis.requested_state = AXIS_STATE_IDLE
 
     def calibrate(self):
         
-        for axis in self.axes():
-            axis.axis.requested_state = AXIS_STATE_IDLE
+        self.idle()
 
         print("warming up sphincter")
         if not self.x.check_status():
@@ -273,7 +274,7 @@ In the event that the position that it is in is not the position that it wasn't,
 
         
 
-    def trap_move(self, new_x, new_y, cords = None, threshold = .2, max_time = 1):
+    def trap_move(self, new_x, new_y, cords = None, threshold = .05, escape_threshold = .2, max_time = 1):
 
         if cords is None:
             x_pos = self.x.get_pos()
@@ -327,7 +328,6 @@ In the event that the position that it is in is not the position that it wasn't,
 
         x_pos = self.x.get_pos()
         y_pos = self.y.get_pos()
-
         t0 = time.perf_counter()
 
         while abs(x_pos - new_x) > threshold or abs(y_pos - new_y) > threshold:
@@ -335,6 +335,8 @@ In the event that the position that it is in is not the position that it wasn't,
             y_pos = self.y.get_pos()
 
             if time.perf_counter() - t0 > max_time:
+                if abs(x_pos - new_x) < escape_threshold and abs(y_pos - new_y) < escape_threshold:
+                    break
                 raise MoveError("Movement timed out")
 
 
