@@ -1,4 +1,3 @@
-from re import X
 from kivy.config import Config
 Config.set('graphics', 'fullscreen', '0')
 
@@ -19,22 +18,24 @@ from kivy.uix.image import Image
 from kivy.clock import Clock
 from kivy.graphics.texture import Texture
 from threading import Thread
+from multiprocessing import Process
 import cv2
 import numpy as np  # used to flip array for properly mirrored output and picture taken
 from time import sleep  # not needed, but could become necessary
 import time
 # import draw_image
-import preview_image
+
 import image_processing
 import trajectory_planning
 
+print("done importing")
 
 # Config.set('graphics', 'width', '800')
 # Config.set('graphics', 'height', '800')
 
 
 
-import run_gantry
+# import run_gantry
 
 '''
 GLOBALS
@@ -190,7 +191,11 @@ class CamApp(App):  # build for kivy display
         def take_picture_button(instance):  # changes ui, starts thread to take picture, as defined in GLOBALS
             remove_button(picture_button)
             add_button(retake_button)
-            add_button(print_button)
+            # add_button(print_button)
+            
+            retake_button.text = "Processing..."
+            # remove_button(print_button)
+            
 
             print(self.x)
             print(self.y)
@@ -198,10 +203,20 @@ class CamApp(App):  # build for kivy display
             # cv2.destroyAllWindows()
             # self.capture.release()
 
-            print('pic taken, see picassopicture.jpg')
-            self.take_picture(self.capture)
-            # Thread(target=take_picture, args=(self.capture,)).start()
+            # time.sleep(2)
+
+            print('pic taken')
+            
+            # Process(target=self.take_picture, args=(self.capture,)).start()
+            # self.take_picture(self.capture)
+            # Thread(target=self.take_picture, args=(self.capture,)).start()
             # take_picture()
+            
+        def take_picture_button_2(instance):
+            self.take_picture(self.capture)
+            add_button(print_button)
+            
+            retake_button.text = "Retake Image"
 
         def retake_picture_button(instance):  # changes ui accordingly, pauses the camera
             remove_button(retake_button)
@@ -212,14 +227,15 @@ class CamApp(App):  # build for kivy display
 
 
         def printing():
-            print('start print here')
+            print('calculating traj')
             # print(self.segments)
             freq = 120
             segments = trajectory_planning.calc_path(self.segments, 10, 1, 1, freq)
             try:
+                print("handing off to run gantry")
                 run_gantry.main(segments, freq)
             except Exception as e:
-                print(f'error \"n{e}\" encountered while printing')
+                print(f'error \"{e}\" encountered while printing')
             sleep(5)
             ready_to_print()
 
@@ -231,7 +247,7 @@ class CamApp(App):  # build for kivy display
 
 
         picture_button = Button(size_hint_x=self.size_x, size_hint_y=self.size_y, text=self.picture_button_text,
-                                font_size=self.button_font_size, on_press=take_picture_button,
+                                font_size=self.button_font_size, on_press=take_picture_button, on_release=take_picture_button_2,
                                 background_color=self.picture_button_color, pos=(0, 0),
                                 disabled=self.disable_all_buttons)
 
@@ -260,7 +276,7 @@ class CamApp(App):  # build for kivy display
         return layout
 
     def update(self, dt):
-        print(1/dt)
+        # print(1/dt)
         # global final_picture
 
         ret, frame = self.capture.read()
@@ -276,6 +292,7 @@ class CamApp(App):  # build for kivy display
             self.img1.texture = texture1
         if pause:
             try:
+                
                 buf1 = cv2.flip(self.final_picture, 1)
                 buf2 = cv2.flip(buf1, 0)
                 buf = buf2.tobytes()
