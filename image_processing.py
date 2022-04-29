@@ -102,7 +102,7 @@ def process_edges_raw(input_img, blur_radius = 11, lower_thresh = 0, upper_thres
 
     return segments
 
-def process_shading_raw(input_img, blur_radius = 21, line_dist = 5, theta = 0.1, bind_dist = 10, area_cut = 10,
+def process_shading_raw(input_img, blur_radius = 21, line_dist = 5, theta = None, bind_dist = 10, area_cut = 10,
         min_len = 15, thresholds = [10, 30, 50, 80]):
 
     splitDistance = 1.5
