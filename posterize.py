@@ -172,7 +172,7 @@ def get_spinny(im, line_dist=30, theta=None, thresholds = [ 30, 50, 80]):
     for i in range(n):
         # print("\r" + doin[j % len(doin)])
         hatch = utilities.copy_blank(hatch)
-        θ = (i+1) * theta # + math.pi / 2 # rotates it by 90 degrees
+        θ = (i+1) * theta + math.pi / 2 # rotates it by 90 degrees
         # θ = math.pi+ 2
         # yspace = 100
         # xspace = int(yspace * math.tan(θ))
