@@ -76,7 +76,7 @@ if __name__ == "__main__":
     
     
     import cv2
-    filename = "2opencv_frame_8.png"
+    filename = "obama.jpg"
     input_img = cv2.imread(filename)
     
     main(input_img)
