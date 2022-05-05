@@ -11,19 +11,21 @@ WindowManager:
 
         Camera:
             id: camera
-            resolution: (640, 480)
+          #  resolution: (640, 480)
             play: True
-        ToggleButton:
-            text: 'Play'
-            on_press: camera.play = not camera.play
-            size_hint_y: None
-            height: '48dp'
+        #ToggleButton:
+        #    text: 'Play'
+        #    on_press: camera.play = not camera.play
+        #    size_hint_y: None
+        #    height: '48dp'
         Button:
             text: 'Capture'
             size_hint_y: None
             height: '48dp'
-            on_press: root.capture()
-
+            on_press:
+                root.capture()
+                app.root.current = 'second'
+                root.manager.transition.direction = "up"
 
 
 
@@ -31,9 +33,18 @@ WindowManager:
 
 <SecondWindow>:
     name: "second"
+    orientation: 'vertical'
+    GridLayout:
+        cols: 1
+        Image:
+            id: image
+            source: 'edges_image.jpg'
 
-    Button:
-        text: "Go Back"
-        on_release:
-            app.root.current = "main"
-            root.manager.transition.direction = "down"
+            # create initial image to be 400
+        Button:
+            text: "Retake Image"
+            size_hint_y: None
+            height: '48dp'
+            on_release:
+                app.root.current = "main"
+                root.manager.transition.direction = "down"
