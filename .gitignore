@@ -5,6 +5,10 @@ __pycache__/
 .idea/
 .vscode/
 
+#shit
+edges.png
+
+
 # C extensions
 # *.so
 
