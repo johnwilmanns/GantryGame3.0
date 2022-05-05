@@ -30,7 +30,7 @@ def getAngle(a, b, c):
 
 
 
-def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb"): #not actually max radius tho
+def calc_segment(seg, max_accel, max_vel, max_radius=1, john = "dumb"): #not actually max radius tho
     #TODO implement turn_vel_multiplier
     # R = V^2/A
 
@@ -213,6 +213,14 @@ def calc_segment(seg, max_accel, max_radius, turn_vel_multiplier, john = "dumb")
 
         l1 = Line(line.start_pos, midpoint, line.start_vel, max_accel)
         l2 = Line(midpoint, line.end_pos, l1.end_vel, -max_accel)
+        
+        if l1.end_vel > max_vel:
+            if line.start_vel > max_vel or line.end_vel > max_vel:
+                raise Exception("line is too fast")
+            else:
+                l1.set_end_vel(max_vel, max_accel)
+            
+        
 
         return l1,l2
         
@@ -406,32 +414,20 @@ if __name__ == "__main__":
 
     rd.seed(42)
     # seg = [(i, rd.random()/10) for i in range(0,10)]
-    seg = [(.5,0), (1,0), (1,1), (1.5,1)]
+    seg = [(0,0), (10,0), (10,0.1)]
 
     segments = [seg]
     # for i in range(0,len(segments)):
     
     parts = calc_segment(seg,1,1,1)
-    plot_chunks(parts)
+    # plot_chunks(parts)
+    # print(parts)
     
     points, t = chunks_to_points(parts, 60)
     # plot_path(points)
     
     for part in parts:
         print(part)
+
     
-    # parts = calc_path(segments, 10, 1, 1, 200)
-    # plot_path_full(parts)
-
-    # with open("path.pickle", "wb") as file:
-    #     pickle.dump(parts, file)
-
-        
-    
-
-    # parts = calc_segment(seg, 1, 10)
-    # print(parts)
-    # plot_path(parts)
-
-
-[[(0,0),(0,0)],[(0,0),(0,0)]]
+    # print(points)

@@ -30,7 +30,7 @@ class Line():
 
     def __repr__(self):
         # return ""
-        return str(f"<Line {self.start_vel} {self.acceleration} {self.end_vel}>")
+        return str(f"<Line {self.start_vel=} {self.acceleration=} {self.end_vel=}>")
         # return str(f"<Line from {self.start_pos} to {self.end_pos} {self.start_vel=} {self.acceleration=} {self.end_vel=}>")
 
     def get_len(self):
