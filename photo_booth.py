@@ -42,6 +42,8 @@ class MainWindow(Screen):
 class SecondWindow(Screen):
     pass
 
+class AjustmentWindow(Screen):
+    pass
 
 class WindowManager(ScreenManager):
     pass

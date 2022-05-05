@@ -1,7 +1,7 @@
 WindowManager:
     MainWindow:
     SecondWindow:
-
+    AjustmentWindow:
 
 <MainWindow>:
     name: "main"
@@ -48,3 +48,9 @@ WindowManager:
             on_release:
                 app.root.current = "main"
                 root.manager.transition.direction = "down"
+
+<AjustmentWindow>:
+    name: "ajustment"
+    orientation: 'vertical'
+    GridLayout:
+        cols: 1
