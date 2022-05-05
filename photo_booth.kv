@@ -2,27 +2,31 @@ WindowManager:
     MainWindow:
     SecondWindow:
 
+
 <MainWindow>:
     name: "main"
-
+    orientation: 'vertical'
     GridLayout:
-        cols:1
+        cols: 1
 
-        GridLayout:
-            cols: 2
-
-            Label:
-                text: "Password: "
-
-            TextInput:
-                id: passw
-                multiline: False
-
+        Camera:
+            id: camera
+            resolution: (640, 480)
+            play: True
+        ToggleButton:
+            text: 'Play'
+            on_press: camera.play = not camera.play
+            size_hint_y: None
+            height: '48dp'
         Button:
-            text: "Submit"
-            on_release:
-                app.root.current = "second" if passw.text == "tim" else "main"
-                root.manager.transition.direction = "up"
+            text: 'Capture'
+            size_hint_y: None
+            height: '48dp'
+            on_press: root.capture()
+
+
+
+
 
 
 <SecondWindow>:
