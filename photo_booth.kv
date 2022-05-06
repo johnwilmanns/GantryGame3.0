@@ -1,3 +1,4 @@
+
 WindowManager:
     MainWindow:
     SecondWindow:
@@ -34,11 +35,15 @@ WindowManager:
 <SecondWindow>:
     name: "second"
     orientation: 'vertical'
+    on_enter:
+        image.source = 'edges_image.jpg'
+        image.reload()
+        print('entered second window')
     GridLayout:
         cols: 1
         Image:
             id: image
-            source: 'edges_image.jpg'
+           # source: 'edges_image.jpg'
 
             # create initial image to be 400
         Button:
@@ -48,9 +53,61 @@ WindowManager:
             on_release:
                 app.root.current = "main"
                 root.manager.transition.direction = "down"
+        Button:
+            text: "Save Image"
+            size_hint_y: None
+            height: '48dp'
+            on_release:
+                root.save()
+                app.root.current = "main"
+        Button:
+            text: "Ajust image"
+            size_hint_y: None
+            height: '48dp'
+            on_release:
+                app.root.current = "ajustment"
+                root.manager.transition.direction = "up"
 
 <AjustmentWindow>:
     name: "ajustment"
     orientation: 'vertical'
+    blur_radius: blur_radius
+    edge_sensitivity: edge_sensitivity
+    min_len: min_len
     GridLayout:
         cols: 1
+        Button:
+            text: "Confirm Values"
+            size_hint_y: None
+            height: '48dp'
+            on_release:
+                root.update_values()
+                app.root.current = "second"
+                root.manager.transition.direction = "down"
+
+        Slider:
+            id: blur_radius
+            min: 1
+            max: 31
+            step: 2
+            orientation: 'horizontal'
+        Label:
+            text: "blur radius" + str(blur_radius.value)
+
+        Slider:
+            id: edge_sensitivity
+            min: 0
+            max: 30
+            step: 1
+            orientation: 'horizontal'
+        Label:
+            text: "edge_sensitivity" + str(edge_sensitivity.value)
+
+        Slider:
+            id: min_len
+            min: 0
+            max: 30
+            step: 1
+            orientation: 'horizontal'
+        Label:
+            text: "min_edge_length" + str(min_len.value)
