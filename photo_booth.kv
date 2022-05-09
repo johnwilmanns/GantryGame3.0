@@ -23,6 +23,7 @@ WindowManager:
             text: 'Capture'
             size_hint_y: None
             height: '48dp'
+
             on_press:
                 root.capture()
                 app.root.current = 'second'
@@ -48,25 +49,33 @@ WindowManager:
             # create initial image to be 400
         Button:
             text: "Retake Image"
+            background_normal: ''
+            background_color: 0.8470588235294118, 0.03529411764705882, 0.49411764705882355, 1
             size_hint_y: None
             height: '48dp'
             on_release:
                 app.root.current = "main"
                 root.manager.transition.direction = "down"
         Button:
+
             text: "Save Image"
+            background_normal: ''
+            background_color: .5490196078431, .34117, .61176, 1
             size_hint_y: None
-            height: '48dp'
+            height: '36dp'
             on_release:
                 root.save()
                 app.root.current = "main"
         Button:
             text: "Ajust image"
+            background_normal: ''
+            background_color: .14, .27, .616, 1
             size_hint_y: None
             height: '48dp'
             on_release:
                 app.root.current = "ajustment"
                 root.manager.transition.direction = "up"
+
 
 <AjustmentWindow>:
     name: "ajustment"

@@ -1,14 +1,23 @@
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.popup import Popup
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.button import Button
+from kivy.config import Config
+
+from kivy.uix.label import Label
+
+
 import time
-
-
+import pickle
+import subprocess
+import os
 import cv2
 import image_processing
 
-global edges_image
+global image_number
 
 # may allah forgive me for how I am dealing with the images
 
@@ -26,9 +35,16 @@ def remake_edges(blur_radius = 11, lower_thresh = 0, upper_thresh = 20, aperture
     edges_image = image_processing.plot_segments(segments)
 
     cv2.imwrite("edges_image.jpg", edges_image)
-    time.sleep(.1)
+    #pickle the segments
+    with open("segments.pkl", "wb") as f:
+        pickle.dump(segments, f)
 
 
+def transfer_path():
+    global image_number
+    image_number += 1
+    os.system('scp segments.pkl soft-dev@gantry-game.local:~/Documents/paths/' + str(image_number) + '.pkl')
+    return image_number
 class MainWindow(Screen):
     def capture(self):
         '''
@@ -48,8 +64,23 @@ class MainWindow(Screen):
 
 
 class SecondWindow(Screen):
-    pass
+    def save(self):
+        layout = GridLayout(cols=1, padding=10)
 
+        popupLabel = Label(text="Your code is " + str(transfer_path()))
+        closeButton = Button(text="Close")
+
+        layout.add_widget(popupLabel)
+        layout.add_widget(closeButton)
+
+        # Instantiate the modal popup and display
+        popup = Popup(title='Saved!',
+                      content=layout)
+        popup.open()
+
+        # Attach close button press with popup.dismiss action
+        closeButton.bind(on_press=popup.dismiss)
+        popup.open()
 class AjustmentWindow(Screen):
     def update_values(self):
         remake_edges(blur_radius= self.blur_radius.value, upper_thresh=self.edge_sensitivity.value, min_len= self.min_len.value)
@@ -67,4 +98,6 @@ class MyMainApp(App):
 
 
 if __name__ == "__main__":
+    global image_number
+    image_number = 1000
     MyMainApp().run()
