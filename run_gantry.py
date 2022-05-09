@@ -103,7 +103,7 @@ gantry.startup()
 # servo.set_up()
 # servo.set_down()
 
-def main(segments, freq):
+def main(segments, freq = 120):
     failed_move = False
     
     print("started")

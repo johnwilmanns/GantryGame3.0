@@ -2,13 +2,14 @@ from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 import pickle
-global edges
+global segments
+import run_gantry
 class MainWindow(Screen):
     def enter_code(self):
         #get list form pickle file
-        global edges
-        edges = pickle.load(open("~/Documents/paths/" + self.code + ".pkl", "rb"))
-
+        global segments
+        segments = pickle.load(open("~/Documents/paths/" + self.code + ".pkl", "rb"))
+        run_gantry.main(segments)
 
 
 class SecondWindow(Screen):
