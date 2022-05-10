@@ -189,10 +189,15 @@ def calc_segment(seg, max_accel, max_vel, max_radius=1, john = "dumb"): #not act
         part.start_vel = get_recent_vel(i)
 
         if isinstance(part, Line):
-            part.acceleration = max_accel
+            if get_recent_vel(i) < max_vel:
+                part.acceleration = max_accel
+            else:
+                part.start_vel = max_vel
+                decelerate_to_from(max_vel, i-1)
+                part.acceleration = 0
         elif isinstance(part, Arc):
 
-            max_speed = part.max_speed(max_accel) 
+            max_speed = min(part.max_speed(max_accel), max_vel)
             if max_speed < get_recent_vel(i): #This is obsolete?
                 # print(f"part {i} is goin way too fast at {get_recent_vel(i)} bucko, should be {max_speed}")
                 # print(f"capping vel at index {i}, to vel {max_speed}")
@@ -206,6 +211,30 @@ def calc_segment(seg, max_accel, max_vel, max_radius=1, john = "dumb"): #not act
             1/0
     
     # print(parts)
+    
+    def cap_vel(line):
+        if line.end_vel > max_vel and line.start_vel > max_vel:
+            raise Exception("line is going too fast")
+        elif line.end_vel > max_vel:
+            assert line.acceleration >= 0
+            dist = (max_vel ** 2 - line.start_vel ** 2) / (2 * line.acceleration) #TODO
+            ratio = dist / line.get_len()
+            l1= Line(line.start_pos, ratio_points(line.start_pos, line.end_pos, ratio), line.start_vel, line.acceleration)
+            l2 = Line(l1.end_pos, line.end_pos, l1.end_vel, 0)
+            
+            return (l1, l2)
+        elif line.start_vel > max_vel:
+            assert line.acceleration <= 0
+            dist = (max_vel ** 2 - line.start_vel ** 2) / (2 * line.acceleration) #TODO make sure a is neg
+            ratio = dist / line.get_len()
+            l1= Line(line.start_pos, ratio_points(line.start_pos, line.end_pos, ratio), max_vel, 0)
+            l2 = Line(l1.end_pos, line.end_pos, l1.end_vel, line.acceleration) #TODO
+            
+            return (l1, l2)
+        else:
+            return line
+    
+        
 
     def optimize_line(line):
         ratio = get_ratio(line.start_vel, line.end_vel, max_accel, line.get_len())
@@ -215,10 +244,18 @@ def calc_segment(seg, max_accel, max_vel, max_radius=1, john = "dumb"): #not act
         l2 = Line(midpoint, line.end_pos, l1.end_vel, -max_accel)
         
         if l1.end_vel > max_vel:
-            if line.start_vel > max_vel or line.end_vel > max_vel:
-                raise Exception("line is too fast")
-            else:
-                l1.set_end_vel(max_vel, max_accel)
+        
+            la, lb = cap_vel(l1)
+            lc, ld = cap_vel(l2)
+            
+            # print(la, lb, lc, ld)
+            return (la, lb, lc, ld)
+        
+        # if l1.end_vel > max_vel:
+        #     if line.start_vel > max_vel or line.end_vel > max_vel:
+        #         raise Exception("line is too fast")
+        #     else:
+        #         l1.set_end_vel(max_vel, max_accel)
             
         
 
@@ -419,12 +456,17 @@ if __name__ == "__main__":
     segments = [seg]
     # for i in range(0,len(segments)):
     
-    parts = calc_segment(seg,1,1,1)
+    parts = calc_segment(seg,2,3,1)
     # plot_chunks(parts)
     # print(parts)
     
     points, t = chunks_to_points(parts, 60)
-    # plot_path(points)
+    plot_path(points)
+    
+    max_dist = 0
+    for i in range(len(points)-1):
+        max_dist = max(max_dist, distance(*points[i+1], *points[i]))
+    print(max_dist * 60)
     
     for part in parts:
         print(part)
