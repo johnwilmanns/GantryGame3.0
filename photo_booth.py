@@ -8,8 +8,8 @@ from kivy.uix.button import Button
 from kivy.config import Config
 
 from kivy.uix.label import Label
-
-
+import trajectory_planning
+import multiprocessing as mp
 import time
 import pickle
 import subprocess
@@ -33,17 +33,27 @@ def remake_edges(blur_radius = 11, lower_thresh = 0, upper_thresh = 20, aperture
     segments = image_processing.process_combo_raw(frame, blur_radius, lower_thresh, upper_thresh, aperture_size, bind_dist, area_cut, min_len, calc_rogues, blur_radius_shade, line_dist, theta, bind_dist_shade, area_cut_shade, min_len_shade, thresholds) #if this line is wrong its github copilots fault
     #     segments = trajectory_planning.calc_path(segments, 5, .01, 1, 120)
     edges_image = image_processing.plot_segments(segments)
-    segments = trajectory_planning.calc_path(segments, 10, 1, 1, 120)
     cv2.imwrite("edges_image.jpg", edges_image)
-    #pickle the segments
-    with open("segments.pkl", "wb") as f:
-        pickle.dump(segments, f)
+    def cri(segments):
+
+        segments = trajectory_planning.calc_path(segments, 10, 1, 1, 120)
+        #pickle the segments
+        with open("segments.pkl", "wb") as f:
+            pickle.dump(segments, f)
+        print("pickled segments")
+    p = mp.Process(target=cri, args=(segments,))
+    p.start()
 
 
 def transfer_path():
     global image_number
     image_number += 1
-    os.system('scp segments.pkl soft-dev@gantry-game.local:~/Documents/paths/' + str(image_number) + '.pkl')
+    def pp(image_number):
+
+        os.system('scp segments.pkl soft-dev@gantry-game.local:~/Documents/paths/' + str(image_number) + '.pkl')
+
+    pee = mp.Process(target=pp, args=(image_number,))
+    pee.start()
     return image_number
 class MainWindow(Screen):
     def capture(self):
@@ -52,6 +62,7 @@ class MainWindow(Screen):
         according to their captured time and date.
         '''
         camera = self.ids['camera']
+        print(self.ids)
         camera.export_to_png("image.png")
 
         print("Captured")
