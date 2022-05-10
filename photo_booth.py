@@ -33,7 +33,7 @@ def remake_edges(blur_radius = 11, lower_thresh = 0, upper_thresh = 20, aperture
     segments = image_processing.process_combo_raw(frame, blur_radius, lower_thresh, upper_thresh, aperture_size, bind_dist, area_cut, min_len, calc_rogues, blur_radius_shade, line_dist, theta, bind_dist_shade, area_cut_shade, min_len_shade, thresholds) #if this line is wrong its github copilots fault
     #     segments = trajectory_planning.calc_path(segments, 5, .01, 1, 120)
     edges_image = image_processing.plot_segments(segments)
-
+    segments = trajectory_planning.calc_path(segments, 10, 1, 1, 120)
     cv2.imwrite("edges_image.jpg", edges_image)
     #pickle the segments
     with open("segments.pkl", "wb") as f:
