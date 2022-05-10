@@ -20,7 +20,7 @@ class WindowManager(ScreenManager):
     pass
 
 
-kv = Builder.load_file("my.kv")
+kv = Builder.load_file("picasso_side_gui.kv")
 
 
 class MyMainApp(App):
