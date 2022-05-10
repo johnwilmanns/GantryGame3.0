@@ -18,7 +18,6 @@ import cv2
 import image_processing
 
 global image_number
-
 # may allah forgive me for how I am dealing with the images
 
 def remake_edges(blur_radius = 11, lower_thresh = 0, upper_thresh = 20, aperture_size = 3, bind_dist = 10, area_cut = 3,

@@ -8,7 +8,7 @@ class MainWindow(Screen):
     def enter_code(self):
         #get list form pickle file
         global segments
-        segments = pickle.load(open("~/Documents/paths/" + self.code + ".pkl", "rb"))
+        segments = pickle.load(open("/home/soft-dev/Documents/paths/" + self.code + ".pkl", "rb"))
         run_gantry.main(segments)
 
 
