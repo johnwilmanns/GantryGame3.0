@@ -7,13 +7,15 @@ edition = "2021"
 
 [lib]
 name = "rust"
-crate-type = ["cdylib"]
+crate-type = ["dylib"]
+# crate-type = ["cdylib"]
+
 
 [dependencies]
-imageproc = "0.22.0"
-image = "0.23.0"
-num-complex = "0.4.0"
-cpython = "0.7"
+# imageproc = "0.22.0"
+# image = "0.23.0"
+# num-complex = "0.4.0"
+# cpython = "0.7"
 
 [dependencies.pyo3]
 version = "0.15.1"

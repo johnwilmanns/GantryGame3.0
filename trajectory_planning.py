@@ -123,13 +123,15 @@ def calc_segment(seg, max_accel, max_vel, max_radius=1, john = "dumb"): #not act
 
     # print(parts[0])
     def get_recent_vel(index):
+        
+        if index == 0:
+            return 0
 
         vel = parts[index-1].end_vel
         return vel if vel is not None else 0
 
 
-        if index == 0:
-            return 0
+        
         for part in reversed(parts[:index]):
             # if isinstance(part, Line):
             return part.end_vel
@@ -189,11 +191,11 @@ def calc_segment(seg, max_accel, max_vel, max_radius=1, john = "dumb"): #not act
         part.start_vel = get_recent_vel(i)
 
         if isinstance(part, Line):
-            if get_recent_vel(i) < max_vel:
+            if get_recent_vel(i) < max_vel-.1:
                 part.acceleration = max_accel
             else:
-                part.start_vel = max_vel
-                decelerate_to_from(max_vel, i-1)
+                part.start_vel = max_vel-.1
+                decelerate_to_from(max_vel-.1, i-1)
                 part.acceleration = 0
         elif isinstance(part, Arc):
 
@@ -210,46 +212,62 @@ def calc_segment(seg, max_accel, max_vel, max_radius=1, john = "dumb"): #not act
         else:
             1/0
     
+    
+    # for part in parts:
+    #     if part.start_vel > max_vel:
+    #         raise Exception
     # print(parts)
     
     def cap_vel(line):
-        if line.end_vel > max_vel and line.start_vel > max_vel:
-            raise Exception("line is going too fast")
-        elif line.end_vel > max_vel:
+        # if line.end_vel > max_vel and line.start_vel > max_vel:
+        #     raise Exception("line is going too fast")
+        if line.end_vel > max_vel + .00001:
+            if round(line.start_vel, 6) == max_vel:
+                return [Line(line.start_pos, line.end_pos, max_vel, 0)]
+                raise NotImplementedError
             assert line.acceleration >= 0
             dist = (max_vel ** 2 - line.start_vel ** 2) / (2 * line.acceleration) #TODO
             ratio = dist / line.get_len()
             l1= Line(line.start_pos, ratio_points(line.start_pos, line.end_pos, ratio), line.start_vel, line.acceleration)
             l2 = Line(l1.end_pos, line.end_pos, l1.end_vel, 0)
             
-            return (l1, l2)
-        elif line.start_vel > max_vel:
+            return [l1, l2]
+        elif line.start_vel > max_vel + .00001:
+            if round(line.end_vel, 6) == max_vel:
+                return [Line(line.start_pos, line.end_pos, max_vel, 0)]
+                raise NotImplementedError
             assert line.acceleration <= 0
             dist = (max_vel ** 2 - line.start_vel ** 2) / (2 * line.acceleration) #TODO make sure a is neg
             ratio = dist / line.get_len()
             l1= Line(line.start_pos, ratio_points(line.start_pos, line.end_pos, ratio), max_vel, 0)
             l2 = Line(l1.end_pos, line.end_pos, l1.end_vel, line.acceleration) #TODO
             
-            return (l1, l2)
+            return [l1, l2]
         else:
             return line
     
         
 
     def optimize_line(line):
+        
         ratio = get_ratio(line.start_vel, line.end_vel, max_accel, line.get_len())
         midpoint = ratio_points(line.start_pos, line.end_pos, ratio)
 
         l1 = Line(line.start_pos, midpoint, line.start_vel, max_accel)
         l2 = Line(midpoint, line.end_pos, l1.end_vel, -max_accel)
         
+        # print(f"{l1=} {l2=}")
+        
         if l1.end_vel > max_vel:
         
-            la, lb = cap_vel(l1)
-            lc, ld = cap_vel(l2)
+            first = cap_vel(l1)
+            second = cap_vel(l2)
+            
+            # if la.acceleration is None or lb.acceleration is None or lc.acceleration is None or ld.acceleration is None:
+            #     raise Exception("acceleration NULL")
             
             # print(la, lb, lc, ld)
-            return (la, lb, lc, ld)
+            return first + second
         
         # if l1.end_vel > max_vel:
         #     if line.start_vel > max_vel or line.end_vel > max_vel:
@@ -257,13 +275,18 @@ def calc_segment(seg, max_accel, max_vel, max_radius=1, john = "dumb"): #not act
         #     else:
         #         l1.set_end_vel(max_vel, max_accel)
             
-        
+        if l1.acceleration is None or l2.acceleration is None:
+            raise Exception("acceleration NULL")
 
         return l1,l2
+    
+        
         
     buffer_parts = []
     
     for i, part in enumerate(parts):
+        if part.start_vel > max_vel:
+            raise Exception("part is too fast")
         if isinstance(part, Line) and abs(part.acceleration) != max_accel:
             buffer_parts.extend(optimize_line(part))
             # buffer_parts[i:i+1] = optimize_line(part)
@@ -312,18 +335,23 @@ def chunks_to_points(parts, freq):
 
     return points, total_time
 
-def calc_path(in_segments, max_accel, max_radius, turn_vel_multiplier, freq):
+def calc_path(in_segments, max_accel, max_radius, max_vel, freq):
+    
+    
+    results = [calc_seg(seg, max_accel, max_radius, max_vel, freq) for seg in in_segments]
+    
+    segments = [res[0] for res in results]
+    times = [res[1] for res in results]
+    
+    print(f"total time drawing: {sum(times)}s, plus travel: {sum(times)+.2*len(times)}s")
+    
+    # stuff = pool.map(calc_seg, (in_segments))
+    return segments
+    
     import multiprocessing as mp
     with mp.Pool(mp.cpu_count()) as pool:
-        # segments = []
-        # total_time = 0
-        # for seg in in_segments:
-        #     parts = calc_segment(seg, max_accel, max_radius, turn_vel_multiplier)
-        #     points, seg_time = chunks_to_points(parts, freq)
-        #     total_time += seg_time
-        #     segments.append(points)
         
-        multiple_results = [pool.apply_async(calc_seg, (seg, max_accel, max_radius, turn_vel_multiplier, freq)) for seg in in_segments]
+        multiple_results = [pool.apply_async(calc_seg, (seg, max_accel, max_radius, max_vel, freq)) for seg in in_segments]
         results = [res.get() for res in multiple_results]
 
 

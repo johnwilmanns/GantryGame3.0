@@ -56,6 +56,8 @@ class Line():
                 return math.sqrt(self.start_vel ** 2 + 2 * self.acceleration * self.get_len())
             except ValueError:
                 return 0  # TODO fix, this is prob shit
+            # except TypeError:
+            #     print(f"{self.acceleration=}")
         else:
             return None
 
