@@ -1,13 +1,5 @@
 from kivy.config import Config
-Config.set('graphics', 'fullscreen', '0')
 
-# Config.set('graphics', 'width', '1280')
-# Config.set('graphics', 'height', '800')
-
-# Config.set('graphics', 'width', '1280')
-# Config.set('graphics', 'height', '800')
-
-Config.write()
 
 
 from kivy.app import App
@@ -28,8 +20,15 @@ import time
 import image_processing
 import trajectory_planning
 
-print("done importing")
+Config.set('graphics', 'fullscreen', '0')
 
+# Config.set('graphics', 'width', '1280')
+# Config.set('graphics', 'height', '800')
+
+# Config.set('graphics', 'width', '1280')
+# Config.set('graphics', 'height', '800')
+
+Config.write()
 # Config.set('graphics', 'width', '800')
 # Config.set('graphics', 'height', '800')
 
