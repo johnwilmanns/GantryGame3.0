@@ -18,6 +18,8 @@ class MainWindow(Screen):
             self.code.text = ""
             run_gantry.main(segments)
         except Exception:
+            self.code.text = ""
+
             layout = GridLayout(cols=1, padding=10)
 
             popupLabel = Label(text="Invalid Code, Please try again")
