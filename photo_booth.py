@@ -101,10 +101,12 @@ class AjustmentWindow(Screen):
     def enter(self):
         global new_image
         if new_image:
-            self.blur_radius.value = 11
-            self.edge_sensitivity.value = 20
-            self.min_len.value = 20
-            new_image = False
+            self.reset_values()
+        new_image = False
+    def reset_values(self):
+        self.blur_radius.value = 11
+        self.edge_sensitivity.value = 20
+        self.min_len.value = 20
 
 
 
