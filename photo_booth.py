@@ -19,10 +19,10 @@ import image_processing
 
 global image_number
 # may allah forgive me for how I am dealing with the images
-
+global new_image
 def remake_edges(blur_radius = 11, lower_thresh = 0, upper_thresh = 20, aperture_size = 3, bind_dist = 10, area_cut = 3,
         min_len = 20, calc_rogues = False, blur_radius_shade = 21, line_dist = 5, theta = None, bind_dist_shade = 10, area_cut_shade = 10,
-        min_len_shade = 15, thresholds = [10, 30, 50, 80]):
+        min_len_shade = 10, thresholds = [10, 30, 50, 80]):
     """
     Remakes the edges image using the given parameters.
     """
@@ -60,6 +60,8 @@ class MainWindow(Screen):
         Function to capture the images and give them the names
         according to their captured time and date.
         '''
+        global new_image
+        new_image = True
         camera = self.ids['camera']
         print(self.ids)
         camera.export_to_png("image.png")
@@ -75,6 +77,7 @@ class MainWindow(Screen):
 
 class SecondWindow(Screen):
     def save(self):
+        global new_image
         layout = GridLayout(cols=1, padding=10)
 
         popupLabel = Label(text="Your code is " + str(transfer_path()))
@@ -91,9 +94,19 @@ class SecondWindow(Screen):
         # Attach close button press with popup.dismiss action
         closeButton.bind(on_press=popup.dismiss)
         popup.open()
+        new_image = True
 class AjustmentWindow(Screen):
     def update_values(self):
         remake_edges(blur_radius= self.blur_radius.value, upper_thresh=self.edge_sensitivity.value, min_len= self.min_len.value)
+    def enter(self):
+        global new_image
+        if new_image:
+            self.blur_radius.value = 11
+            self.edge_sensitivity.value = 20
+            self.min_len.value = 20
+            new_image = False
+
+
 
 class WindowManager(ScreenManager):
     pass
@@ -109,5 +122,7 @@ class MyMainApp(App):
 
 if __name__ == "__main__":
     global image_number
+    global new_image
     image_number = 1000
+    new_image = True
     MyMainApp().run()
