@@ -9,6 +9,7 @@ class MainWindow(Screen):
         #get list form pickle file
         global segments
         segments = pickle.load(open("/home/soft-dev/Documents/paths/" + self.code.text + ".pkl", "rb"))
+        self.code.text = ""
         run_gantry.main(segments)
 
 
