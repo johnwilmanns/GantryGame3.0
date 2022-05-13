@@ -8,7 +8,7 @@ from kivy.uix.label import Label
 
 import pickle
 global segments
-import run_gantry
+# import run_gantry
 class MainWindow(Screen):
     def enter_code(self):
         #get list form pickle file
@@ -36,9 +36,15 @@ class MainWindow(Screen):
             # Attach close button press with popup.dismiss action
             closeButton.bind(on_press=popup.dismiss)
 
+
+class FirstWindow(Screen):
+    pass
+
 class SecondWindow(Screen):
     pass
 
+class ThirdWindow(Screen):
+    pass
 
 class WindowManager(ScreenManager):
     pass

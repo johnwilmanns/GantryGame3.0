@@ -1,6 +1,8 @@
 WindowManager:
     MainWindow:
+    FirstWindow:
     SecondWindow:
+    ThirdWindow:
 
 <MainWindow>:
     name: "main"
@@ -23,13 +25,66 @@ WindowManager:
             on_release:
                 root.enter_code()
                 root.manager.transition.direction = "left"
+        Button:
+            text: "Directions"
+            on_release:
+                root.manager.transition.direction = "left"
+                root.manager.current = "first"
 
+<FirstWindow>:
+    name: "first"
+    GridLayout:
+        cols: 1
+
+        Label:
+            text: "Get Paper"
+            size_hint_y: None
+            height: 40
+        Image:
+            id: image
+            source: 'paper_get.gif'
+        Button:
+            text: "Continue"
+            size_hint_y: None
+            height: "80"
+            on_release:
+                app.root.current = "second"
+                root.manager.transition.direction = "left"
 
 <SecondWindow>:
     name: "second"
+    GridLayout:
+        cols: 1
+        Label:
+            text: "Insert Paper"
+            size_hint_y: None
+            height: 40
+        Image:
+            id: image
+            source: 'paper_insertion.gif'
+        Button:
+            text: "Go back"
+            size_hint_y: None
+            height: "80dp"
+            on_release:
+                app.root.current = "main"
+                root.manager.transition.direction = "right"
 
-    Button:
-        text: "Go Back"
-        on_release:
-            app.root.current = "main"
-            root.manager.transition.direction = "right"
+<ThirdWindow>:
+    name: 'third'
+    GridLayout:
+        cols: 1
+        Label:
+            text: "Close Door, ensure door is all the way shut"
+            size_hint_y: None
+            height: 40
+        Image:
+            id: image
+            source: 'door_close.gif'
+        Button:
+            text: "Go Back"
+            size_hint_y: None
+            height: "80dp"
+            on_release:
+                app.root.current = "main"
+                root.manager.transition.direction = "right"
