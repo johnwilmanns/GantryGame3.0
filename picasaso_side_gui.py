@@ -8,7 +8,7 @@ from kivy.uix.label import Label
 
 import pickle
 global segments
-# import run_gantry
+import run_gantry
 class MainWindow(Screen):
     def enter_code(self):
         #get list form pickle file

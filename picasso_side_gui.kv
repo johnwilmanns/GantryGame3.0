@@ -22,11 +22,16 @@ WindowManager:
 
         Button:
             text: "Print"
+            size_hint_y: None
+            height: 50
+
             on_release:
                 root.enter_code()
                 root.manager.transition.direction = "left"
         Button:
             text: "Directions"
+            size_hint_y: None
+            height: 50
             on_release:
                 root.manager.transition.direction = "left"
                 root.manager.current = "first"
