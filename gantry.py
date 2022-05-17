@@ -274,7 +274,7 @@ In the event that the position that it is in is not the position that it wasn't,
 
         
 
-    def trap_move(self, new_x, new_y, cords = None, threshold = .05, escape_threshold = .2, max_time = 1):
+    def trap_move(self, new_x, new_y, cords = None, threshold = .1, escape_threshold = .2, max_time = .25):
 
         if cords is None:
             x_pos = self.x.get_pos()
