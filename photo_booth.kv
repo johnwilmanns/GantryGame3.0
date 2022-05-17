@@ -84,6 +84,11 @@ WindowManager:
     blur_radius: blur_radius
     edge_sensitivity: edge_sensitivity
     min_len: min_len
+    threshold1: threshold1
+    threshold2: threshold2
+    threshold3: threshold3
+    threshold4: threshold4
+
     on_pre_enter:
         root.enter()
     GridLayout:
@@ -135,3 +140,40 @@ WindowManager:
             text: "min_edge_length: " + str(min_len.value)
         Label:
             text: "Increasing the minimum length will decrease the amount of noise in the image and reduce its print time"
+
+        Slider:
+            id: threshold1
+            min: 1
+            max: threshold2.value
+            step: 1
+            orientation: 'horizontal'
+        Label:
+            text: "threshold1: " + str(threshold1.value)
+        Slider:
+            id: threshold2
+            min: threshold1.value
+            max: threshold3.value
+            step: 1
+            orientation: 'horizontal'
+        Label:
+            text: "threshold2: " + str(threshold2.value)
+
+        Slider:
+            id: threshold3
+            min: threshold2.value
+            max: threshold4.value
+            step: 1
+            orientation: 'horizontal'
+        Label:
+            text: "threshold3: " + str(threshold3.value)
+        Slider:
+            id: threshold4
+            min: threshold3.value
+            max: 100
+            step: 1
+            orientation: 'horizontal'
+        Label:
+            text: "threshold4: " + str(threshold4.value)
+
+        Label:
+            text: "These are the thresholds for image darkness. Higher values will result in a darker image, and increased print times. spreading apart the values will result in a more contrasted image, while closer values will result in more detail"
