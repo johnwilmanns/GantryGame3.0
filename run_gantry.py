@@ -154,6 +154,8 @@ def main(segments, freq = 120):
         pass
     except Exception:
         segments.sort(key = lambda x: len(x))
+
+
     for i, seg in enumerate(segments):
         print(f"Currently on segment {i}/{len(segments)}")
         t0 = time.perf_counter()
@@ -179,7 +181,7 @@ def main(segments, freq = 120):
                     blocked_move(seg[0])
                 except MoveError:
                     print("failed for 3rd time, exiting")
-                    break
+                    continue
 
 
 

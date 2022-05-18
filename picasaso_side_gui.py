@@ -17,7 +17,8 @@ class MainWindow(Screen):
             segments = pickle.load(open("/home/soft-dev/Documents/paths/" + self.code.text + ".pkl", "rb"))
             self.code.text = ""
             run_gantry.main(segments)
-        except Exception:
+        except Exception as e:
+            print(e)
             self.code.text = ""
 
             layout = GridLayout(cols=1, padding=10)
