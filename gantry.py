@@ -333,17 +333,18 @@ In the event that the position that it is in is not the position that it wasn't,
         y_accelerating = True
         old_x_vel = self.x.get_vel()
         old_y_vel = self.y.get_vel()
-        while True:
-            if x_accelerating or y_accelerating:
-                if old_x_vel > self.x.get_vel():
-                    x_accelerating = False
-                if old_y_vel > self.y.get_vel():
-                    y_accelerating = False
-            else:
-                break
-            if time.perf_counter() - t0 > max_time:
-                print("movement exceeded for acceleration")
-                raise MoveError("Movement timed out")
+        # while True:
+        #     if x_accelerating or y_accelerating:
+        #         if old_x_vel > self.x.get_vel():
+        #             x_accelerating = False
+        #         if old_y_vel > self.y.get_vel():
+        #             y_accelerating = False
+        #     else:
+        #         break
+        #     if time.perf_counter() - t0 > max_time:
+        #         print("movement exceeded for acceleration")
+        #         raise MoveError("Movement timed out")
+        time.sleep(.08)
         while self.x.get_vel() > vel_threshold or self.y.get_vel() > vel_threshold:
             if time.perf_counter() > t0 + max_time:
                 raise MoveError("movement expired during deceleration")
