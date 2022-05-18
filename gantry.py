@@ -335,9 +335,9 @@ In the event that the position that it is in is not the position that it wasn't,
         old_y_vel = self.y.get_vel()
         while True:
             if x_accelerating or y_accelerating:
-                if old_x_vel > self.x.get_vel()
+                if old_x_vel > self.x.get_vel():
                     x_accelerating = False
-                if old_y_vel > self.y.get_vel()
+                if old_y_vel > self.y.get_vel():
                     y_accelerating = False
             else:
                 break
