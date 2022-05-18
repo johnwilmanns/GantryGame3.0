@@ -30,9 +30,10 @@ def getAngle(a, b, c):
 
 
 
-def calc_segment(seg, max_accel, max_vel, max_radius=1, john = "dumb"): #not actually max radius tho
+def calc_segment(seg, max_accel, max_radius, max_vel, john = "dumb"): #not actually max radius tho
     #TODO implement turn_vel_multiplier
     # R = V^2/A
+    
 
     points = []
     parts = []
@@ -212,10 +213,12 @@ def calc_segment(seg, max_accel, max_vel, max_radius=1, john = "dumb"): #not act
         else:
             1/0
     
+    if parts[-1].end_vel > max_vel:
+        decelerate_to_from(max_vel, len(parts)-1)
     
-    # for part in parts:
-    #     if part.start_vel > max_vel:
-    #         raise Exception
+    for part in parts:
+        if part.start_vel > max_vel or part.end_vel > max_vel:
+            raise Exception(f"Velocity is too high: {part.start_vel} {part.end_vel}")
     # print(parts)
     
     def cap_vel(line):
@@ -246,8 +249,6 @@ def calc_segment(seg, max_accel, max_vel, max_radius=1, john = "dumb"): #not act
         else:
             return line
     
-        
-
     def optimize_line(line):
         
         ratio = get_ratio(line.start_vel, line.end_vel, max_accel, line.get_len())
@@ -282,20 +283,28 @@ def calc_segment(seg, max_accel, max_vel, max_radius=1, john = "dumb"): #not act
     
         
         
-    buffer_parts = []
+    # buffer_parts = []
     
-    for i, part in enumerate(parts):
-        if part.start_vel > max_vel:
-            raise Exception("part is too fast")
-        if isinstance(part, Line) and abs(part.acceleration) != max_accel:
-            buffer_parts.extend(optimize_line(part))
-            # buffer_parts[i:i+1] = optimize_line(part)
-            # print(len(parts))
-        else: 
-            buffer_parts.append(part)
+    # for i, part in enumerate(parts):
+    #     if part.start_vel > max_vel:
+    #         raise Exception("part is too fast")
+    #     if isinstance(part, Line) and abs(part.acceleration) != max_accel:
+    #         buffer_parts.extend(optimize_line(part))
+    #         # buffer_parts[i:i+1] = optimize_line(part)
+    #         # print(len(parts))
+    #     else: 
+    #         buffer_parts.append(part)
             
-    parts = buffer_parts
+    # parts = buffer_parts
+    
+    for part in parts:
+        if (part.start_vel > (max_vel + .00001)) or (part.end_vel > (max_vel + .00001)):
+            print(part.start_vel)
+            print(part.end_vel)
+            print(parts)
+            raise Exception
 
+    # print(parts)
     # for i, part in enumerate(parts): 
     #     if isinstance(part, Arc):
     #         vel = None
@@ -309,6 +318,7 @@ def calc_segment(seg, max_accel, max_vel, max_radius=1, john = "dumb"): #not act
 
 
     # lines = optimize_line(parts[0])
+
     return(parts)
 
 def chunks_to_points(parts, freq):
@@ -337,6 +347,7 @@ def chunks_to_points(parts, freq):
 
 def calc_path(in_segments, max_accel, max_radius, max_vel, freq):
     
+    print(f"max accel {max_accel}, max radius {max_radius}, max vel {max_vel}")
     
     results = [calc_seg(seg, max_accel, max_radius, max_vel, freq) for seg in in_segments]
     
@@ -363,9 +374,15 @@ def calc_path(in_segments, max_accel, max_radius, max_vel, freq):
         # stuff = pool.map(calc_seg, (in_segments))
         return segments
 
-def calc_seg(seg, max_accel=1, max_radius=1, turn_vel_multiplier=1, freq=60):
+def calc_seg(seg, max_accel, max_radius, max_vel, freq):
     # print(total_time)
-    parts = calc_segment(seg, max_accel, max_radius, turn_vel_multiplier)
+    parts = calc_segment(seg, max_accel, max_radius, max_vel)
+    # for part in parts:
+    #     if part.start_vel > max_vel or part.end_vel > max_vel:
+    #         print(f"max vel: {max_vel}, was exceeded by {part.start_vel} or {part.end_vel}")
+    #         # raise Exception
+    #         raise Exception("part is too fast")
+            
     points, seg_time = chunks_to_points(parts, freq)
     return (points, seg_time)
 
@@ -484,20 +501,20 @@ if __name__ == "__main__":
     segments = [seg]
     # for i in range(0,len(segments)):
     
-    parts = calc_segment(seg,2,3,1)
+    parts = calc_segment(seg,100,10,1)
     # plot_chunks(parts)
     # print(parts)
     
     points, t = chunks_to_points(parts, 60)
-    plot_path(points)
+    # plot_path(points)
     
     max_dist = 0
     for i in range(len(points)-1):
         max_dist = max(max_dist, distance(*points[i+1], *points[i]))
     print(max_dist * 60)
     
-    for part in parts:
-        print(part)
+    # for part in parts:
+    #     print(part)
 
     
     # print(points)
