@@ -342,10 +342,11 @@ In the event that the position that it is in is not the position that it wasn't,
             else:
                 break
             if time.perf_counter() - t0 > max_time:
+                print("movement exceeded for acceleration")
                 raise MoveError("Movement timed out")
         while self.x.get_vel() > vel_threshold or self.y.get_vel() > vel_threshold:
             if time.perf_counter() > t0 + max_time:
-                raise MoveError("Movement timed out")
+                raise MoveError("movement expired during deceleration")
 
         while abs(x_pos - new_x) > threshold or abs(y_pos - new_y) > threshold:
             x_pos = self.x.get_pos()
@@ -354,6 +355,7 @@ In the event that the position that it is in is not the position that it wasn't,
             if time.perf_counter() - t0 > max_time:
                 if abs(x_pos - new_x) < escape_threshold and abs(y_pos - new_y) < escape_threshold:
                     break
+                print("movement timed out during positional controll")
                 raise MoveError("Movement timed out")
 
 
