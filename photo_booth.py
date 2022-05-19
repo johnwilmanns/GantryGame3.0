@@ -137,7 +137,6 @@ class MainWindow(Screen):
         self.take_picture_button.text = "2"
         time.sleep(1)
         self.take_picture_button.text = "1"
-        time.sleep(1)
 
         _, image = self.capture.read()
         # camera = self.ids['camera']
@@ -145,8 +144,11 @@ class MainWindow(Screen):
         # camera.export_to_png("image.png")
         #
         # print("Captured")
-        remake_edges()
 
+
+        Clock.schedule_once(self.switch_to_second_screen, 1)
+        remake_edges()
+    def switch_to_second_screen(self, dt):
         SCREEN_MANAGER.current = SECOND_SCREEN_NAME
         SCREEN_MANAGER.transition.direction = "up"
 
