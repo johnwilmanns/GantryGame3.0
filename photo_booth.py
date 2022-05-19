@@ -76,10 +76,18 @@ class MainWindow(Screen):
     def __init__(self, **kwargs):
         super(MainWindow, self).__init__(**kwargs)
         # opencv2 stuffs
-        self.capture = cv2.VideoCapture(0, cv2.CAP_V4L)
+        # self.capture = cv2.VideoCapture(0, cv2.CAP_V4L)
+        # self.capture.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
+        # self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+        # self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+
+        self.capture = cv2.VideoCapture(0)
         self.capture.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
         self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
         self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+        width = self.capture.get(cv2.CAP_PROP_FRAME_WIDTH)
+        height = self.capture.get(cv2.CAP_PROP_FRAME_HEIGHT)
+        print(width, height)
         Clock.schedule_interval(self.update, 1.0 / 33.0)
 
     def update(self, dt):
