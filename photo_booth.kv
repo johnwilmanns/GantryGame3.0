@@ -1,0 +1,181 @@
+
+WindowManager:
+    MainWindow:
+    SecondWindow:
+    AjustmentWindow:
+
+<MainWindow>:
+    name: "main"
+    orientation: 'vertical'
+    GridLayout:
+        cols: 1
+
+        Camera:
+            id: camera
+            index: 0
+            resolution: (1920, 1080)
+            play: True
+        #ToggleButton:
+        #    text: 'Play'
+        #    on_press: camera.play = not camera.play
+        #    size_hint_y: None
+        #    height: '48dp'
+        Button:
+            text: 'Capture'
+            size_hint_y: None
+            height: '48dp'
+
+            on_press:
+                root.capture()
+                app.root.current = 'second'
+                root.manager.transition.direction = "up"
+
+
+
+
+
+<SecondWindow>:
+    name: "second"
+    orientation: 'vertical'
+    on_enter:
+        image.source = 'edges_image.jpg'
+        image.reload()
+        print('entered second window')
+    GridLayout:
+        cols: 1
+        Image:
+            id: image
+           # source: 'edges_image.jpg'
+
+            # create initial image to be 400
+        Button:
+            text: "Retake Image"
+            background_normal: ''
+            background_color: 0.8470588235294118, 0.03529411764705882, 0.49411764705882355, 1
+            size_hint_y: None
+            height: '48dp'
+            on_release:
+                app.root.current = "main"
+                root.manager.transition.direction = "down"
+        Button:
+
+            text: "Save Image"
+            background_normal: ''
+            background_color: .5490196078431, .34117, .61176, 1
+            size_hint_y: None
+            height: '36dp'
+            on_release:
+                root.save()
+                app.root.current = "main"
+        Button:
+            text: "Adjust image (Advanced Mode)"
+            background_normal: ''
+            background_color: .14, .27, .616, 1
+            size_hint_y: None
+            height: '48dp'
+            on_release:
+                app.root.current = "ajustment"
+                root.manager.transition.direction = "up"
+
+
+<AjustmentWindow>:
+    name: "ajustment"
+    orientation: 'vertical'
+    blur_radius: blur_radius
+    edge_sensitivity: edge_sensitivity
+    min_len: min_len
+    threshold1: threshold1
+    threshold2: threshold2
+    threshold3: threshold3
+    threshold4: threshold4
+
+    on_pre_enter:
+        root.enter()
+    GridLayout:
+        cols: 1
+        Button:
+            text: "Confirm Values"
+            size_hint_y: None
+            height: '48dp'
+            on_release:
+                root.update_values()
+                app.root.current = "second"
+                root.manager.transition.direction = "down"
+        Button:
+            text: "Reset Values to Default"
+            size_hint_y: None
+            height: '48dp'
+            on_release:
+                root.reset_values()
+
+        Slider:
+            id: blur_radius
+            min: 1
+            max: 31
+            step: 2
+            orientation: 'horizontal'
+        Label:
+            text: "blur radius: " + str(blur_radius.value)
+        Label:
+            text: "More blur will increase the consistancy of the lines and decrease print time, at the expense of line resolution"
+
+        Slider:
+            id: edge_sensitivity
+            min: 0
+            max: 30
+            step: 1
+            orientation: 'horizontal'
+        Label:
+            text: "edge_sensitivity: " + str(edge_sensitivity.value)
+        Label:
+            text: "More sensitivity will increase the amount of lines, but will increse print time and image noise"
+
+        Slider:
+            id: min_len
+            min: 0
+            max: 30
+            step: 1
+            orientation: 'horizontal'
+        Label:
+            text: "min_edge_length: " + str(min_len.value)
+        Label:
+            text: "Increasing the minimum length will decrease the amount of noise in the image and reduce its print time"
+
+        Slider:
+            id: threshold1
+            min: 1
+            max: threshold2.value
+            step: 1
+            orientation: 'horizontal'
+        Label:
+            text: "threshold1: " + str(threshold1.value)
+        Slider:
+            id: threshold2
+            min: threshold1.value
+            max: threshold3.value
+            step: 1
+            orientation: 'horizontal'
+        Label:
+            text: "threshold2: " + str(threshold2.value)
+
+        Slider:
+            id: threshold3
+            min: threshold2.value
+            max: threshold4.value
+            step: 1
+            orientation: 'horizontal'
+        Label:
+            text: "threshold3: " + str(threshold3.value)
+        Slider:
+            id: threshold4
+            min: threshold3.value
+            max: 100
+            step: 1
+            orientation: 'horizontal'
+        Label:
+            text: "threshold4: " + str(threshold4.value)
+
+        Label:
+            text: "These are the thresholds for image darkness Higher values will result in a darker image and increased print times. "
+        Label:
+            text: "Spreading apart the values will result in a more contrasted image, while closer values will result in more detail"

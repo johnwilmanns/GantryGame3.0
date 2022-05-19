@@ -103,7 +103,7 @@ gantry.startup()
 # servo.set_up()
 # servo.set_down()
 
-def main(segments, freq):
+def main(segments, freq = 120):
     failed_move = False
     
     print("started")
@@ -154,6 +154,8 @@ def main(segments, freq):
         pass
     except Exception:
         segments.sort(key = lambda x: len(x))
+
+
     for i, seg in enumerate(segments):
         print(f"Currently on segment {i}/{len(segments)}")
         t0 = time.perf_counter()
@@ -179,7 +181,7 @@ def main(segments, freq):
                     blocked_move(seg[0])
                 except MoveError:
                     print("failed for 3rd time, exiting")
-                    break
+                    continue
 
 
 

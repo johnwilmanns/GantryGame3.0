@@ -274,7 +274,7 @@ In the event that the position that it is in is not the position that it wasn't,
 
         
 
-    def trap_move(self, new_x, new_y, cords = None, threshold = .05, escape_threshold = .2, max_time = 1):
+    def trap_move(self, new_x, new_y, cords = None, threshold = .1, escape_threshold = .2, vel_threshold = .1, max_time = 10, max_time_finish = .5):
 
         if cords is None:
             x_pos = self.x.get_pos()
@@ -329,14 +329,34 @@ In the event that the position that it is in is not the position that it wasn't,
         x_pos = self.x.get_pos()
         y_pos = self.y.get_pos()
         t0 = time.perf_counter()
-
+        x_accelerating = True
+        y_accelerating = True
+        old_x_vel = self.x.get_vel()
+        old_y_vel = self.y.get_vel()
+        # while True:
+        #     if x_accelerating or y_accelerating:
+        #         if old_x_vel > self.x.get_vel():
+        #             x_accelerating = False
+        #         if old_y_vel > self.y.get_vel():
+        #             y_accelerating = False
+        #     else:
+        #         break
+        #     if time.perf_counter() - t0 > max_time:
+        #         print("movement exceeded for acceleration")
+        #         raise MoveError("Movement timed out")
+        time.sleep(.08)
+        while self.x.get_vel() > vel_threshold or self.y.get_vel() > vel_threshold:
+            if time.perf_counter() > t0 + max_time:
+                raise MoveError("movement expired during deceleration")
+        t0 = time.perf_counter()
         while abs(x_pos - new_x) > threshold or abs(y_pos - new_y) > threshold:
             x_pos = self.x.get_pos()
             y_pos = self.y.get_pos()
 
-            if time.perf_counter() - t0 > max_time:
+            if time.perf_counter() - t0 > max_time_finish:
                 if abs(x_pos - new_x) < escape_threshold and abs(y_pos - new_y) < escape_threshold:
                     break
+                print("movement timed out during positional controll")
                 raise MoveError("Movement timed out")
 
 

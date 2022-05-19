@@ -70,7 +70,7 @@ def process_edges_raw(input_img, blur_radius = 11, lower_thresh = 0, upper_thres
     # cv2.imshow("edges", edges)
     cv2.imwrite("edges.png", edges)
     # cv2.waitKey(0)
-    
+
     # exit(0)
     # return
     
@@ -212,12 +212,16 @@ def process_shading_raw_wave(input_img, blur_radius = 21, line_dist = 10, theta 
 
     return all_segments
 
-def process_combo_raw(input_img):
+def process_combo_raw(input_img, blur_radius = 11, lower_thresh = 0, upper_thresh = 20, aperture_size = 3, bind_dist = 10, area_cut = 3,
+        min_len = 20, calc_rogues = False, blur_radius_shade = 21, line_dist = 5, theta = None, bind_dist_shade = 10, area_cut_shade = 10,
+        min_len_shade = 15, thresholds = [10, 30, 50, 80]):
 
     print("starting edge processing")
-    segments = process_edges_raw(input_img)
+    segments = process_edges_raw(input_img, blur_radius, lower_thresh, upper_thresh, aperture_size, bind_dist, area_cut,
+        min_len, calc_rogues)
     print("starting shading processing")
-    segments.extend(process_shading_raw(input_img))
+    segments.extend(process_shading_raw(input_img, blur_radius_shade, line_dist, theta, bind_dist_shade, area_cut_shade,
+        min_len_shade, thresholds))
     print("finished pre processing")
     
     
