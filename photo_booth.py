@@ -55,6 +55,34 @@ def transfer_path():
     pee.start()
     return image_number
 class MainWindow(Screen):
+
+
+    def __init__(self, **kwargs):
+        super(MainScreen, self).__init__(**kwargs)
+        # opencv2 stuffs
+        self.capture = cv2.VideoCapture(0, cv2.CAP_V4L)
+        self.capture.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
+        self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+        self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+        Clock.schedule_interval(self.update, 1.0 / 33.0)
+
+    def update(self, dt):
+        # display image from cam in opencv window
+        ret, frame = self.capture.read()
+        # convert it to texture
+        buf1 = cv2.flip(frame, 0)
+        buf = buf1.tostring()
+        texture1 = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
+        # if working on RASPBERRY PI, use colorfmt='rgba' here instead, but stick with "bgr" in blit_buffer.
+        texture1.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
+        # display image from the texture
+        self.ids.img1.texture = texture1
+        self.ids.img1.size_hint_x = .5
+        self.ids.img1.size_hint_y = .5
+        self.ids.img1.pos_hint = {'center_x': .5, 'center_y': .5}
+
+        print(1/dt)
+
     def capture(self):
         '''
         Function to capture the images and give them the names
