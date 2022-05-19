@@ -1,3 +1,5 @@
+from threading import Thread
+
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -26,6 +28,10 @@ global image_number
 # may allah forgive me for how I am dealing with the images
 global new_image
 global image
+
+SCREEN_MANAGER = ScreenManager()
+#add names here
+SECOND_SCREEN_NAME = 'second'
 
 def remake_edges(blur_radius=11, lower_thresh=0, upper_thresh=20, aperture_size=3, bind_dist=10, area_cut=3,
                  min_len=20, calc_rogues=False, blur_radius_shade=21, line_dist=5, theta=None, bind_dist_shade=10,
@@ -107,6 +113,12 @@ class MainWindow(Screen):
 
         # print(1 / dt)
 
+
+
+    def take_picture_thread(self):
+        # Clock.schedule_once(self.take_picture, .1)
+        Thread(target=self.take_picture).start()
+
     def take_picture(self):
         '''
         Function to capture the images and give them the names
@@ -120,6 +132,13 @@ class MainWindow(Screen):
 
         global image
 
+        self.take_picture_button.text = "3"
+        time.sleep(1)
+        self.take_picture_button.text = "2"
+        time.sleep(1)
+        self.take_picture_button.text = "1"
+        time.sleep(1)
+
         _, image = self.capture.read()
         # camera = self.ids['camera']
         # print(self.ids)
@@ -127,6 +146,9 @@ class MainWindow(Screen):
         #
         # print("Captured")
         remake_edges()
+
+        SCREEN_MANAGER.current = SECOND_SCREEN_NAME
+        SCREEN_MANAGER.transition.direction = "up"
 
 
 class SecondWindow(Screen):
@@ -172,12 +194,14 @@ class WindowManager(ScreenManager):
     pass
 
 
-kv = Builder.load_file("photo_booth.kv")
+Builder.load_file("photo_booth.kv")
+SCREEN_MANAGER.add_widget(MainWindow(name="main"))
+SCREEN_MANAGER.add_widget(SecondWindow(name="second"))
 
 
 class MyMainApp(App):
     def build(self):
-        return kv
+        return SCREEN_MANAGER
 
 
 if __name__ == "__main__":

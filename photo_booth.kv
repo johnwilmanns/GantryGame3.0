@@ -1,11 +1,7 @@
 
-WindowManager:
-    MainWindow:
-    SecondWindow:
-    AjustmentWindow:
-
 <MainWindow>:
     name: "main"
+    take_picture_button: take_picture_button
     orientation: 'vertical'
     GridLayout:
         cols: 1
@@ -22,14 +18,15 @@ WindowManager:
         #    size_hint_y: None
         #    height: '48dp'
         Button:
+            id: take_picture_button
             text: 'Take Picture'
             size_hint_y: None
             height: '48dp'
 
             on_press:
-                root.take_picture()
-                app.root.current = 'second'
-                root.manager.transition.direction = "up"
+                root.take_picture_thread()
+                #app.root.current = 'second'
+                #root.manager.transition.direction = "up"
 
 
 
