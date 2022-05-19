@@ -25,7 +25,7 @@ import image_processing
 global image_number
 # may allah forgive me for how I am dealing with the images
 global new_image
-
+global image
 
 def remake_edges(blur_radius=11, lower_thresh=0, upper_thresh=20, aperture_size=3, bind_dist=10, area_cut=3,
                  min_len=20, calc_rogues=False, blur_radius_shade=21, line_dist=5, theta=None, bind_dist_shade=10,
@@ -34,9 +34,12 @@ def remake_edges(blur_radius=11, lower_thresh=0, upper_thresh=20, aperture_size=
     """
     Remakes the edges image using the given parameters.
     """
-    filename = "image.png"
-    frame = cv2.imread(filename)
+    print("remaking edges")
+    global image
+    # filename = "image.png"
+    # frame = cv2.imread(filename)
 
+    frame = image
     segments = image_processing.process_combo_raw(frame, blur_radius, lower_thresh, upper_thresh, aperture_size,
                                                   bind_dist, area_cut, min_len, calc_rogues, blur_radius_shade,
                                                   line_dist, theta, bind_dist_shade, area_cut_shade, min_len_shade,
@@ -96,18 +99,25 @@ class MainWindow(Screen):
 
         # print(1 / dt)
 
-    def capture(self):
+    def take_picture(self):
         '''
         Function to capture the images and give them the names
         according to their captured time and date.
         '''
+
+        # print("taking image")
+
         global new_image
         new_image = True
-        camera = self.ids['camera']
-        print(self.ids)
-        camera.export_to_png("image.png")
 
-        print("Captured")
+        global image
+
+        _, image = self.capture.read()
+        # camera = self.ids['camera']
+        # print(self.ids)
+        # camera.export_to_png("image.png")
+        #
+        # print("Captured")
         remake_edges()
 
 

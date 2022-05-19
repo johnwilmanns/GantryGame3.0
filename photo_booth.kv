@@ -22,12 +22,12 @@ WindowManager:
         #    size_hint_y: None
         #    height: '48dp'
         Button:
-            text: 'Capture'
+            text: 'Take Picture'
             size_hint_y: None
             height: '48dp'
 
             on_press:
-                root.capture()
+                root.take_picture()
                 app.root.current = 'second'
                 root.manager.transition.direction = "up"
 
