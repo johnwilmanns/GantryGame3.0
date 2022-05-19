@@ -8,11 +8,10 @@ from kivy.uix.button import Button
 from kivy.config import Config
 from kivy.uix.label import Label
 
-#Imports for Cesars code
+# Imports for Cesars code
 from kivy.clock import Clock
 from kivy.graphics.texture import Texture
 from kivy.lang import Builder
-
 
 import trajectory_planning
 import multiprocessing as mp
@@ -26,26 +25,33 @@ import image_processing
 global image_number
 # may allah forgive me for how I am dealing with the images
 global new_image
-def remake_edges(blur_radius = 11, lower_thresh = 0, upper_thresh = 20, aperture_size = 3, bind_dist = 10, area_cut = 3,
-        min_len = 20, calc_rogues = False, blur_radius_shade = 21, line_dist = 5, theta = None, bind_dist_shade = 10, area_cut_shade = 10,
-        min_len_shade = 10, thresholds = [10, 30, 50, 80]):
+
+
+def remake_edges(blur_radius=11, lower_thresh=0, upper_thresh=20, aperture_size=3, bind_dist=10, area_cut=3,
+                 min_len=20, calc_rogues=False, blur_radius_shade=21, line_dist=5, theta=None, bind_dist_shade=10,
+                 area_cut_shade=10,
+                 min_len_shade=10, thresholds=[10, 30, 50, 80]):
     """
     Remakes the edges image using the given parameters.
     """
     filename = "image.png"
     frame = cv2.imread(filename)
 
-    segments = image_processing.process_combo_raw(frame, blur_radius, lower_thresh, upper_thresh, aperture_size, bind_dist, area_cut, min_len, calc_rogues, blur_radius_shade, line_dist, theta, bind_dist_shade, area_cut_shade, min_len_shade, thresholds) #if this line is wrong its github copilots fault
+    segments = image_processing.process_combo_raw(frame, blur_radius, lower_thresh, upper_thresh, aperture_size,
+                                                  bind_dist, area_cut, min_len, calc_rogues, blur_radius_shade,
+                                                  line_dist, theta, bind_dist_shade, area_cut_shade, min_len_shade,
+                                                  thresholds)  # if this line is wrong its github copilots fault
     #     segments = trajectory_planning.calc_path(segments, 5, .01, 1, 120)
     edges_image = image_processing.plot_segments(segments)
     cv2.imwrite("edges_image.jpg", edges_image)
-    def cri(segments):
 
+    def cri(segments):
         segments = trajectory_planning.calc_path(segments, 10, 1, 1, 120)
-        #pickle the segments
+        # pickle the segments
         with open("segments.pkl", "wb") as f:
             pickle.dump(segments, f)
         print("pickled segments")
+
     p = mp.Process(target=cri, args=(segments,))
     p.start()
 
@@ -53,15 +59,16 @@ def remake_edges(blur_radius = 11, lower_thresh = 0, upper_thresh = 20, aperture
 def transfer_path():
     global image_number
     image_number += 1
-    def pp(image_number):
 
+    def pp(image_number):
         os.system('scp segments.pkl soft-dev@gantry-game.local:~/Documents/paths/' + str(image_number) + '.pkl')
 
     pee = mp.Process(target=pp, args=(image_number,))
     pee.start()
     return image_number
-class MainWindow(Screen):
 
+
+class MainWindow(Screen):
 
     def __init__(self, **kwargs):
         super(MainWindow, self).__init__(**kwargs)
@@ -87,7 +94,7 @@ class MainWindow(Screen):
         self.ids.img1.size_hint_y = .5
         self.ids.img1.pos_hint = {'center_x': .5, 'center_y': .5}
 
-        print(1/dt)
+        # print(1 / dt)
 
     def capture(self):
         '''
@@ -102,11 +109,6 @@ class MainWindow(Screen):
 
         print("Captured")
         remake_edges()
-
-
-
-
-
 
 
 class SecondWindow(Screen):
@@ -129,19 +131,23 @@ class SecondWindow(Screen):
         closeButton.bind(on_press=popup.dismiss)
         popup.open()
         new_image = True
+
+
 class AjustmentWindow(Screen):
     def update_values(self):
-        remake_edges(blur_radius= self.blur_radius.value, upper_thresh=self.edge_sensitivity.value, min_len= self.min_len.value)
+        remake_edges(blur_radius=self.blur_radius.value, upper_thresh=self.edge_sensitivity.value,
+                     min_len=self.min_len.value)
+
     def enter(self):
         global new_image
         if new_image:
             self.reset_values()
         new_image = False
+
     def reset_values(self):
         self.blur_radius.value = 11
         self.edge_sensitivity.value = 20
         self.min_len.value = 20
-
 
 
 class WindowManager(ScreenManager):
