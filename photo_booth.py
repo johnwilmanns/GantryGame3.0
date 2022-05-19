@@ -6,8 +6,14 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
 from kivy.config import Config
-
 from kivy.uix.label import Label
+
+#Imports for Cesars code
+from kivy.clock import Clock
+from kivy.graphics.texture import Texture
+from kivy.lang import Builder
+
+
 import trajectory_planning
 import multiprocessing as mp
 import time
@@ -58,7 +64,7 @@ class MainWindow(Screen):
 
 
     def __init__(self, **kwargs):
-        super(MainScreen, self).__init__(**kwargs)
+        super(MainWindow, self).__init__(**kwargs)
         # opencv2 stuffs
         self.capture = cv2.VideoCapture(0, cv2.CAP_V4L)
         self.capture.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
