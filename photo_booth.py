@@ -137,17 +137,18 @@ class MainWindow(Screen):
         self.take_picture_button.text = "2"
         time.sleep(1)
         self.take_picture_button.text = "1"
-
+        time.sleep(1)
         _, image = self.capture.read()
         # camera = self.ids['camera']
         # print(self.ids)
         # camera.export_to_png("image.png")
         #
         # print("Captured")
-
-
-        Clock.schedule_once(self.switch_to_second_screen, 1)
+        self.take_picture_button.text = "CHEESE"
         remake_edges()
+        Clock.schedule_once(self.switch_to_second_screen, 0)
+        self.take_picture_button.text = "TAKE PICTURE"
+
     def switch_to_second_screen(self, dt):
         SCREEN_MANAGER.current = SECOND_SCREEN_NAME
         SCREEN_MANAGER.transition.direction = "up"
@@ -178,7 +179,7 @@ class SecondWindow(Screen):
 class AjustmentWindow(Screen):
     def update_values(self):
         remake_edges(blur_radius=self.blur_radius.value, upper_thresh=self.edge_sensitivity.value,
-                     min_len=self.min_len.value)
+                     min_len=self.min_len.value, thresholds=[self.threshold1, self.threshold2, self.threshold3, self.threshold4])
 
     def enter(self):
         global new_image
@@ -190,7 +191,10 @@ class AjustmentWindow(Screen):
         self.blur_radius.value = 11
         self.edge_sensitivity.value = 20
         self.min_len.value = 20
-
+        self.threshold1.value = 10
+        self.threshold2.value = 30
+        self.threshold3.value = 50
+        self.threshold4.value = 80
 
 class WindowManager(ScreenManager):
     pass
@@ -199,7 +203,7 @@ class WindowManager(ScreenManager):
 Builder.load_file("photo_booth.kv")
 SCREEN_MANAGER.add_widget(MainWindow(name="main"))
 SCREEN_MANAGER.add_widget(SecondWindow(name="second"))
-
+SCREEN_MANAGER.add_widget(AjustmentWindow(name="ajustment"))
 
 class MyMainApp(App):
     def build(self):
