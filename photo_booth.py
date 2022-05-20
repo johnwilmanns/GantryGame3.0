@@ -144,10 +144,10 @@ class MainWindow(Screen):
         # camera.export_to_png("image.png")
         #
         # print("Captured")
-        self.take_picture_button.text = "CHEESE"
+        self.take_picture_button.text = "Picture Taken"
         remake_edges()
         Clock.schedule_once(self.switch_to_second_screen, 0)
-        self.take_picture_button.text = "TAKE PICTURE"
+        self.take_picture_button.text = "Click to take picture"
 
     def switch_to_second_screen(self, dt):
         SCREEN_MANAGER.current = SECOND_SCREEN_NAME
