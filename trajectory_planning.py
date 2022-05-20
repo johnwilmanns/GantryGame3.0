@@ -284,7 +284,8 @@ def calc_path(in_segments, max_accel, max_radius, turn_vel_multiplier, freq):
 
         segments = [res[0] for res in results]
         times = [res[1] for res in results]
-        
+
+        #todo, fix this implementation. Its awful but I'm out of time.
         print(f"total time drawing: {sum(times)}s, plus travel: {sum(times)+.2*len(times)}s")
         with open('time.txt', 'w') as f:
             f.write(f"{(sum(times)+.2*len(times)) / 60}")
