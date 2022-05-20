@@ -179,7 +179,7 @@ class SecondWindow(Screen):
 class AjustmentWindow(Screen):
     def update_values(self):
         remake_edges(blur_radius=self.blur_radius.value, upper_thresh=self.edge_sensitivity.value,
-                     min_len=self.min_len.value, thresholds=[self.threshold1, self.threshold2, self.threshold3, self.threshold4])
+                     min_len=self.min_len.value, thresholds=[int(self.threshold1.value), int(self.threshold2.value), int(self.threshold3.value), int(self.threshold4.value)])
 
     def enter(self):
         global new_image
