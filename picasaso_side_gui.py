@@ -13,10 +13,11 @@ class MainWindow(Screen):
     def enter_code(self):
         #get list form pickle file
         global segments
+        working = False
         try:
             segments = pickle.load(open("/home/soft-dev/Documents/paths/" + self.code.text + ".pkl", "rb"))
             self.code.text = ""
-            run_gantry.main(segments)
+            working = True
         except Exception as e:
             print(e)
             self.code.text = ""
@@ -36,6 +37,8 @@ class MainWindow(Screen):
 
             # Attach close button press with popup.dismiss action
             closeButton.bind(on_press=popup.dismiss)
+        if working:
+            run_gantry.main(segments)
 
 
 class FirstWindow(Screen):
