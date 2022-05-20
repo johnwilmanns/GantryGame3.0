@@ -239,7 +239,10 @@ def main(segments, freq = 120):
         
     # plot_deltas()
     servo.pen_high_up()
-    blocked_move((0,0))
+    try:
+        blocked_move((0,0))
+    except MoveError:
+        pass
     gantry.idle()
 
     servo.lock_open()
