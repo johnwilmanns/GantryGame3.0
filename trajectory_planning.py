@@ -286,7 +286,8 @@ def calc_path(in_segments, max_accel, max_radius, turn_vel_multiplier, freq):
         times = [res[1] for res in results]
         
         print(f"total time drawing: {sum(times)}s, plus travel: {sum(times)+.2*len(times)}s")
-        
+        with open('time.txt', 'w') as f:
+            f.write(f"{(sum(times)+.2*len(times)) / 60}")
         # stuff = pool.map(calc_seg, (in_segments))
         return segments
 
