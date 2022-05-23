@@ -4,10 +4,15 @@ New code for the gantry game drawing machine.
 
 For future maintainers:
 
-How to use: 
-Connect to Odrive and arduino
-Put a file in
-put the file name in main.py. run it
+So you've decided to pick this project up, polish it off, and make it actually good??
+Well you have signed yourself up for a helluva challange!
+
+By my own admission this project is under documented and over complicated. I have left this file in the repo as my best hope of explaining it, but if you need anything feel free to contact me at johnwilmanns@gmail.com, I might remember enough to help you.
+
+
+How the photo booth works (general overview):
+It takes a photo, then runs a bunch of code to first make "edges" images containing single pixel white lines where the pen will draw. Most of this code is contained within image_processing.py and posturize.py. To make things harder on you, it also runs with multiprocessing, however that should be failry well figured out. 
+After the photo is taken, the edges files are processed into "peices" / segments, which are displayed. These
 
 Important functions/meathods/classes
 
