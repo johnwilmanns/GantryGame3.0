@@ -57,17 +57,24 @@ def main(input_img):
     
     print(f"{len(segments)} segments found");
     
-    # 
-    
-    segments = trajectory_planning.calc_path(segments, 10, 1, 2, 120)
-    
     from trajectory_planning import distance
+
+    max_dist = 0
+    for points in segments:
+        for i in range(len(points)-1):
+            max_dist = max(max_dist, distance(*points[i+1], *points[i]))
+    print(max_dist)
+    
+    segments = trajectory_planning.calc_path(segments, 10, 1, .25, 120)
+    
+    
     
     max_dist = 0
     for points in segments:
         for i in range(len(points)-1):
             max_dist = max(max_dist, distance(*points[i+1], *points[i]))
     print(max_dist * 120)
+    
     
     
     # cv2.waitKey(0)
@@ -85,7 +92,7 @@ if __name__ == "__main__":
     
     
     import cv2
-    filename = "small_obama.jpg"
+    filename = "final.jpg"
     input_img = cv2.imread(filename)
     
     main(input_img)

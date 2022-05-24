@@ -192,11 +192,11 @@ def calc_segment(seg, max_accel, max_radius, max_vel, john = "dumb"): #not actua
         part.start_vel = get_recent_vel(i)
 
         if isinstance(part, Line):
-            if get_recent_vel(i) < max_vel-.1:
+            if get_recent_vel(i) < max_vel-.01:
                 part.acceleration = max_accel
             else:
-                part.start_vel = max_vel-.1
-                decelerate_to_from(max_vel-.1, i-1)
+                part.start_vel = max_vel-.01
+                decelerate_to_from(max_vel-.01, i-1)
                 part.acceleration = 0
         elif isinstance(part, Arc):
 
@@ -217,7 +217,7 @@ def calc_segment(seg, max_accel, max_radius, max_vel, john = "dumb"): #not actua
         decelerate_to_from(max_vel, len(parts)-1)
     
     for part in parts:
-        if part.start_vel > max_vel or part.end_vel > max_vel:
+        if part.start_vel > max_vel + .0001 or part.end_vel > max_vel + .0001:
             raise Exception(f"Velocity is too high: {part.start_vel} {part.end_vel}")
     # print(parts)
     
@@ -247,7 +247,7 @@ def calc_segment(seg, max_accel, max_radius, max_vel, john = "dumb"): #not actua
             
             return [l1, l2]
         else:
-            return line
+            return [line]
     
     def optimize_line(line):
         
@@ -283,19 +283,19 @@ def calc_segment(seg, max_accel, max_radius, max_vel, john = "dumb"): #not actua
     
         
         
-    # buffer_parts = []
+    buffer_parts = []
     
-    # for i, part in enumerate(parts):
-    #     if part.start_vel > max_vel:
-    #         raise Exception("part is too fast")
-    #     if isinstance(part, Line) and abs(part.acceleration) != max_accel:
-    #         buffer_parts.extend(optimize_line(part))
-    #         # buffer_parts[i:i+1] = optimize_line(part)
-    #         # print(len(parts))
-    #     else: 
-    #         buffer_parts.append(part)
+    for i, part in enumerate(parts):
+        if part.start_vel > max_vel:
+            raise Exception("part is too fast")
+        if isinstance(part, Line) and abs(part.acceleration) != max_accel:
+            buffer_parts.extend(optimize_line(part))
+            # buffer_parts[i:i+1] = optimize_line(part)
+            # print(len(parts))
+        else: 
+            buffer_parts.append(part)
             
-    # parts = buffer_parts
+    parts = buffer_parts
     
     for part in parts:
         if (part.start_vel > (max_vel + .00001)) or (part.end_vel > (max_vel + .00001)):
