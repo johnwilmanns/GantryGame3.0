@@ -53,13 +53,22 @@ def main(input_img):
     # segments = trajectory_planning.calc_path(segments, 5, .01, 1, 120)
     
     # run_gantry.main(segments)
-    out_image = image_processing.plot_segments(segments)
+    # out_image = image_processing.plot_segments(segments)
     
     print(f"{len(segments)} segments found");
     
     # 
     
-    segments = trajectory_planning.calc_path(segments, 10, 1, 1, 120)   
+    segments = trajectory_planning.calc_path(segments, 10, 1, 2, 120)
+    
+    from trajectory_planning import distance
+    
+    max_dist = 0
+    for points in segments:
+        for i in range(len(points)-1):
+            max_dist = max(max_dist, distance(*points[i+1], *points[i]))
+    print(max_dist * 120)
+    
     
     # cv2.waitKey(0)
 
@@ -67,8 +76,8 @@ def main(input_img):
     #     import run_gantry
     #     run_gantry.main(segments, 120)
     # else:
-    cv2.imshow("out_image", out_image)
-    cv2.waitKey(0)
+    # cv2.imshow("out_image", out_image)
+    # cv2.waitKey(0)
 
     
     
@@ -76,7 +85,7 @@ if __name__ == "__main__":
     
     
     import cv2
-    filename = "obama.jpg"
+    filename = "small_obama.jpg"
     input_img = cv2.imread(filename)
     
     main(input_img)
