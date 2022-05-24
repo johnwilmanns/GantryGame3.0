@@ -345,8 +345,9 @@ def chunks_to_points(parts, freq):
 
     return points, total_time
 
+            #warning: all of these values are multiplied by whatever the image is scaled to before drawing. right now this is about 8
 def calc_path(in_segments, max_accel, max_radius, max_vel, freq):
-    
+
     print(f"max accel {max_accel}, max radius {max_radius}, max vel {max_vel}")
     
     results = [calc_seg(seg, max_accel, max_radius, max_vel, freq) for seg in in_segments]

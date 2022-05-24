@@ -55,7 +55,7 @@ def remake_edges(blur_radius=11, lower_thresh=0, upper_thresh=20, aperture_size=
     cv2.imwrite("edges_image.jpg", edges_image)
 
     def cri(segments):
-        segments = trajectory_planning.calc_path(segments, 10, 1, .25, 120)
+        segments = trajectory_planning.calc_path(segments, 10, 1, 200, 120)
         # pickle the segments
         with open("segments.pkl", "wb") as f:
             pickle.dump(segments, f)
@@ -189,7 +189,7 @@ class AjustmentWindow(Screen):
 
     def reset_values(self):
         self.blur_radius.value = 11
-        self.edge_sensitivity.value = 20
+        self.edge_sensitivity.value = 30
         self.min_len.value = 20
         self.threshold1.value = 10
         self.threshold2.value = 30
