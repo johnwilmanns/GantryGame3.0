@@ -57,7 +57,7 @@ def remake_edges(blur_radius=11, lower_thresh=0, upper_thresh=20, aperture_size=
     def cri(segments):
         segments = trajectory_planning.calc_path(segments, 10, 1, 1, 120)
         # pickle the segments
-        with open("segments.pkl", "wb") as f:
+        with open("segments.txt", "wb") as f:
             pickle.dump(segments, f)
         print("pickled segments")
 
@@ -70,7 +70,8 @@ def transfer_path():
     image_number += 1
 
     def pp(image_number):
-        os.system('scp segments.pkl soft-dev@gantry-game.local:~/Documents/paths/' + str(image_number) + '.pkl')
+        os.rename("segments.txt", "segments_" + str(image_number) + ".txt")
+        # os.system('scp segments.pkl soft-dev@gantry-game.local:~/Documents/paths/' + str(image_number) + '.pkl')
 
     pee = mp.Process(target=pp, args=(image_number,))
     pee.start()
@@ -209,10 +210,47 @@ class MyMainApp(App):
     def build(self):
         return SCREEN_MANAGER
 
+def create_web_server():
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+    import time
+
+
+    hostName = "localhost"
+    serverPort = 8080
+
+    class MyServer(BaseHTTPRequestHandler):
+        def do_GET(self):
+
+            code = self.path.lstrip('/').upper()
+
+            try:
+                file = open(f"segments_{code}.txt", "r")
+                self.wfile.write(bytes(file.read(), "utf-8"))
+            except Exception:
+                print("File not found")
+
+            
+
+
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+            # self.wfile.write(bytes("<html><head><title>https://pythonbasics.org</title></head>", "utf-8"))
+            # self.wfile.write(bytes("<p>Request: %s</p>" % self.path, "utf-8"))
+            # self.wfile.write(bytes("<body>", "utf-8"))
+            # self.wfile.write(bytes("<p>This is an example web server.</p>", "utf-8"))
+            # self.wfile.write(bytes("</body></html>", "utf-8"))
+
+    server = HTTPServer(('localhost', 8080), MyServer)
+    print ('HTTPServer started')
+    server.serve_forever()
+
 
 if __name__ == "__main__":
     global image_number
     global new_image
     image_number = 1000
     new_image = True
+
+
     MyMainApp().run()
