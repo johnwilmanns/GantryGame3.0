@@ -7,7 +7,7 @@ edition = "2021"
 
 [lib]
 name = "rust"
-crate-type = ["cdylib"]
+crate-type = ["dylib"]
 
 [dependencies]
 imageproc = "0.22.0"

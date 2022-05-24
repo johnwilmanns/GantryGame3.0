@@ -30,14 +30,14 @@ def main(input_img):
     
     print("starting edge processing")
     segments = []
-    segments = image_processing.process_edges_raw(input_img, 
-                                                    blur_radius = EDGE_BLUR_RADIUS,
-                                                    lower_thresh= EDGE_LOWER_THRESHOLD,
-                                                    upper_thresh= EDGE_UPPER_THRESHOLD,
-                                                    aperture_size= EDGE_APERTURE_SIZE,
-                                                    bind_dist = EDGE_BIND_DIST,
-                                                    area_cut = EDGE_AREA_CUT,
-                                                    min_len = EDGE_MIN_LEN)
+    # segments = image_processing.process_edges_raw(input_img, 
+    #                                                 blur_radius = EDGE_BLUR_RADIUS,
+    #                                                 lower_thresh= EDGE_LOWER_THRESHOLD,
+    #                                                 upper_thresh= EDGE_UPPER_THRESHOLD,
+    #                                                 aperture_size= EDGE_APERTURE_SIZE,
+    #                                                 bind_dist = EDGE_BIND_DIST,
+    #                                                 area_cut = EDGE_AREA_CUT,
+    #                                                 min_len = EDGE_MIN_LEN)
     
     print("starting shading processing")
     segments.extend(image_processing.process_shading_raw(input_img,
@@ -57,9 +57,23 @@ def main(input_img):
     
     print(f"{len(segments)} segments found");
     
-    # 
+    from trajectory_planning import distance
+
+    max_dist = 0
+    for points in segments:
+        for i in range(len(points)-1):
+            max_dist = max(max_dist, distance(*points[i+1], *points[i]))
+    print(max_dist)
     
     segments = trajectory_planning.calc_path(segments, 10, 1, 1, 120)   
+
+    
+
+    max_dist = 0
+    for points in segments:
+        for i in range(len(points)-1):
+            max_dist = max(max_dist, distance(*points[i+1], *points[i]))
+    print(max_dist * 120)
     
     # cv2.waitKey(0)
 
@@ -76,7 +90,7 @@ if __name__ == "__main__":
     
     
     import cv2
-    filename = "obama.jpg"
+    filename = "final.jpg"
     input_img = cv2.imread(filename)
     
     main(input_img)

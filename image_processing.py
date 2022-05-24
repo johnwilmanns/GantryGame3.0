@@ -36,8 +36,8 @@ def plot_segments(segments, shape = (540*2, 960*2)):
             
             
             cv2.line(img,(x1,y1),(x2,y2),color,1)
-            # cv2.line(img,(x1,y1), (x1,y1), (0,0,255), 4)
-            # cv2.line(img,(x2,y2), (x2,y2), (0,0,255), 4)
+            cv2.line(img,(x1,y1), (x1,y1), (0,0,255), 4)
+            cv2.line(img,(x2,y2), (x2,y2), (0,0,255), 4)
             
     color = (0,0,255)
     # for i in range(len(segments)-1):
