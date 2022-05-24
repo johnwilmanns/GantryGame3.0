@@ -163,25 +163,15 @@ def main(segments, freq = 120):
         try:
             blocked_move(seg[0])
         except MoveError:
-            if not failed_move:
-                print("failed move")
-                failed_move = True
-                continue
-            else:
-                print("failed move again")
-                # log here!
-                # gantry.dump_errors()
-                # gantry.clear_errors()
+            
                 servo.pen_high_up()
                 gantry.startup()
                 gantry.enable_motors()
-                failed_move = False
-
                 try:
                     blocked_move(seg[0])
                 except MoveError:
-                    print("failed for 3rd time, exiting")
-                    continue
+                    print("failed for 2nd time, exiting")
+                    break
 
 
 
