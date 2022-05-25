@@ -284,7 +284,7 @@ def calc_segment(seg, max_accel, max_radius, max_vel, john = "dumb"): #not actua
         
         
     buffer_parts = []
-    
+
     for i, part in enumerate(parts):
         if part.start_vel > max_vel:
             raise Exception("part is too fast")
@@ -292,9 +292,9 @@ def calc_segment(seg, max_accel, max_radius, max_vel, john = "dumb"): #not actua
             buffer_parts.extend(optimize_line(part))
             # buffer_parts[i:i+1] = optimize_line(part)
             # print(len(parts))
-        else: 
+        else:
             buffer_parts.append(part)
-            
+
     parts = buffer_parts
     
     for part in parts:
