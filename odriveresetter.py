@@ -2,6 +2,7 @@ import ODrive_Ease_Lib
 import odrive
 import time
 from odrive.utils import *
+print("imported odrive resetter")
 
 odrv1_serial = "20793595524B"  # Previously Xavier #actually Y
 odrv0_serial = "20673593524B"  # Previously Yannie #actually x
