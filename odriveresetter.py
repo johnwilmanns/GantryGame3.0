@@ -39,7 +39,7 @@ odrv1.axis1.controller.config.vel_integrator_gain = 1.9
 
 
 odrv0.axis0.motor.config.current_lim = 0
-odrv0.axis1.motor.config.current_lim = 20
+odrv0.axis1.motor.config.current_lim = 30
 
 odrv0.axis0.controller.config.vel_limit = 2000
 odrv0.axis1.controller.config.vel_limit = 2000
