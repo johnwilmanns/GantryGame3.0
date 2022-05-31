@@ -5,10 +5,12 @@ from kivy.uix.popup import Popup
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label
+import odriveresetter
 
 import pickle
 global segments
 import run_gantry
+
 class MainWindow(Screen):
     def enter_code(self):
         #get list form pickle file

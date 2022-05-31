@@ -53,10 +53,12 @@ def remake_edges(blur_radius=11, lower_thresh=0, upper_thresh=20, aperture_size=
     #     segments = trajectory_planning.calc_path(segments, 5, .01, 1, 120)
     edges_image = image_processing.plot_segments(segments)
     cv2.imwrite("edges_image.jpg", edges_image)
+    os.system("rm segments.pkl")
 
     def cri(segments):
-        segments = trajectory_planning.calc_path(segments, 10, 1, 1, 120)
+        segments = trajectory_planning.calc_path(segments, 10, 1, .5, 120)
         # pickle the segments
+
         with open("segments.pkl", "wb") as f:
             pickle.dump(segments, f)
         print("pickled segments")
@@ -70,7 +72,15 @@ def transfer_path():
     image_number += 1
 
     def pp(image_number):
+        while True:
+            print("pooping")
+            try:
+                open("segments.pkl")
+                break
+            except Exception:
+                pass
         os.system('scp segments.pkl soft-dev@gantry-game.local:~/Documents/paths/' + str(image_number) + '.pkl')
+        print(f"sent segments with code {image_number}")
 
     pee = mp.Process(target=pp, args=(image_number,))
     pee.start()
@@ -189,7 +199,7 @@ class AjustmentWindow(Screen):
 
     def reset_values(self):
         self.blur_radius.value = 11
-        self.edge_sensitivity.value = 20
+        self.edge_sensitivity.value = 30
         self.min_len.value = 20
         self.threshold1.value = 10
         self.threshold2.value = 30

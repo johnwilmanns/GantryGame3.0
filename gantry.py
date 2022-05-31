@@ -53,6 +53,7 @@ class Gantry:
     
 
     def startup(self):
+        import odriveresetter
         print("starting up")
         # self.dump_errors()
         
