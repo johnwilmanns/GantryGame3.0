@@ -1,3 +1,7 @@
+'''
+this code is worthless. we used it to fill in the entire print bed with black sharpie so that when I forgot to load paper it wouldn't show up
+'''
+
 import run_gantry
 import trajectory_planning
 import time

@@ -30,4 +30,6 @@ run_gantry: loops through the points from trajectory planning and moves the gant
 Posturize: uses hatching to create a depth effect, get_spinny needs to be refactored, but this is the current method. It uses angles to add depth.
 
 How the motion works:
-it uses odrive's position filtering mode. It feeds the odrive those points at the set frequency. Full path planning ensures that the accelration is constantn throughout the entire movement. 
+it uses odrive's position filtering mode. It feeds the odrive those points at the set frequency. Full path planning ensures that the accelration is constantn throughout the entire movement. This exports a list of coordinates that run_gantry uses to set_pos with filtered position control. The travel moves are done with trapazoidal trajectories to make sure that they are nice. 
+
+How 2 run:

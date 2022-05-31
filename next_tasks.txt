@@ -1,0 +1,16 @@
+Mechanical:
+
+1. Loctite all moving bolts. I've started but they will just continue to wiggle themselves appart
+2. Install the thinner plates on the y axis so that the collet gets more hold on the motor and screw.
+3. Shim the lead screw so it doesn't rattle back and fourth
+4. Maybe replace the x motor, its bearings are shot because we ran it so hard before it was tuned correctly
+5. thicken the hoop for the set screw on the pen carriage and print a new one
+
+Code:
+
+Samir and I tried really hard to make sure this entire thing worked before we left. However, if something breaks email me at johnwilmanns@gmail.com (actually please just email me, I'd like to know you are working on the project)
+
+1. New gui. The current gui, photo-booth.py is awful. this is because I am terrible at UI design. The current one was made for two reasons. Number one is to explain how to use the other code. I figured by making a functioning GUI it would be easy for you to make a good one. Secondly, I just needed one for the fair.
+2. Use something better than os.system to transfer files around.
+3. Figure out a better code system. Probably make them more unique or delete after use. We ran into issues of people starting to print while it was still processing / uploading
+4. Add a cancel button to the printer. I tried to put run_gantry in a process but it didn't work for some reason. DO NOT USE THREADING ANYWHERE NEAR RUN_GANTRY IT WILL RUIN THE TIMING. THE SWITCHING BACK AND FOURTH ABSOLUTELY DESTROYS THE MACHINES ABILITY TO SEND THE COMMANDS AT THE CORRECT FREQUENCY. IT ALSO DESTROYS THE TRAVEL MOVES.
