@@ -30,14 +30,14 @@ def main(input_img):
     
     print("starting edge processing")
     segments = []
-    segments = image_processing.process_edges_raw(input_img, 
-                                                    blur_radius = EDGE_BLUR_RADIUS,
-                                                    lower_thresh= EDGE_LOWER_THRESHOLD,
-                                                    upper_thresh= EDGE_UPPER_THRESHOLD,
-                                                    aperture_size= EDGE_APERTURE_SIZE,
-                                                    bind_dist = EDGE_BIND_DIST,
-                                                    area_cut = EDGE_AREA_CUT,
-                                                    min_len = EDGE_MIN_LEN)
+    # segments = image_processing.process_edges_raw(input_img, 
+    #                                                 blur_radius = EDGE_BLUR_RADIUS,
+    #                                                 lower_thresh= EDGE_LOWER_THRESHOLD,
+    #                                                 upper_thresh= EDGE_UPPER_THRESHOLD,
+    #                                                 aperture_size= EDGE_APERTURE_SIZE,
+    #                                                 bind_dist = EDGE_BIND_DIST,
+    #                                                 area_cut = EDGE_AREA_CUT,
+    #                                                 min_len = EDGE_MIN_LEN)
     
     print("starting shading processing")
     segments.extend(image_processing.process_shading_raw(input_img,
