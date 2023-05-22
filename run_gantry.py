@@ -180,6 +180,7 @@ def main(segments, freq = 120):
         # print(seg[0])
         pen_down()
         t1 = time.perf_counter()
+        #start of segment
         for i, point in enumerate(seg[1:]):
 
             # queue1.put(point)
